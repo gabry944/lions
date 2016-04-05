@@ -30,7 +30,10 @@ public class ListActivity extends AppCompatActivity {
         ipRecyclerView.setLayoutManager(ipLayoutManager);
 
         // temp!!
-        String[] myDataset = {"ett", "tva", "tre"};
+        PointOfInterest p1 = new PointOfInterest("Toalett", "", "", 0,0,1);
+        PointOfInterest p2 = new PointOfInterest("Mötesrum", "Magnum", "", 0,0,1);
+        PointOfInterest p3 = new PointOfInterest("Toalett", "", "", 0,0,1);
+        PointOfInterest[] myDataset = {p1, p2, p3};
 
         // specify an adapter
         ipAdapter = new ipAdapter(myDataset);
@@ -40,7 +43,7 @@ public class ListActivity extends AppCompatActivity {
 }
 
 class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
-    private String[] ipDataset;
+    private PointOfInterest[] ipDataset;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -60,7 +63,7 @@ class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public ipAdapter(String[] myDataset) {
+    public ipAdapter(PointOfInterest[] myDataset) {
         ipDataset = myDataset;
     }
 
@@ -81,8 +84,8 @@ class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.mIdView.setText(ipDataset[position]);
-        holder.mContentView.setText(ipDataset[position]);
+        holder.mIdView.setText(String.format("%d", ipDataset[position].getID()));
+        holder.mContentView.setText(ipDataset[position].titel);
 
     }
 
