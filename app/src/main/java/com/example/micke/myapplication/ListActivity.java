@@ -15,10 +15,16 @@ public class ListActivity extends AppCompatActivity {
     private RecyclerView.Adapter ipAdapter;
     private RecyclerView.LayoutManager ipLayoutManager;
 
+    private FireBaseHandler fireBaseHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        fireBaseHandler = new FireBaseHandler(getApplicationContext());
+        fireBaseHandler.test();
+
         ipRecyclerView = (RecyclerView) findViewById(R.id.ip_recycler_view);
 
         // This setting improve performance if changes
