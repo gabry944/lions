@@ -57,14 +57,12 @@ class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public final View mView;
-        public final TextView mIdView;
         public final TextView mContentView;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mContentView = (TextView) view.findViewById(R.id.title);
         }
     }
 
@@ -90,7 +88,6 @@ class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.mIdView.setText(String.format("%d", ipDataset[position].getID()));
         holder.mContentView.setText(ipDataset[position].titel);
 
     }
