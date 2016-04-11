@@ -6,7 +6,6 @@ public class PointOfInterest {
     public String description;
     public float latitude;
     public float longitude;
-    public int floor;
     private String id;
 
     public PointOfInterest() {
@@ -22,7 +21,6 @@ public class PointOfInterest {
         description = d;
         latitude = lat;
         longitude = lon;
-        floor = f;
         this.id = id;
     }
 
@@ -32,7 +30,6 @@ public class PointOfInterest {
         description = p.getDescription();
         latitude = p.getLatitude();
         longitude = p.getLongitude();
-        floor = p.getFloor();
         id = p.getId();
     }
 
@@ -56,11 +53,6 @@ public class PointOfInterest {
         return titel;
     }
 
-    public float getLongitude() {
-        return longitude;
-    }
+    public float getLongitude() { return longitude; }
 
-    public int getFloor() {
-        return floor;
-    }
 }
