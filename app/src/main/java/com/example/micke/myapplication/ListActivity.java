@@ -1,12 +1,16 @@
 package com.example.micke.myapplication;
 
-import android.app.ActionBar;
+
+import android.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -21,7 +25,7 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
     private RecyclerView.Adapter ipAdapter;
     private RecyclerView.LayoutManager ipLayoutManager;
 
-    private FireBaseHandler fireBaseHandler;
+    private FireBaseBuilding fireBaseHandler;
 
     private List<PointOfInterest> myDataset;
 
@@ -30,7 +34,9 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fireBaseHandler = new FireBaseHandler(getApplicationContext());
+        String buildingId = "1";
+
+        fireBaseHandler = new FireBaseBuilding(getApplicationContext(), buildingId);
         fireBaseHandler.test();
 
         ipRecyclerView = (RecyclerView) findViewById(R.id.ip_recycler_view);
@@ -43,7 +49,7 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
         ipLayoutManager = new LinearLayoutManager(this);
         ipRecyclerView.setLayoutManager(ipLayoutManager);
 
-        myDataset = fireBaseHandler.getPoints("1", this);
+        myDataset = fireBaseHandler.getPoints(buildingId, this);
 
         // specify an adapter
         ipAdapter = new ipAdapter(myDataset);
@@ -53,6 +59,27 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
     @Override
     public void dataSetChanged() {
         ipAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.list_options, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        Log.d("ItemClicked", "Item: " + item.toString());
+        if (id == R.id.item_add) {
+            DialogFragment newFragment = new AddPointDialogFragment();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("firebase", fireBaseHandler);
+            newFragment.setArguments(bundle);
+            newFragment.show(this.getFragmentManager(), "add_point_layout");
+        }
+        return false;
     }
 }
 
@@ -106,8 +133,8 @@ class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        holder.mContentView.setText(ipDataset.get(position).titel);
-        Log.d("index", ipDataset.get(position).titel + " size: " + ipDataset.size());
+        holder.mContentView.setText(ipDataset.get(position).title);
+        Log.d("index", ipDataset.get(position).title + " size: " + ipDataset.size());
 
         //To expand an "item" in the recyclerview
         holder.mContentView.setOnClickListener(new View.OnClickListener() {
@@ -148,9 +175,6 @@ class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
                 v.startAnimation(a);
             }
         });
-
-
-
 
     }
 
