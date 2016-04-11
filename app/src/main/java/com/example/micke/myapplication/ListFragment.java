@@ -1,8 +1,8 @@
 package com.example.micke.myapplication;
 
-import android.support.v7.app.AppCompatActivity;
-import android.support.v4.app.FragmentActivity;
+
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,47 +12,25 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ListActivity extends AppCompatActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //setContentView(R.layout.fragment_list);
-
-        if(findViewById(R.id.ip_list_layout)!=null){
-            
-            if(savedInstanceState != null){
-                return;
-            }
-
-            ListFragment ip_list_fragment = new ListFragment();
-            ip_list_fragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().add(R.id.ip_list_layout, ip_list_fragment).commit();
-        }
-
-
-    }
-
-}
-/*
-public class ListActivity extends AppCompatActivity {
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class ListFragment extends Fragment {
     //ip stands for interest points.
     private RecyclerView ipRecyclerView;
     private RecyclerView.Adapter ipAdapter;
     private RecyclerView.LayoutManager ipLayoutManager;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_list);
-        ipRecyclerView = (RecyclerView) findViewById(R.id.ip_recycler_view);
+    public ListFragment() {
+        ipRecyclerView = (RecyclerView) getView().findViewById(R.id.ip_recycler_view);
 
         // This setting improve performance if changes
         // in content do not change the layout size of the RecyclerView
         ipRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager in the Recycler view
-        ipLayoutManager = new LinearLayoutManager(this);
+        ipLayoutManager = new LinearLayoutManager(getActivity());
         ipRecyclerView.setLayoutManager(ipLayoutManager);
 
         // temp!!
@@ -64,7 +42,14 @@ public class ListActivity extends AppCompatActivity {
         // specify an adapter
         ipAdapter = new ipAdapter(myDataset);
         ipRecyclerView.setAdapter(ipAdapter);
+    }
 
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_list, container, false);
     }
 
     class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
@@ -131,8 +116,8 @@ public class ListActivity extends AppCompatActivity {
                     IndoorMapFragment fragment = new IndoorMapFragment();
                     fragment.setArguments(arguments);
 
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.main_layout, fragment)
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.ip_list_layout, fragment)
                             .commit();
 
                     //fragmentTransaction.replace(R.id.content, fragment);
@@ -153,7 +138,13 @@ public class ListActivity extends AppCompatActivity {
         }
     }
 
+/*
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+
+
+    */
 }
-
-
- */
