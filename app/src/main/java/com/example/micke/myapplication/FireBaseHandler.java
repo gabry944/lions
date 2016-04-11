@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class FireBaseHandler {
 
-    private Firebase myFirebaseRef;
+    protected Firebase myFirebaseRef;
 
     FireBaseHandler(Context context) {
         Firebase.setAndroidContext(context);
@@ -55,42 +55,13 @@ public class FireBaseHandler {
         });
     }
 
-    public String generateIpId() {
+    /*
+    * Generates a unique id in the firebase database. Used for buildings and points of interest.
+    * Returns the unique id.
+     */
+    public String generateId() {
         Firebase temp = myFirebaseRef.push();
-        Log.d("fb:ipid", temp.getKey().toString());
+        Log.d("fb:id", temp.getKey().toString());
         return temp.getKey().toString();
-    }
-
-    public void updateIp(PointOfInterest point) {
-        Firebase ipRef = myFirebaseRef.child("building/1/floor/4/ip/" + point.getId());
-        ipRef.setValue(point);
-    }
-
-    public List<PointOfInterest> getPoints(String buildingId, final ListActivity listActivity) {
-        final List<PointOfInterest> list = new ArrayList<>();
-
-        myFirebaseRef.child("building/" + buildingId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot building) {
-                list.clear();
-                DataSnapshot floors = building.child("floor");
-                Log.d("hej", "data changed");
-                for (DataSnapshot floor : floors.getChildren()) {
-                    DataSnapshot ips = floor.child("ip");
-                    for (DataSnapshot ip : ips.getChildren()) {
-                        Log.d("ip", ip.getValue().toString());
-                        PointOfInterest point = new PointOfInterest(ip.getValue(PointOfInterest.class));
-                        list.add(point);
-                    }
-                }
-                listActivity.dataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(FirebaseError error) {
-            }
-        });
-
-        return list;
     }
 }
