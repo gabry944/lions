@@ -5,26 +5,34 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
-public class ListActivity extends AppCompatActivity {
+import java.util.List;
+
+public class ListActivity extends AppCompatActivity implements DataSetChanged {
     //ip stands for interest points.
     private RecyclerView ipRecyclerView;
     private RecyclerView.Adapter ipAdapter;
     private RecyclerView.LayoutManager ipLayoutManager;
 
+    private FireBaseHandler fireBaseHandler;
+
+    private List<PointOfInterest> myDataset;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        fireBaseHandler = new FireBaseHandler(getApplicationContext());
+        fireBaseHandler.test();
+
         ipRecyclerView = (RecyclerView) findViewById(R.id.ip_recycler_view);
 
         // This setting improve performance if changes
@@ -35,21 +43,21 @@ public class ListActivity extends AppCompatActivity {
         ipLayoutManager = new LinearLayoutManager(this);
         ipRecyclerView.setLayoutManager(ipLayoutManager);
 
-        // temp!!
-        PointOfInterest p1 = new PointOfInterest("Toalett", "", "", 0,0,1);
-        PointOfInterest p2 = new PointOfInterest("Mötesrum", "Magnum", "", 0,0,1);
-        PointOfInterest p3 = new PointOfInterest("Toalett", "", "", 0,0,1);
-        PointOfInterest[] myDataset = {p1, p2, p3};
+        myDataset = fireBaseHandler.getPoints("1", this);
 
         // specify an adapter
         ipAdapter = new ipAdapter(myDataset);
         ipRecyclerView.setAdapter(ipAdapter);
+    }
 
+    @Override
+    public void dataSetChanged() {
+        ipAdapter.notifyDataSetChanged();
     }
 }
 
 class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
-    private PointOfInterest[] ipDataset;
+    private List<PointOfInterest> ipDataset;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -67,8 +75,16 @@ class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         }
     }
 
+    //empty constructor
+    public ipAdapter() {
+
+    }
+
+    public void setIpDataset(List<PointOfInterest> ipDataset) {
+        this.ipDataset = ipDataset;
+    }
     // Provide a suitable constructor (depends on the kind of dataset)
-    public ipAdapter(PointOfInterest[] myDataset) {
+    public ipAdapter(List<PointOfInterest> myDataset) {
         ipDataset = myDataset;
     }
 
@@ -89,7 +105,9 @@ class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     public void onBindViewHolder(final ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.mContentView.setText(ipDataset[position].titel);
+
+        holder.mContentView.setText(ipDataset.get(position).titel);
+        Log.d("index", ipDataset.get(position).titel + " size: " + ipDataset.size());
 
         //To expand an "item" in the recyclerview
         holder.mContentView.setOnClickListener(new View.OnClickListener() {
@@ -131,11 +149,14 @@ class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             }
         });
 
+
+
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return ipDataset.length;
+        return ipDataset.size();
     }
 }

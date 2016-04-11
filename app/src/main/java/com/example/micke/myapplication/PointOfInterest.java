@@ -6,14 +6,13 @@ public class PointOfInterest {
     public String description;
     public float latitude;
     public float longitude;
-    public int floor;
-    private int ID;
+    private String id;
 
-    public PointOfInterest(){
-        ID = 0;
+    public PointOfInterest() {
+
     }
 
-    public PointOfInterest(String c, String t, String d, float lat, float lon, int f){
+    public PointOfInterest(String c, String t, String d, float lat, float lon, int f, String id){
         category = c;
         if(t == "")
             titel = c;
@@ -22,16 +21,38 @@ public class PointOfInterest {
         description = d;
         latitude = lat;
         longitude = lon;
-        floor = f;
-        ID = getNewID();
+        this.id = id;
     }
 
-    public int getID() {
-        return ID;
+    public PointOfInterest(PointOfInterest p) {
+        category = p.getCategory();
+        titel = p.getTitel();
+        description = p.getDescription();
+        latitude = p.getLatitude();
+        longitude = p.getLongitude();
+        id = p.getId();
     }
 
-    private int getNewID() {
-        //get ID from server
-        return 0;
+    public String getId() {
+        return id;
     }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public float getLatitude() {
+        return latitude;
+    }
+
+    public String getTitel() {
+        return titel;
+    }
+
+    public float getLongitude() { return longitude; }
+
 }
