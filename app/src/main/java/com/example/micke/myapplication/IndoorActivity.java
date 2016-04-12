@@ -1,38 +1,38 @@
 package com.example.micke.myapplication;
 
+import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.List;
 
-public class IndoorActivity extends AppCompatActivity {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
+public class IndoorActivity extends AppCompatActivity implements DataSetChanged {
+
+    private FireBaseIndoor fireBaseHandler;
     private IndoorPageSliderAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     private ViewPager mViewPager;
+    private RecyclerView ipRecyclerView;
+    private RecyclerView.Adapter ipAdapter;
+    private RecyclerView.LayoutManager ipLayoutManager;
+    private List<PointOfInterest> myDataset;
+    private String buildingId;
 
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.activity_indoor);
+
+        fireBaseHandler = new FireBaseIndoor(getApplicationContext(), buildingId);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -44,12 +44,24 @@ public class IndoorActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        buildingId = "1";
+        myDataset = fireBaseHandler.getPoints(buildingId, this);
+
+        // specify an adapter
+//        ipAdapter = new ipAdapter(myDataset);
+//        ipRecyclerView.setAdapter(ipAdapter);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "BLablabla", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                DialogFragment newFragment = new AddPointDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("firebase", fireBaseHandler);
+                newFragment.setArguments(bundle);
+                newFragment.show(getFragmentManager(), "add_point_layout");
+//                Snackbar.make(view, "BLablabla", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
             }
         });
     }
@@ -76,4 +88,8 @@ public class IndoorActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void dataSetChanged() {
+//        ipAdapter.notifyDataSetChanged();
+    }
 }
