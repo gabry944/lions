@@ -50,11 +50,11 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
         ipLayoutManager = new LinearLayoutManager(this);
         ipRecyclerView.setLayoutManager(ipLayoutManager);
 
-//        myDataset = fireBaseHandler.getPoints(buildingId, this);
+        //myDataset = fireBaseHandler.getBuildings(buildingId, this);
 
         // specify an adapter
-//        ipAdapter = new ipAdapter(myDataset);
-//        ipRecyclerView.setAdapter(ipAdapter);
+        ipAdapter = new ipAdapter(myDataset);
+        ipRecyclerView.setAdapter(ipAdapter);
     }
 
     @Override
@@ -80,14 +80,14 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
             newFragment.setArguments(bundle);
             newFragment.show(this.getFragmentManager(), "add_point_layout");
         } else if (id == R.id.item_camera) {
-            Intent intent = new Intent(getApplicationContext(), QRReader.class);
-            startActivity(intent);
+//            Intent intent = new Intent(getApplicationContext(), QRReader.class);
+//            startActivity(intent);
         }
         return false; //
     }
 }
 
-class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
+/*class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     private List<PointOfInterest> ipDataset;
 
     // Provide a reference to the views for each data item
@@ -157,10 +157,7 @@ class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
                 Animation a = new Animation() {
                     @Override
                     protected void applyTransformation(float interpolatedTime, Transformation t) {
-                        //Check to make it expanding more "adaptive way".
-                        /*v.getLayoutParams().height = interpolatedTime == 1
-                                ? RecyclerView.LayoutParams.WRAP_CONTENT
-                                : (int) (targetHeight * interpolatedTime);*/
+
                         v.getLayoutParams().height = (int) (targetHeight * interpolatedTime * 10);
 
                         Log.d("TAG", "2: " + Integer.toString(v.getLayoutParams().height));
@@ -187,4 +184,4 @@ class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     public int getItemCount() {
         return ipDataset.size();
     }
-}
+}*/

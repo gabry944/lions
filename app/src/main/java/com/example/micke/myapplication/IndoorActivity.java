@@ -10,7 +10,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -21,12 +23,13 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
 
     private FireBaseIndoor fireBaseHandler;
     private IndoorPageSliderAdapter mSectionsPagerAdapter;
-    private ViewPager mViewPager;
+    public static ViewPager mViewPager;
     private RecyclerView ipRecyclerView;
-    private RecyclerView.Adapter ipAdapter;
+    private ipAdapter ipadapter;
     private RecyclerView.LayoutManager ipLayoutManager;
     private List<PointOfInterest> myDataset;
     private String buildingId;
+    private String ipId;
 
     @Override
     public void onCreate(Bundle state) {
@@ -36,6 +39,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         buildingId = bundle.getString("buildingId", "1");
+        ipId = bundle.getString("ipId", "-1");
 
         fireBaseHandler = new FireBaseIndoor(getApplicationContext(), buildingId);
 
@@ -48,14 +52,16 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setCurrentItem(1);
 
         myDataset = fireBaseHandler.getPoints(buildingId, this);
 
         // specify an adapter
-//        ipAdapter = new ipAdapter(myDataset);
-//        ipRecyclerView.setAdapter(ipAdapter);
+        ipadapter = new ipAdapter(myDataset);
+        //ipRecyclerView.setAdapter(ipadapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        assert fab != null;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,12 +74,18 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
 //                        .setAction("Action", null).show();
             }
         });
+
+        //If QRFragment gets user here, go to indoor map
+        if(!ipId.equals("-1")) {
+            mViewPager.setCurrentItem(0);
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_test, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.list_options, menu);
         return true;
     }
 
@@ -82,18 +94,27 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+
+        // return super.onOptionsItemSelected(item);
+
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        Log.d("ItemClicked", "Item: " + item.toString());
+        if (id == R.id.item_add) {
+            AddPointDialogFragment newFragment = new AddPointDialogFragment();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("firebase", fireBaseHandler);
+            newFragment.setArguments(bundle);
+            newFragment.show(this.getFragmentManager(), "add_point_layout");
+        } else if (id == R.id.item_camera) {
+            Intent intent = new Intent(getApplicationContext(), QRFragment.class);
+            startActivity(intent);
         }
-
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     @Override
     public void dataSetChanged() {
-//        ipAdapter.notifyDataSetChanged();
+        ipadapter.notifyDataSetChanged();
     }
+
 }
