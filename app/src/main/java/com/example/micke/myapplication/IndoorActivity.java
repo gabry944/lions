@@ -60,19 +60,6 @@ public class IndoorActivity extends AppCompatActivity implements ZBarScannerView
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        mScannerView.setResultHandler(this); // Register ourselves as a handler for scan results.
-        mScannerView.startCamera();          // Start camera on resume
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        mScannerView.stopCamera();           // Stop camera on pause
-    }
-
-    @Override
     public void handleResult(Result rawResult) {
         // Do something with the result here
         Log.v("qr", rawResult.getContents()); // Prints scan results
@@ -182,6 +169,19 @@ public class IndoorActivity extends AppCompatActivity implements ZBarScannerView
 
         }
 
+        @Override
+        public void onResume() {
+            super.onResume();
+            mScannerView.setResultHandler(indoorActivity); // Register ourselves as a handler for scan results.
+            mScannerView.startCamera();          // Start camera on resume
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            mScannerView.stopCamera();           // Stop camera on pause
+        }
+
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -219,12 +219,9 @@ public class IndoorActivity extends AppCompatActivity implements ZBarScannerView
             // Return a PlaceholderFragment (defined as a static inner class below).
             Log.d("getitem", "pos: " + position);
             if(position <= 1) {
-//                mScannerView.stopCamera(); // Start camera
                 return PlaceholderFragment.newInstance(position + 1);
             }
             else {
-                mScannerView.startCamera(); // Start camera
-                mScannerView.setResultHandler(indoorActivity);
                 return QRFragment.newInstance(position + 1);
             }
         }
