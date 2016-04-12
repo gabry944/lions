@@ -10,7 +10,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -74,7 +76,8 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_test, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.list_options, menu);
         return true;
     }
 
@@ -83,14 +86,22 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+
+        // return super.onOptionsItemSelected(item);
+
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        Log.d("ItemClicked", "Item: " + item.toString());
+        if (id == R.id.item_add) {
+            AddPointDialogFragment newFragment = new AddPointDialogFragment();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("firebase", fireBaseHandler);
+            newFragment.setArguments(bundle);
+            newFragment.show(this.getFragmentManager(), "add_point_layout");
+        } else if (id == R.id.item_camera) {
+            Intent intent = new Intent(getApplicationContext(), QRFragment.class);
+            startActivity(intent);
         }
-
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     @Override
