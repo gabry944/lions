@@ -1,7 +1,11 @@
 package com.example.micke.myapplication;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +24,6 @@ public class QRFragment extends Fragment implements ZBarScannerView.ResultHandle
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     public QRFragment() {
-
     }
 
     @Override
