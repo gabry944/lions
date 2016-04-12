@@ -17,7 +17,7 @@ public class OutdoorPageSliderAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if(position == 0) {
-            return OutdoorListFragment.newInstance(position + 1);
+            return OutdoorMapFragment.newInstance(position + 1);
         } else if(position == 1) {
             return OutdoorListFragment.newInstance(position + 1);
         } else {
