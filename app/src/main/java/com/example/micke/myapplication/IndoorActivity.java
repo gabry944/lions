@@ -93,6 +93,4 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
         ipadapter.notifyDataSetChanged();
     }
 
-
-
 }
