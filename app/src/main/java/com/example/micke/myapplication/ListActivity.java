@@ -2,6 +2,7 @@ package com.example.micke.myapplication;
 
 
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -78,6 +79,9 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
             bundle.putSerializable("firebase", fireBaseHandler);
             newFragment.setArguments(bundle);
             newFragment.show(this.getFragmentManager(), "add_point_layout");
+        } else if (id == R.id.item_camera) {
+            Intent intent = new Intent(getApplicationContext(), QRReader.class);
+            startActivity(intent);
         }
         return false;
     }

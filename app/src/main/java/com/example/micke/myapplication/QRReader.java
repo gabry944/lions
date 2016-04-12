@@ -52,6 +52,8 @@ public class QRReader extends AppCompatActivity implements ZBarScannerView.Resul
                 //parts[3] = floor id (1,2,3 etc.)
                 //parts[4] = ips
                 //parts[5] = ip id
+            } else if(parts[0].equals("car")) {
+                //Implement QR reading for car here
             }
         }
 
