@@ -25,6 +25,7 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
     private RecyclerView.Adapter ipAdapter;
     private RecyclerView.LayoutManager ipLayoutManager;
 
+
     private FireBaseBuilding fireBaseHandler;
 
     private List<PointOfInterest> myDataset;
@@ -85,6 +86,7 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
 
 class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     private List<PointOfInterest> ipDataset;
+    public boolean isExpanded = false;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -141,40 +143,75 @@ class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             @Override
             public void onClick(final View v) {
 
-                v.measure(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT);
-                final int targetHeight = v.getMeasuredHeight();
+                if (isExpanded){
+                    collapseView(v);
+                    isExpanded = false;
+                }
+                else{
+                    expandView(v);
+                    isExpanded = true;
+                }
 
-                Log.d("TAG", Integer.toString(v.getMeasuredHeight()));
+            }
+        });
 
-                // Older versions of android (pre API 21) cancel animations for views with a height of 0.
-                v.getLayoutParams().height = 1;
-                v.setVisibility(View.VISIBLE);
+    }
 
-                Animation a = new Animation() {
-                    @Override
-                    protected void applyTransformation(float interpolatedTime, Transformation t) {
-                        //Check to make it expanding more "adaptive way".
+    public void collapseView(final View v){
+        final int initialHeight = v.getMeasuredHeight();
+
+
+        Animation a = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if(interpolatedTime == 1){
+                    v.setVisibility(View.GONE);
+                }else{
+                    v.getLayoutParams().height = initialHeight;// - (int)(initialHeight * interpolatedTime) + 10;
+                    v.requestLayout();
+                }
+            }
+            
+        };
+
+        // 1dp/ms
+        a.setDuration(500);
+        // a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+
+
+    }
+
+    public void expandView(final View v){
+        v.measure(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = v.getMeasuredHeight();
+
+        Log.d("TAG", Integer.toString(v.getMeasuredHeight()));
+
+        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+        v.getLayoutParams().height = 1;
+        v.setVisibility(View.VISIBLE);
+
+        Animation a = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                //Check to make it expanding more "adaptive way".
                         /*v.getLayoutParams().height = interpolatedTime == 1
                                 ? RecyclerView.LayoutParams.WRAP_CONTENT
                                 : (int) (targetHeight * interpolatedTime);*/
-                        v.getLayoutParams().height = (int) (targetHeight * interpolatedTime * 10);
+                v.getLayoutParams().height = (int) (targetHeight * interpolatedTime * 10);
 
-                        Log.d("TAG", "2: " + Integer.toString(v.getLayoutParams().height));
+                Log.d("TAG", "2: " + Integer.toString(v.getLayoutParams().height));
 
-                        v.requestLayout();
-                    }
-
-                    @Override
-                    public boolean willChangeBounds() {
-                        return false;
-                    }
-                };
-
-                // 1dp/ms
-                a.setDuration(((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density)) * 4);
-                v.startAnimation(a);
+                v.requestLayout();
             }
-        });
+
+        };
+
+        // 1dp/ms
+        a.setDuration(((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density)) * 4);
+        v.startAnimation(a);
 
     }
 
