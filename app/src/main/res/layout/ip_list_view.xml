@@ -20,6 +20,15 @@
             android:layout_margin="12dp"
             android:textAppearance="?attr/textAppearanceListItem" />
 
+        <ImageButton
+            android:id="@+id/goToMapImage"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src ="@drawable/map_marker"
+            android:maxWidth="50dp"
+            android:maxHeight="50dp"
+            android:layout_gravity="end"/>
+
     </android.support.v7.widget.CardView>
 
 

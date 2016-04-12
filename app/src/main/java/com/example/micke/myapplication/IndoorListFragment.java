@@ -1,6 +1,5 @@
 package com.example.micke.myapplication;
 
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,7 +27,7 @@ public class IndoorListFragment extends Fragment implements DataSetChanged {
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
-    ViewPager mPager;
+
 
     //ip stands for interest points.
     private RecyclerView ipRecyclerView;
@@ -77,23 +76,6 @@ public class IndoorListFragment extends Fragment implements DataSetChanged {
 
         TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-        ImageButton goToMapImage = (ImageButton) rootView.findViewById(R.id.goToMapImage);
-        goToMapImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(ILF, "onClick: start ");
-
-                if (getActivity() == null)
-                    Log.d(ILF, "onClick: getActivity = null ");
-                mPager = (ViewPager) getActivity().findViewById(R.id.container);
-                if (mPager == null)
-                    Log.d(ILF, "onClick: mPager = null ");
-
-                mPager.setCurrentItem(0, true);
-
-                Log.d(ILF, "onClick: färdig ");
-            }
-        });
 
         return rootView;
     }

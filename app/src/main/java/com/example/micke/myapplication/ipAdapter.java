@@ -1,5 +1,6 @@
 package com.example.micke.myapplication;
 
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -7,13 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.List;
 
-/**
- * Created by micke on 2016-04-12.
- */
 public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     private List<PointOfInterest> ipDataset;
     public boolean isExpanded = false;
@@ -27,13 +26,13 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         // each data item is just a string in this case
         public final View mView;
         public final TextView mContentView;
-
+        public final ImageButton goToMapImage;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mContentView = (TextView) view.findViewById(R.id.title);
-
+            goToMapImage = (ImageButton) view.findViewById(R.id.goToMapImage);
         }
     }
 
@@ -70,6 +69,16 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
         holder.mContentView.setText(ipDataset.get(position).title);
         Log.d("index", ipDataset.get(position).title + " size: " + ipDataset.size());
+
+
+        holder.goToMapImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                mPager.setCurrentItem(0, true);
+            }
+        });
+
 
         //To expand an "item" in the recyclerview
         holder.mContentView.setOnClickListener(new View.OnClickListener() {
@@ -145,9 +154,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         // 1dp/ms
         a.setDuration(((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density)) * 10);
         v.startAnimation(a);
-
     }
-
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
