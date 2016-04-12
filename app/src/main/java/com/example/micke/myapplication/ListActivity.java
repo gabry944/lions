@@ -80,8 +80,8 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
             newFragment.setArguments(bundle);
             newFragment.show(this.getFragmentManager(), "add_point_layout");
         } else if (id == R.id.item_camera) {
-            Intent intent = new Intent(getApplicationContext(), QRReader.class);
-            startActivity(intent);
+//            Intent intent = new Intent(getApplicationContext(), QRReader.class);
+//            startActivity(intent);
         }
         return false; //
     }

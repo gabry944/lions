@@ -1,7 +1,9 @@
 package com.example.micke.myapplication;
 
+import android.app.ListFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,16 +11,31 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.List;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 
 /**
  * A placeholder fragment containing a simple view.
  */
+
 public class IndoorListFragment extends Fragment implements DataSetChanged {
+
+    String ILF = "IndoorListFragment";
+
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
+    ViewPager mPager;
 
     //ip stands for interest points.
     private RecyclerView ipRecyclerView;
@@ -56,6 +73,7 @@ public class IndoorListFragment extends Fragment implements DataSetChanged {
         myDataset = fireBaseHandler.getPoints(buildingId, (IndoorActivity) getActivity());
 
         View rootView = inflater.inflate(R.layout.fragment_indoor_list, container, false);
+
         ipRecyclerView = (RecyclerView) rootView.findViewById(R.id.ip_recycler_view);
         ipRecyclerView.setHasFixedSize(true);
         ipLayoutManager = new LinearLayoutManager(getActivity());
@@ -64,8 +82,26 @@ public class IndoorListFragment extends Fragment implements DataSetChanged {
         ipadapter = new ipAdapter(myDataset);
         ipRecyclerView.setAdapter(ipadapter);
 
-        //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-        //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+        TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+        textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+        ImageButton goToMapImage = (ImageButton) rootView.findViewById(R.id.goToMapImage);
+        goToMapImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(ILF, "onClick: start ");
+
+                if (getActivity() == null)
+                    Log.d(ILF, "onClick: getActivity = null ");
+                mPager = (ViewPager) getActivity().findViewById(R.id.container);
+                if (mPager == null)
+                    Log.d(ILF, "onClick: mPager = null ");
+
+                mPager.setCurrentItem(0, true);
+
+                Log.d(ILF, "onClick: färdig ");
+            }
+        });
+
         return rootView;
     }
 
@@ -73,6 +109,7 @@ public class IndoorListFragment extends Fragment implements DataSetChanged {
     public void dataSetChanged() {
         ipadapter.notifyDataSetChanged();
     }
+}
 
     /*Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -97,5 +134,3 @@ public class IndoorListFragment extends Fragment implements DataSetChanged {
         }
         return false; //
     }*/
-
-}
