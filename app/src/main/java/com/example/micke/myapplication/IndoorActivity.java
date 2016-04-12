@@ -1,6 +1,7 @@
 package com.example.micke.myapplication;
 
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -32,6 +33,10 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
         super.onCreate(state);
         setContentView(R.layout.activity_indoor);
 
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        buildingId = bundle.getString("buildingId", "1");
+
         fireBaseHandler = new FireBaseIndoor(getApplicationContext(), buildingId);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -44,7 +49,6 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        buildingId = "1";
         myDataset = fireBaseHandler.getPoints(buildingId, this);
 
         // specify an adapter
