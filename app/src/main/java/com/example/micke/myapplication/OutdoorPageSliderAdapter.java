@@ -19,7 +19,7 @@ public class OutdoorPageSliderAdapter extends FragmentPagerAdapter {
         if(position == 0) {
             return OutdoorListFragment.newInstance(position + 1);
         } else if(position == 1) {
-            return IndoorListFragment.newInstance(position + 1);
+            return OutdoorListFragment.newInstance(position + 1);
         } else {
             return QRFragment.newInstance(position + 1);
         }
