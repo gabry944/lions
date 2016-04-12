@@ -18,7 +18,7 @@ public class IndoorPageSliderAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if(position == 0) {
-            return IndoorListFragment.newInstance(position + 1);
+            return IndoorMapFragment.newInstance(position + 1);
         } else if(position == 1) {
             return IndoorListFragment.newInstance(position + 1);
         } else {

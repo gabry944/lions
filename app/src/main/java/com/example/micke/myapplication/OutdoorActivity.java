@@ -43,14 +43,21 @@ public class OutdoorActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setCurrentItem(1);
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), IndoorActivity.class);
+                Intent intent = new Intent(view.getContext(), IndoorActivity.class);
+                Bundle bundle = new Bundle();
+                String buildingId = "1";
+                bundle.putString("buildingId", buildingId);
+                intent.putExtras(bundle);
                 startActivity(intent);
+//                Intent intent = new Intent(getApplicationContext(), IndoorActivity.class);
+//                startActivity(intent);
             }
         });
 
