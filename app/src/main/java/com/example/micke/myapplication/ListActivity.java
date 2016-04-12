@@ -83,7 +83,7 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
             Intent intent = new Intent(getApplicationContext(), QRReader.class);
             startActivity(intent);
         }
-        return false;
+        return false; //
     }
 }
 
