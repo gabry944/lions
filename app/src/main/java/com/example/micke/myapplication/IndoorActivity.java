@@ -29,6 +29,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
     private RecyclerView.LayoutManager ipLayoutManager;
     private List<PointOfInterest> myDataset;
     private String buildingId;
+    private String ipId;
 
     @Override
     public void onCreate(Bundle state) {
@@ -38,6 +39,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         buildingId = bundle.getString("buildingId", "1");
+        ipId = bundle.getString("ipId", "-1");
 
         fireBaseHandler = new FireBaseIndoor(getApplicationContext(), buildingId);
 
@@ -59,6 +61,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
         //ipRecyclerView.setAdapter(ipadapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        assert fab != null;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,6 +74,11 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
 //                        .setAction("Action", null).show();
             }
         });
+
+        //If QRFragment gets user here, go to indoor map
+        if(!ipId.equals("-1")) {
+            mViewPager.setCurrentItem(0);
+        }
     }
 
     @Override

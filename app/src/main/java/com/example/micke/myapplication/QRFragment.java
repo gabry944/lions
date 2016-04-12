@@ -1,17 +1,17 @@
 package com.example.micke.myapplication;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import me.dm7.barcodescanner.zbar.BarcodeFormat;
 import me.dm7.barcodescanner.zbar.Result;
 import me.dm7.barcodescanner.zbar.ZBarScannerView;
 
@@ -55,7 +55,10 @@ public class QRFragment extends Fragment implements ZBarScannerView.ResultHandle
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 //            View rootView = inflater.inflate(R.layout.activity_qr_reader, container, false);
+        ArrayList<BarcodeFormat> list = new ArrayList<>();
+        list.add(BarcodeFormat.QRCODE);
         mScannerView = new ZBarScannerView(getContext());
+        mScannerView.setFormats(list);
         View rootView = mScannerView;
         return rootView;
     }
@@ -81,15 +84,22 @@ public class QRFragment extends Fragment implements ZBarScannerView.ResultHandle
         if(partsLength > 1) {
             if(parts[0].equals("building")) {
                 //Insert code for going to map-fragment here
-                //parts[1] = bulding id
+                //parts[1] = building id
                 //parts[2] = floors
                 //parts[3] = floor id (1,2,3 etc.)
                 //parts[4] = ips
                 //parts[5] = ip id
 
                 //Go to map fragment
-                IndoorActivity.mViewPager.setCurrentItem(0);
-                Log.d("buildscan", "setting item 0... current item: " + IndoorActivity.mViewPager.getCurrentItem());
+                Intent intent = new Intent(getContext(), IndoorActivity.class);
+                Bundle bundle = new Bundle();
+                String ipId = "-1";
+                if(parts[5] != null)
+                    ipId = parts[5];
+                bundle.putString("ipId", ipId);
+                intent.putExtras(bundle);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             } else if(parts[0].equals("car")) {
                 //Implement QR reading for car here
             }
