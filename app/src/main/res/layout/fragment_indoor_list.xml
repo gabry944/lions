@@ -15,7 +15,7 @@
 
     <ImageButton
         android:id="@+id/goToMapImage"
-        android:layout_width="40dp"
-        android:layout_height="40dp" />
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
 
 </RelativeLayout>

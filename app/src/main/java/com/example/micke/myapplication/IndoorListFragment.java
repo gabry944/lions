@@ -58,7 +58,7 @@ public class IndoorListFragment extends Fragment {
                 if(mPager == null)
                     Log.d(ILF, "onClick: mPager = null ");
 
-                mPager.setCurrentItem(2, true);
+                mPager.setCurrentItem(0, true);
 
                 Log.d(ILF, "onClick: färdig ");
             }
@@ -114,10 +114,10 @@ public class IndoorListFragment extends Fragment {
                     Bundle arguments = new Bundle();
                     //arguments.putString(IndoorMapFragment.ARG_ITEM_ID, holder.mPoint.getID() + "");
                     //arguments.putString(IndoorMapFragment.ARG_ITEM_TITLE, holder.mPoint.titel);
-                    arguments.putString(IndoorMapFragment.ARG_ITEM_CATEGORY, holder.mPoint.category);
-                    arguments.putString(IndoorMapFragment.ARG_ITEM_DESCRIPTION, holder.mPoint.description);
-                    arguments.putString(IndoorMapFragment.ARG_ITEM_LATITUDE, holder.mPoint.latitude + "");
-                    arguments.putString(IndoorMapFragment.ARG_ITEM_LONGITUDE, holder.mPoint.longitude + "");
+                    //arguments.putString(IndoorMapFragment.ARG_ITEM_CATEGORY, holder.mPoint.category);
+                    //arguments.putString(IndoorMapFragment.ARG_ITEM_DESCRIPTION, holder.mPoint.description);
+                    //arguments.putString(IndoorMapFragment.ARG_ITEM_LATITUDE, holder.mPoint.latitude + "");
+                    //arguments.putString(IndoorMapFragment.ARG_ITEM_LONGITUDE, holder.mPoint.longitude + "");
                     //arguments.putString(IndoorMapFragment.ARG_ITEM_FLOOR, holder.mPoint.floor + "");
                     IndoorMapFragment fragment = new IndoorMapFragment();
                     fragment.setArguments(arguments);
