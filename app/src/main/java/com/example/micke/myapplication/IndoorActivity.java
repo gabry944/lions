@@ -48,6 +48,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setCurrentItem(1);
 
         myDataset = fireBaseHandler.getPoints(buildingId, this);
 
