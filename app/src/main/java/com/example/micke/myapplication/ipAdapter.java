@@ -95,8 +95,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     public void collapseView(final View v) {
         final int initialHeight = v.getMeasuredHeight();
 
-        Log.d("TAG", "SHPIJBHUBUYFIUGVB");
-
         Animation a = new Animation() {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
