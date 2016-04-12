@@ -24,7 +24,6 @@ public class QRFragment extends Fragment implements ZBarScannerView.ResultHandle
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     public QRFragment() {
-
     }
 
     @Override
