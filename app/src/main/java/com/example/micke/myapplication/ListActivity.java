@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -27,8 +26,7 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
     private RecyclerView.Adapter ipAdapter;
     private RecyclerView.LayoutManager ipLayoutManager;
 
-
-    private FireBaseBuilding fireBaseHandler;
+    private FireBaseIndoor fireBaseHandler;
 
     private List<PointOfInterest> myDataset;
 
@@ -39,7 +37,7 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
 
         String buildingId = "1";
 
-        fireBaseHandler = new FireBaseBuilding(getApplicationContext(), buildingId);
+        fireBaseHandler = new FireBaseIndoor(getApplicationContext(), buildingId);
         fireBaseHandler.test();
 
         ipRecyclerView = (RecyclerView) findViewById(R.id.ip_recycler_view);
@@ -52,11 +50,11 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
         ipLayoutManager = new LinearLayoutManager(this);
         ipRecyclerView.setLayoutManager(ipLayoutManager);
 
-        myDataset = fireBaseHandler.getPoints(buildingId, this);
+//        myDataset = fireBaseHandler.getPoints(buildingId, this);
 
         // specify an adapter
-        ipAdapter = new ipAdapter(myDataset);
-        ipRecyclerView.setAdapter(ipAdapter);
+//        ipAdapter = new ipAdapter(myDataset);
+//        ipRecyclerView.setAdapter(ipAdapter);
     }
 
     @Override
@@ -85,15 +83,12 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
             Intent intent = new Intent(getApplicationContext(), QRReader.class);
             startActivity(intent);
         }
-        return false;
+        return false; //
     }
 }
 
 class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     private List<PointOfInterest> ipDataset;
-    public boolean isExpanded = false;
-    private int temphHeight;
-    private View tempView;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -102,7 +97,6 @@ class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         // each data item is just a string in this case
         public final View mView;
         public final TextView mContentView;
-
 
         public ViewHolder(View view) {
             super(view);
@@ -151,79 +145,42 @@ class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             @Override
             public void onClick(final View v) {
 
-                if (isExpanded) {
-                    /*if(tempView != null)
-                        collapseView(tempView);*/
+                v.measure(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT);
+                final int targetHeight = v.getMeasuredHeight();
 
-                    collapseView(v);
-                    isExpanded = false;
-                } else {
-                    expandView(v);
-                    isExpanded = true;
-                }
+                Log.d("TAG", Integer.toString(v.getMeasuredHeight()));
 
+                // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+                v.getLayoutParams().height = 1;
+                v.setVisibility(View.VISIBLE);
+
+                Animation a = new Animation() {
+                    @Override
+                    protected void applyTransformation(float interpolatedTime, Transformation t) {
+                        //Check to make it expanding more "adaptive way".
+                        /*v.getLayoutParams().height = interpolatedTime == 1
+                                ? RecyclerView.LayoutParams.WRAP_CONTENT
+                                : (int) (targetHeight * interpolatedTime);*/
+                        v.getLayoutParams().height = (int) (targetHeight * interpolatedTime * 10);
+
+                        Log.d("TAG", "2: " + Integer.toString(v.getLayoutParams().height));
+
+                        v.requestLayout();
+                    }
+
+                    @Override
+                    public boolean willChangeBounds() {
+                        return false;
+                    }
+                };
+
+                // 1dp/ms
+                a.setDuration(((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density)) * 4);
+                v.startAnimation(a);
             }
         });
 
     }
-
-    public void collapseView(final View v){
-        final int initialHeight = v.getMeasuredHeight();
-
-        Animation a = new Animation()
-        {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-
-                    v.getLayoutParams().height = (initialHeight + temphHeight) - (int)(initialHeight * interpolatedTime);
-                    v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-            
-        };
-
-        a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
-
-    }
-
-    public void expandView(final View v){
-        tempView = v;
-
-        v.measure(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT);
-        final int targetHeight = v.getMeasuredHeight();
-        temphHeight = targetHeight;
-
-        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
-        v.getLayoutParams().height = 1;
-        v.setVisibility(View.VISIBLE);
-
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                //Make it expand in a more "adaptive way".
-                v.getLayoutParams().height = (int) (targetHeight * interpolatedTime * 10);
-
-                v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-
-        };
-
-        // 1dp/ms
-        a.setDuration(((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density)) * 10);
-        v.startAnimation(a);
-
-    }
-
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
