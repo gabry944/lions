@@ -3,6 +3,7 @@ package com.example.micke.myapplication;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback {
     private static final String ARG_SECTION_NUMBER = "section_number";
     private GoogleMap mMap;
     private double longitude, latitude;
+    private View rootView;
 
     public OutdoorMapFragment() {
     }
@@ -44,7 +46,13 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.activity_outdoor_maps, container, false);
+        try {
+            rootView = inflater.inflate(R.layout.activity_outdoor_maps, container, false);
+        } catch (InflateException e) {
+            /* map is already there, just return view as it is */
+            return rootView;
+        }
+
         Log.d("map", "OutdoorKartFragment created");
 
         latitude = 58.3918064;
