@@ -26,7 +26,7 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
     private RecyclerView.Adapter ipAdapter;
     private RecyclerView.LayoutManager ipLayoutManager;
 
-    private FireBaseBuilding fireBaseHandler;
+    private FireBaseIndoor fireBaseHandler;
 
     private List<PointOfInterest> myDataset;
 
@@ -37,7 +37,7 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
 
         String buildingId = "1";
 
-        fireBaseHandler = new FireBaseBuilding(getApplicationContext(), buildingId);
+        fireBaseHandler = new FireBaseIndoor(getApplicationContext(), buildingId);
         fireBaseHandler.test();
 
         ipRecyclerView = (RecyclerView) findViewById(R.id.ip_recycler_view);
@@ -50,11 +50,11 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
         ipLayoutManager = new LinearLayoutManager(this);
         ipRecyclerView.setLayoutManager(ipLayoutManager);
 
-        myDataset = fireBaseHandler.getPoints(buildingId, this);
+//        myDataset = fireBaseHandler.getPoints(buildingId, this);
 
         // specify an adapter
-        ipAdapter = new ipAdapter(myDataset);
-        ipRecyclerView.setAdapter(ipAdapter);
+//        ipAdapter = new ipAdapter(myDataset);
+//        ipRecyclerView.setAdapter(ipAdapter);
     }
 
     @Override

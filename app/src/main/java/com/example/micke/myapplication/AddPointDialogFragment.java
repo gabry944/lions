@@ -3,15 +3,11 @@ package com.example.micke.myapplication;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 /**
  * Created by iSirux on 2016-04-11.
@@ -30,7 +26,7 @@ public class AddPointDialogFragment extends DialogFragment {
 
         //Get arguments - reference to firebase database
         Bundle bundle = this.getArguments();
-        final FireBaseBuilding fireBaseBuilding = (FireBaseBuilding) bundle.getSerializable("firebase");
+        final FireBaseIndoor fireBaseBuilding = (FireBaseIndoor) bundle.getSerializable("firebase");
 
         dialogBuilder
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {

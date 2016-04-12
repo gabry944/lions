@@ -15,11 +15,11 @@ import java.util.List;
 /**
  * Created by iSirux on 2016-04-11.
  */
-public class FireBaseBuilding extends FireBaseHandler implements Serializable {
+public class FireBaseIndoor extends FireBaseHandler implements Serializable {
 
     private String buildingId;
 
-    FireBaseBuilding(Context context, String buildingId) {
+    FireBaseIndoor(Context context, String buildingId) {
         super(context);
         this.buildingId = buildingId;
     }
@@ -33,7 +33,7 @@ public class FireBaseBuilding extends FireBaseHandler implements Serializable {
         ipRef.setValue(point);
     }
 
-    public List<PointOfInterest> getPoints(String buildingId, final ListActivity listActivity) {
+    public List<PointOfInterest> getPoints(String buildingId, final IndoorActivity indoorActivity) {
         final List<PointOfInterest> list = new ArrayList<>();
 
         myFirebaseRef.child("building/" + buildingId).addValueEventListener(new ValueEventListener() {
@@ -50,7 +50,7 @@ public class FireBaseBuilding extends FireBaseHandler implements Serializable {
                         list.add(point);
                     }
                 }
-                listActivity.dataSetChanged();
+                indoorActivity.dataSetChanged();
             }
 
             @Override
