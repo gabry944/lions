@@ -50,7 +50,7 @@ public class ListActivity extends AppCompatActivity implements DataSetChanged {
         ipLayoutManager = new LinearLayoutManager(this);
         ipRecyclerView.setLayoutManager(ipLayoutManager);
 
-        //myDataset = fireBaseHandler.getPoints(buildingId, this);
+        //myDataset = fireBaseHandler.getBuildings(buildingId, this);
 
         // specify an adapter
         ipAdapter = new ipAdapter(myDataset);

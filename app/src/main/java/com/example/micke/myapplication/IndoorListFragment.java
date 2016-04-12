@@ -85,27 +85,3 @@ public class IndoorListFragment extends Fragment implements DataSetChanged {
         ipadapter.notifyDataSetChanged();
     }
 }
-
-    /*Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.list_options, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        Log.d("ItemClicked", "Item: " + item.toString());
-        if (id == R.id.item_add) {
-            DialogFragment newFragment = new AddPointDialogFragment();
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("firebase", fireBaseHandler);
-            newFragment.setArguments(bundle);
-            newFragment.show(this.getFragmentManager(), "add_point_layout");
-        } else if (id == R.id.item_camera) {
-            Intent intent = new Intent(getApplicationContext(), QRReader.class);
-            startActivity(intent);
-        }
-        return false; //
-    }*/
