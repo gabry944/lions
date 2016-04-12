@@ -21,7 +21,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
 
     private FireBaseIndoor fireBaseHandler;
     private IndoorPageSliderAdapter mSectionsPagerAdapter;
-    private ViewPager mViewPager;
+    public static ViewPager mViewPager;
     private RecyclerView ipRecyclerView;
     private RecyclerView.Adapter ipAdapter;
     private RecyclerView.LayoutManager ipLayoutManager;

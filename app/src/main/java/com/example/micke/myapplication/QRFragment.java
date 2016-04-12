@@ -70,6 +70,11 @@ public class QRFragment extends Fragment implements ZBarScannerView.ResultHandle
         //
         String[] parts = rawResult.getContents().split("/");
         int partsLength = parts.length;
+
+        for (String part: parts) {
+            Log.d("buildparts", part);
+        }
+
         if(partsLength > 1) {
             if(parts[0].equals("building")) {
                 //Insert code for going to map-fragment here
@@ -78,6 +83,10 @@ public class QRFragment extends Fragment implements ZBarScannerView.ResultHandle
                 //parts[3] = floor id (1,2,3 etc.)
                 //parts[4] = ips
                 //parts[5] = ip id
+
+                //Go to map fragment
+                IndoorActivity.mViewPager.setCurrentItem(0);
+                Log.d("buildscan", "setting item 0... current item: " + IndoorActivity.mViewPager.getCurrentItem());
             } else if(parts[0].equals("car")) {
                 //Implement QR reading for car here
             }
