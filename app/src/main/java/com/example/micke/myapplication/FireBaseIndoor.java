@@ -1,6 +1,7 @@
 package com.example.micke.myapplication;
 
 import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.firebase.client.DataSnapshot;

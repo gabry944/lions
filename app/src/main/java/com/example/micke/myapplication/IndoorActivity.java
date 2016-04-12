@@ -23,7 +23,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
     private IndoorPageSliderAdapter mSectionsPagerAdapter;
     public static ViewPager mViewPager;
     private RecyclerView ipRecyclerView;
-    private RecyclerView.Adapter ipAdapter;
+    private ipAdapter ipadapter;
     private RecyclerView.LayoutManager ipLayoutManager;
     private List<PointOfInterest> myDataset;
     private String buildingId;
@@ -53,8 +53,8 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
         myDataset = fireBaseHandler.getPoints(buildingId, this);
 
         // specify an adapter
-//        ipAdapter = new ipAdapter(myDataset);
-//        ipRecyclerView.setAdapter(ipAdapter);
+        ipadapter = new ipAdapter(myDataset);
+        //ipRecyclerView.setAdapter(ipadapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -95,6 +95,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
 
     @Override
     public void dataSetChanged() {
-//        ipAdapter.notifyDataSetChanged();
+        ipadapter.notifyDataSetChanged();
     }
+
 }
