@@ -48,18 +48,15 @@ public class IndoorMapFragment extends Fragment {
         final ImageView switcherView = (ImageView) rootView.findViewById(R.id.map);
         switcherView.setScaleX(5.0f);
         switcherView.setScaleY(5.0f);
+
         switcherView.setOnTouchListener(new View.OnTouchListener() {
 
             public boolean onTouch(View arg0, MotionEvent event) {
-
-                final int action = MotionEventCompat.getActionMasked(event);
-
                 float posX, posY;
                 float curX, curY;
 
-                float scalePointer1X, scalePointer1Y, scalePointer2X, scalePointer2Y;
-
-                final float SCROLLSPEED = 1.0f;
+                final float SCROLLSPEED = 30.0f;
+                final float ZOOMSPEED = 15.0f;
 
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
@@ -75,127 +72,52 @@ public class IndoorMapFragment extends Fragment {
                     case MotionEvent.ACTION_MOVE:
 
                         //Check if user want to zoom
-                        //Ny plan: ta mittpunkt vid ACTION_DOWN och jämför avstånd (2 vektorer) i varje step i ACTION_MOVE
                         if (event.getPointerCount() == 2) {
-                            Log.d("map_pointer", "1: pos: " + event.getX(0) + "," + event.getY(0));
-                            Log.d("map_pointer", "2: pos: " + event.getX(1) + "," + event.getY(1));
-                            Log.d("map_pointer", "scale: " + scaleFactor);
-                            Log.d("map_pointer", "---");
 
-                            scalePointer1X = event.getX(0) - mx;
-                            scalePointer1Y = event.getY(0) - my;
-                            scalePointer2X = event.getX(1) - mx2;
-                            scalePointer2Y = event.getY(1) - my2;
-                            double scalePointer = Math.sqrt(Math.pow(scalePointer1X + scalePointer2X, 2.0) + Math.pow(scalePointer1Y + scalePointer2Y, 2.0));
-                            if (scalePointer > 10) scalePointer = 10;
+                            float zoomVectorX = mx - mx2;
+                            float zoomVectorY = my - my2;
+                            float newZoomVectorX = event.getX(0) - event.getX(1);
+                            float newZoomVectorY = event.getY(0) - event.getY(1);
 
-                            if (scalePointer1X < 0 && scalePointer1Y < 0 && scalePointer2X > 0 && scalePointer2Y > 0) {
-                                scaleFactor -= 0.01 * scalePointer;
-                                Log.d("map_scale_pos", "1");
-                            }
-                            if ((scalePointer1X < 0 && scalePointer1Y > 0 && scalePointer2X > 0 && scalePointer2Y < 0)) {
-                                scaleFactor -= 0.01 * scalePointer;
-                                Log.d("map_scale_pos", "2");
-                            }
-                            if ((scalePointer1X > 0 && scalePointer1Y > 0 && scalePointer2X < 0 && scalePointer2Y < 0)) {
-                                scaleFactor += 0.01 * scalePointer;
-                                Log.d("map_scale_pos", "3");
-                            }
-                            if ((scalePointer1X > 0 && scalePointer1Y < 0 && scalePointer2X < 0 && scalePointer2Y > 0)) {
-                                scaleFactor += 0.01 * scalePointer;
-                                Log.d("map_scale_pos", "4");
-                            }
+                            double diff = ((double)scaleFactor/5.0) *
+                                    (Math.sqrt(Math.pow(newZoomVectorX, 2.0) + Math.pow(newZoomVectorY, 2.0)) -
+                                    Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)));
 
-//                                    scaleFactor -= 0.01 * scalePointer;
-//                                    Log.d("map_scale", "down -> " + scalePointer);
-//                                } else {
-//                                    scaleFactor += 0.01 * scalePointer;
-//                                    Log.d("map_scale", "up -> " + scalePointer);
-//                                }
-
+                            diff = (diff < -ZOOMSPEED) ? -ZOOMSPEED : diff;
+                            diff = (diff > ZOOMSPEED) ? ZOOMSPEED : diff;
+                            scaleFactor += 0.01 * diff;
                             scaleFactor = (scaleFactor > 10.0f) ? 10.0f : scaleFactor;
                             scaleFactor = (scaleFactor < 1.0f) ? 1.0f : scaleFactor;
+
+                            Log.d("map_indoor", "Two fingers: scaleFactor = " + scaleFactor + ", diff = " + diff);
                             switcherView.setScaleX(scaleFactor);
                             switcherView.setScaleY(scaleFactor);
                             mx = event.getX(0);
                             my = event.getY(0);
                             mx2 = event.getX(1);
                             my2 = event.getY(1);
-
-                            break;  //we don't want to zoom and move at the same time
                         }
+                        //Check if user want to drag the map
+                        else if (event.getPointerCount() == 1) {
+                            curX = event.getX();
+                            curY = event.getY();
 
-                        curX = event.getX();
-                        curY = event.getY();
-                        Log.d("map_move", "---");
-                        Log.d("map_move", "event.getX() = " + Float.toString(event.getX()) + " event.getY() = " + Float.toString(event.getY()));
-                        Log.d("map_move", "getScaleX() = " + Float.toString(switcherView.getScaleX()) + " getScaleY() = " + Float.toString(switcherView.getScaleY()));
-                        Log.d("map_move", "getTranslateionX() = " + Float.toString(switcherView.getTranslationX()) + " getTranslateionY() = " + Float.toString(switcherView.getTranslationY()));
-                        //switcherView.scrollBy((int) (mx - curX), (int) (my - curY));
-                        posX = switcherView.getTranslationX();
-                        posY = switcherView.getTranslationY();
-                        float deltaX = Math.abs(mx - curX) < 5.0f ? (mx - curX) : Math.signum((mx - curX)) * 5.0f;
-                        float deltaY = Math.abs(my - curY) < 5.0f ? (my - curY) : Math.signum((my - curY)) * 5.0f;
-                        switcherView.setTranslationX(posX - SCROLLSPEED * deltaX);
-                        switcherView.setTranslationY(posY - SCROLLSPEED * deltaY);
-                        mx = curX;
-                        my = curY;
-                        break;
-                    case MotionEvent.ACTION_POINTER_UP:
+                            posX = switcherView.getTranslationX();
+                            posY = switcherView.getTranslationY();
+                            float deltaX = (scaleFactor/2.0f)*Math.abs(mx - curX) < SCROLLSPEED ? (scaleFactor/2.0f)*(mx - curX) : Math.signum((mx - curX)) * SCROLLSPEED;
+                            float deltaY = (scaleFactor/2.0f)*Math.abs(my - curY) < SCROLLSPEED ? (scaleFactor / 2.0f) * (my - curY) : Math.signum((my - curY)) * SCROLLSPEED;
 
-//                        if (event.getPointerCount() == 2) {
-//                            Log.d("map_pointer", "1: pos: " + event.getX(0) + "," + event.getY(0));
-//                            Log.d("map_pointer", "2: pos: " + event.getX(1) + "," + event.getY(1));
-//                            Log.d("map_pointer", "scale: " + scaleFactor);
-//                            Log.d("map_pointer", "---");
-//
-//                            scalePointer1X = event.getX(0) - mx;
-//                            scalePointer1Y = event.getY(0) - my;
-//                            scalePointer2X = event.getX(1) - mx2;
-//                            scalePointer2Y = event.getY(1) - my2;
-//                            double scalePointer = Math.pow(scalePointer1X + scalePointer2X, 2.0) + Math.pow(scalePointer1Y + scalePointer2Y, 2.0);
-//                            if(scalePointer > 40) scalePointer = 40;
-//
-//                            if (scaleFactor > 0.2 && scalePointer1X * scalePointer1Y <= 0 && scalePointer2X * scalePointer2Y <= 0) { // same sign , same sign
-//                                scaleFactor -= 0.01*scalePointer;
-//                                Log.d("map_scale", "down -> " + scalePointer);
-//                            }
-//                            if (scaleFactor < 5.0 && scalePointer1X * scalePointer1Y >= 0 && scalePointer2X * scalePointer2Y >= 0) { // different sign , different sign
-//                                scaleFactor += 0.01*scalePointer;
-//                                Log.d("map_scale", "up -> " + scalePointer);
-//                            }
-//
-//                            //Log.d("map_scale", "-> " + scalePointer);
-//
-//                            scalePointer = 0;
-//                            if (scalePointer < -10.0 && scaleFactor < 5.0) {
-//                                Log.d("map_scale", "scale up");
-//                                scaleFactor += 0.1;
-//                            }
-//
-//                            if (scalePointer > 10.0 && scaleFactor > 0.2) {
-//                                Log.d("map_scale", "scale down");
-//                                scaleFactor -= 0.1;
-//                            }
-//
-//                            switcherView.setScaleX(scaleFactor);
-//                            switcherView.setScaleY(scaleFactor);
-//
-//                            mx = event.getX(0);
-//                            my = event.getY(0);
-//                            mx2 = event.getX(1);
-//                            my2 = event.getY(1);
-//
-//                            break;  //we don't want to zoom and move at the same time
-//                        }
-
-                        break;
+                            Log.d("map_indoor", "One finger: deltaX = " + deltaX + ", deltaY = " + deltaY);
+                            switcherView.setTranslationX(posX - deltaX);
+                            switcherView.setTranslationY(posY - deltaY);
+                            mx = curX;
+                            my = curY;
+                        }
                 }
 
                 return true;
             }
         });
-
 
         return rootView;
     }
