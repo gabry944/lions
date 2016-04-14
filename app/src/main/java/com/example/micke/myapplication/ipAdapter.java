@@ -166,11 +166,13 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         ipDataset.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, ipDataset.size());
+
     }
 
     public void addItem(int position, PointOfInterest ip) {
         ipDataset.add(position, ip);
         notifyItemInserted(position);
+        notifyItemRangeChanged(position, ipDataset.size());
     }
 
     public void moveItem(int fromPosition, int toPosition) {
@@ -181,13 +183,13 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
     public void updateAdapter(List<PointOfInterest> ipSet) {
         applyAndAnimateRemovals(ipSet);
-      //  applyAndAnimateAdditions(ipSet);
+        applyAndAnimateAdditions(ipSet);
         Log.d("new", "---");
         for(PointOfInterest ip: ipDataset){
             Log.d("new filtered list", ip.title);
         }
 
-       // applyAndAnimateMovedItems(ipSet);
+        applyAndAnimateMovedItems(ipSet);
     }
 
     private void applyAndAnimateRemovals(List<PointOfInterest> newips) {
@@ -217,4 +219,5 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             }
         }
     }
+
 }

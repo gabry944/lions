@@ -71,8 +71,7 @@ public class IndoorListFragment extends Fragment implements DataSetChanged {
         ipLayoutManager = new LinearLayoutManager(getActivity());
         ipRecyclerView.setLayoutManager(ipLayoutManager);
 
-        ipadapter = new ipAdapter(myDataset);
-        ipRecyclerView.setAdapter(ipadapter);
+        ipRecyclerView.setAdapter(((IndoorActivity) getActivity()).getAdapter());
 
         TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
@@ -85,7 +84,5 @@ public class IndoorListFragment extends Fragment implements DataSetChanged {
         ipadapter.notifyDataSetChanged();
     }
 
-/*    public RecyclerView getView(){
-        return ipRecyclerView;
-    }*/
+
 }

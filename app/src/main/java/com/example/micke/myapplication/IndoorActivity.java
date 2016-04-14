@@ -63,6 +63,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
         ipadapter = new ipAdapter(myDataset);
         //ipRecyclerView.setAdapter(ipadapter);
 
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         assert fab != null;
         fab.setOnClickListener(new View.OnClickListener() {
@@ -134,11 +135,11 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
     public boolean onQueryTextChange(String newText) {
         final List<PointOfInterest> filteredDataset = filter(myDataset, newText);
         ipadapter.updateAdapter(filteredDataset);
-        dataSetChanged();
+       // dataSetChanged();
       //  getSupportFragmentManager().findFragmentById(R.id.ip_recycler_view).getView().scrollToPosition(0);
         //ipRecyclerView.scrollToPosition(0);
 
-        Log.d("new filtered list", filteredDataset.get(0).title);
+      //  Log.d("new filtered list", filteredDataset.get(0).title);
         return true;
     }
 
@@ -155,4 +156,6 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
         return  filteredDataset;
 
     }
+
+    public ipAdapter getAdapter(){ return ipadapter; }
 }
