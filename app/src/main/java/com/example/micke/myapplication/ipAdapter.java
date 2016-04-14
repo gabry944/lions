@@ -158,11 +158,13 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         Rect bounds = new Rect();
         contentView.getPaint().getTextBounds((String) contentView.getText(), 0, contentView.getText().length(), bounds);
 
-        int cardwidth = v.getWidth() - R.dimen.list_margin * 2;
-        int textHeight = v.getHeight() - R.dimen.list_margin *2;
+        int cardwidth = v.getWidth() - 12 *4;
+        int textHeight = v.getHeight() - 12 *2;
 
+        Log.d(TAG, "expandView: bounds.width()/cardwidth = " + bounds.width()/cardwidth);
+        Log.d(TAG, "expandView: (bounds.width()/cardwidth +1)*textHeight = " + (bounds.width()/cardwidth +1)*textHeight);
         //get desired size of card by calculating number of rows
-        final int targetHeight = initHeight + (bounds.width()/v.getWidth()+1)*initHeight;
+        final int targetHeight = initHeight + (bounds.width()/cardwidth +1)*textHeight;
 
         // Older versions of android (pre API 21) cancel animations for views with a height of 0.
         v.getLayoutParams().height = 1;
@@ -174,7 +176,10 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 //Make it expand in a more "adaptive way".
-                v.getLayoutParams().height = (int) (initHeight * interpolatedTime * (targetHeight/initHeight));
+                if (targetHeight/initHeight <2)
+                    v.getLayoutParams().height = (int) (initHeight * interpolatedTime * 2);
+                else
+                    v.getLayoutParams().height = (int) (initHeight * interpolatedTime * (targetHeight/initHeight));
                 v.requestLayout();
             }
 
