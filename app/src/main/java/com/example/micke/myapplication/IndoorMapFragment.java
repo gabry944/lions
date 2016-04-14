@@ -1,5 +1,12 @@
 package com.example.micke.myapplication;
 
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MotionEventCompat;
@@ -9,6 +16,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -45,11 +55,18 @@ public class IndoorMapFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_indoor_map, container, false);
 
-        final ImageView switcherView = (ImageView) rootView.findViewById(R.id.map);
-        switcherView.setScaleX(5.0f);
-        switcherView.setScaleY(5.0f);
+        final RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+        //final ImageView switcherView = (ImageView) rootView.findViewById(R.id.map);
+        r.setScaleX(5.0f);
+        r.setScaleY(5.0f);
 
-        switcherView.setOnTouchListener(new View.OnTouchListener() {
+        //List<PointOfInterest> l = ((IndoorActivity) getActivity()).getData();
+        //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
+        //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
+        //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
+
+
+        r.setOnTouchListener(new View.OnTouchListener() {
 
             public boolean onTouch(View arg0, MotionEvent event) {
                 float posX, posY;
@@ -57,6 +74,7 @@ public class IndoorMapFragment extends Fragment {
 
                 final float SCROLLSPEED = 30.0f;
                 final float ZOOMSPEED = 15.0f;
+
 
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
@@ -90,8 +108,8 @@ public class IndoorMapFragment extends Fragment {
                             scaleFactor = (scaleFactor < 1.0f) ? 1.0f : scaleFactor;
 
                             Log.d("map_indoor", "Two fingers: scaleFactor = " + scaleFactor + ", diff = " + diff);
-                            switcherView.setScaleX(scaleFactor);
-                            switcherView.setScaleY(scaleFactor);
+                            r.setScaleX(scaleFactor);
+                            r.setScaleY(scaleFactor);
                             mx = event.getX(0);
                             my = event.getY(0);
                             mx2 = event.getX(1);
@@ -102,14 +120,17 @@ public class IndoorMapFragment extends Fragment {
                             curX = event.getX();
                             curY = event.getY();
 
-                            posX = switcherView.getTranslationX();
-                            posY = switcherView.getTranslationY();
+                            posX = r.getTranslationX();
+                            posY = r.getTranslationY();
                             float deltaX = (scaleFactor/2.0f)*Math.abs(mx - curX) < SCROLLSPEED ? (scaleFactor/2.0f)*(mx - curX) : Math.signum((mx - curX)) * SCROLLSPEED;
                             float deltaY = (scaleFactor/2.0f)*Math.abs(my - curY) < SCROLLSPEED ? (scaleFactor / 2.0f) * (my - curY) : Math.signum((my - curY)) * SCROLLSPEED;
 
                             Log.d("map_indoor", "One finger: deltaX = " + deltaX + ", deltaY = " + deltaY);
-                            switcherView.setTranslationX(posX - deltaX);
-                            switcherView.setTranslationY(posY - deltaY);
+                            Log.d("map_indoor", "posX = " + event.getRawX() + ", posY = " + event.getRawY());
+                            addPoint(r, event.getRawX(), event.getRawY());
+
+                            r.setTranslationX(posX - deltaX);
+                            r.setTranslationY(posY - deltaY);
                             mx = curX;
                             my = curY;
                         }
@@ -120,5 +141,15 @@ public class IndoorMapFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    private void addPoint(RelativeLayout parent, float posX, float posY) {
+        ImageView point = new ImageView(getContext());
+        point.setX(posX);
+        point.setY(posY);
+        point.setScaleX(0.05f);
+        point.setScaleY(0.05f);
+        point.setImageResource(R.drawable.map_marker);
+        parent.addView(point);
     }
 }
