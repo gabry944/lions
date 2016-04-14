@@ -139,7 +139,6 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
         return false;
     }
 
-    public ipAdapter getAdapter(){
-        return ipadapter;
-    }
+    public ipAdapter getAdapter(){ return ipadapter; }
+    public List<PointOfInterest> getData() { return myDataset; }
 }

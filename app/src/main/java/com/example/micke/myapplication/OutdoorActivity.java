@@ -11,13 +11,14 @@ import android.support.v7.widget.Toolbar;
 
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import java.util.List;
 
-public class OutdoorActivity extends AppCompatActivity {
+public class OutdoorActivity extends AppCompatActivity implements DataSetChanged {
 
     private OutdoorPageSliderAdapter mSectionsPagerAdapter;
     int MY_PERMISSIONS_REQUEST_CAMERA = 0;
@@ -112,4 +113,12 @@ public class OutdoorActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void dataSetChanged() {
+        Log.d("outdoor", "dataSetChanged outdoor");
+    }
+
+    public FireBaseOutdoor getFireBaseHandler() {
+        return fireBaseHandler;
+    }
 }

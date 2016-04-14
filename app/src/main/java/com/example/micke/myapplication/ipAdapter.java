@@ -76,7 +76,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         holder.mIDView.setText(ipDataset.get(position).getId());
         Log.d("index", ipDataset.get(position).title + " size: " + ipDataset.size());
 
-
         holder.goToMapImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,20 +91,26 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             @Override
             public void onClick(final View v) {
 
-                if (isExpanded) {
-                    /*if(tempView != null)
-                        collapseView(tempView);*/
+                if(isExpanded){
 
-                    collapseView(v);
-                    isExpanded = false;
-                } else {
+                    if (tempView != null && tempView != v) {
+                        collapseView(tempView);
+                        expandView(v);
+                    }
+
+                    else if(tempView == v){
+                        collapseView(v);
+                        isExpanded = false;
+                    }
+                }
+
+                //if(isExpanded == false)
+                else{
                     expandView(v);
                     isExpanded = true;
                 }
-
             }
         });
-
     }
 
     public void collapseView(final View v) {
@@ -126,7 +131,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
         };
 
-        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density) * 4);
         v.startAnimation(a);
 
     }
@@ -146,7 +151,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 //Make it expand in a more "adaptive way".
-                v.getLayoutParams().height = (int) (targetHeight * interpolatedTime * 10);
+                v.getLayoutParams().height = (int) (targetHeight * interpolatedTime * 5);
 
                 v.requestLayout();
             }
