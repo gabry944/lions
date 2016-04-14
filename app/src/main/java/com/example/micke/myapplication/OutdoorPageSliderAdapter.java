@@ -1,5 +1,6 @@
 package com.example.micke.myapplication;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -9,19 +10,24 @@ import android.support.v4.app.FragmentPagerAdapter;
  * one of the sections/tabs/pages.
  */
 public class OutdoorPageSliderAdapter extends FragmentPagerAdapter {
+    public Context mContext;
 
-    public OutdoorPageSliderAdapter(FragmentManager fm) {
+    public OutdoorPageSliderAdapter(FragmentManager fm, Context con) {
         super(fm);
+        mContext = con;
     }
 
     @Override
     public Fragment getItem(int position) {
         if(position == 0) {
-            return OutdoorMapFragment.newInstance(position + 1);
+            ((OutdoorActivity)mContext).map = OutdoorMapFragment.newInstance(position + 1);
+            return ((OutdoorActivity)mContext).map;
         } else if(position == 1) {
-            return OutdoorListFragment.newInstance(position + 1);
+            ((OutdoorActivity)mContext).list = OutdoorListFragment.newInstance(position + 1);
+            return ((OutdoorActivity)mContext).list;
         } else {
-            return QRFragment.newInstance(position + 1);
+            ((OutdoorActivity)mContext).qr = QRFragment.newInstance(position + 1);
+            return ((OutdoorActivity)mContext).qr;
         }
     }
 
