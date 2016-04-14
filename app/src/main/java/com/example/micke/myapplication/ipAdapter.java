@@ -70,7 +70,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         holder.mContentView.setText(ipDataset.get(position).title);
         Log.d("index", ipDataset.get(position).title + " size: " + ipDataset.size());
 
-
         holder.goToMapImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,19 +84,33 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             @Override
             public void onClick(final View v) {
 
-                if (isExpanded) {
-                    collapseView(v);
+                if (tempView != null && tempView != v) {
+                    Log.d("TAG", "In if");
+                    collapseView(tempView);
+                    expandView(v);
                     isExpanded = false;
-                } else {
-                    if(tempView != null) {
-                        Log.d("TAG", "tempView != null");
-                        collapseView(tempView);
+                }
+                else if(tempView == v){
+
+                    if(isExpanded) {
+                        Log.d("TAG", "isExpanded");
+                        collapseView(v);
+                        isExpanded = false;
                     }
-                    Log.d("TAG", "in else");
+                    else {
+
+                        Log.d("TAG", "isExpanded is false");
+                        expandView(v);
+                        isExpanded = true;
+                    }
+
+                }
+                else {
+                    Log.d("TAG", "In else");
+
                     expandView(v);
                     isExpanded = true;
                 }
-
             }
         });
 
@@ -121,7 +134,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
         };
 
-        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density)*4);
+        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density) * 4);
         v.startAnimation(a);
 
     }
