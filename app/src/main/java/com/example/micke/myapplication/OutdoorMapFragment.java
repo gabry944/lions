@@ -1,7 +1,9 @@
 package com.example.micke.myapplication;
 
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.InflateException;
@@ -86,6 +88,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
         mMap.setOnMapLongClickListener(this);
         mMap.setOnMapClickListener(this);
         mMap.setOnMarkerClickListener(this);
+//        mMap.setInfoWindowAdapter(new BuildingInfoWindowAdapter(getContext()));
 
         Log.d("loadall", "attempting to load buildings...");
         buildings = new ArrayList<Building>();
@@ -139,6 +142,12 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public boolean onMarkerClick(Marker marker) {
         Log.d("marker", "marker clicked");
+        Intent intent = new Intent(getContext(), IndoorActivity.class);
+        Bundle bundle = new Bundle();
+        String buildingId = marker.getId();
+        bundle.putString("buildingId", buildingId);
+        intent.putExtras(bundle);
+        startActivity(intent);
         return false;
     }
 
