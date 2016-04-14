@@ -30,6 +30,27 @@ public class FireBaseOutdoor extends FireBaseHandler implements Serializable {
         buildingRef.setValue(building);
     }
 
+    public void buildingListener(final BuildingDataSetChanged buildingDataSetChanged) {
+        final List<Building> list = new ArrayList<>();
+        myFirebaseRef.child("building").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot buildings) {
+                list.clear();
+                for (DataSnapshot building : buildings.getChildren()) {
+                    Building b = new Building(building.getValue(Building.class));
+                    Log.d("loadall", b.getLatitude() + " " + b.getLongitude() + " " + b.getId() + " " + b.getName());
+                    Log.d("loadall", building.toString());
+                    list.add(b);
+                }
+                buildingDataSetChanged.dataSetChanged(list);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
+    }
+
     public List<Building> getBuildings(final DataSetChanged outdoorActivity) {
         final List<Building> list = new ArrayList<>();
 
