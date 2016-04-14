@@ -17,7 +17,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     private List<PointOfInterest> ipDataset;
     public boolean isExpanded = false;
     private int temphHeight;
-    private View tempView;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -26,12 +25,14 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         // each data item is just a string in this case
         public final View mView;
         public final TextView mContentView;
+        public final TextView mTitleView;
         public final ImageButton goToMapImage;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mContentView = (TextView) view.findViewById(R.id.title);
+            mTitleView = (TextView) view.findViewById(R.id.title);
+            mContentView = (TextView) view.findViewById(R.id.content);
             goToMapImage = (ImageButton) view.findViewById(R.id.goToMapImage);
         }
     }
@@ -67,7 +68,8 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        holder.mContentView.setText(ipDataset.get(position).title);
+        holder.mTitleView.setText(ipDataset.get(position).title);
+        holder.mContentView.setText(ipDataset.get(position).getDescription());
         Log.d("index", ipDataset.get(position).title + " size: " + ipDataset.size());
 
 
@@ -81,18 +83,20 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
 
         //To expand an "item" in the recyclerview
-        holder.mContentView.setOnClickListener(new View.OnClickListener() {
+        holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
 
+                Log.d("ipAdapter","setOnClickListener");
                 if (isExpanded) {
-                    /*if(tempView != null)
-                        collapseView(tempView);*/
-
                     collapseView(v);
+                    v.findViewById(R.id.content).setVisibility(View.GONE);
                     isExpanded = false;
                 } else {
+                    Log.d("ipAdapter","setOnClickListener to expand");
                     expandView(v);
+                    v.findViewById(R.id.content).setVisibility(View.VISIBLE);
+                    //v.findViewById(R.id.content).setPadding(0,temphHeight,0,0);
                     isExpanded = true;
                 }
 
@@ -125,7 +129,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     }
 
     public void expandView(final View v) {
-        tempView = v;
+        Log.d("ipAdapter", "expandView: ");
 
         v.measure(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT);
         final int targetHeight = v.getMeasuredHeight();
@@ -134,6 +138,8 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         // Older versions of android (pre API 21) cancel animations for views with a height of 0.
         v.getLayoutParams().height = 1;
         v.setVisibility(View.VISIBLE);
+
+
 
         Animation a = new Animation() {
             @Override
