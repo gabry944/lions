@@ -174,7 +174,62 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         return ipDataset.size();
     }
 
-    public void updateList(List<PointOfInterest> newList){
-        ipDataset = newList;
+    public void removeItem(int position) {
+        ipDataset.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, ipDataset.size());
+
     }
+
+    public void addItem(int position, PointOfInterest ip) {
+        ipDataset.add(position, ip);
+        notifyItemInserted(position);
+        notifyItemRangeChanged(position, ipDataset.size());
+    }
+
+    public void moveItem(int fromPosition, int toPosition) {
+        final PointOfInterest ip = ipDataset.remove(fromPosition);
+        ipDataset.add(toPosition, ip);
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
+    public void updateAdapter(List<PointOfInterest> ipSet) {
+        applyAndAnimateRemovals(ipSet);
+        applyAndAnimateAdditions(ipSet);
+        Log.d("new", "---");
+        for(PointOfInterest ip: ipDataset){
+            Log.d("new filtered list", ip.title);
+        }
+
+        applyAndAnimateMovedItems(ipSet);
+    }
+
+    private void applyAndAnimateRemovals(List<PointOfInterest> newips) {
+        for (int i = ipDataset.size() - 1; i >= 0; i--) {
+            final PointOfInterest ip = ipDataset.get(i);
+            if (!newips.contains(ip)) {
+                removeItem(i);
+            }
+        }
+    }
+
+    private void applyAndAnimateAdditions(List<PointOfInterest> newips) {
+        for (int i = 0, count = newips.size(); i < count; i++) {
+            final PointOfInterest ip = newips.get(i);
+            if (!ipDataset.contains(ip)) {
+                addItem(i, ip);
+            }
+        }
+    }
+
+    private void applyAndAnimateMovedItems(List<PointOfInterest> newips) {
+        for (int toPosition = newips.size() - 1; toPosition >= 0; toPosition--) {
+            final PointOfInterest ip = newips.get(toPosition);
+            final int fromPosition = ipDataset.indexOf(ip);
+            if (fromPosition >= 0 && fromPosition != toPosition) {
+                moveItem(fromPosition, toPosition);
+            }
+        }
+    }
+
 }

@@ -67,6 +67,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
         ipadapter = new ipAdapter(this, myDataset);
         //ipRecyclerView.setAdapter(ipadapter);
 
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         assert fab != null;
         fab.setOnClickListener(new View.OnClickListener() {
@@ -137,12 +138,12 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
     @Override
     public boolean onQueryTextChange(String newText) {
         final List<PointOfInterest> filteredDataset = filter(myDataset, newText);
+        ipadapter.updateAdapter(filteredDataset);
+       // dataSetChanged();
+      //  getSupportFragmentManager().findFragmentById(R.id.ip_recycler_view).getView().scrollToPosition(0);
+        //ipRecyclerView.scrollToPosition(0);
 
-      /*  if(myDataset.get(4).title.contains(newText)){
-            Log.d("text matched in dataset", newText);
-
-        }*/
-        Log.d("new filtered list", filteredDataset.get(0).title);
+      //  Log.d("new filtered list", filteredDataset.get(0).title);
         return true;
     }
 
@@ -162,4 +163,5 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
 
     public ipAdapter getAdapter(){ return ipadapter; }
     public List<PointOfInterest> getData() { return myDataset; }
+
 }
