@@ -34,7 +34,7 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
         ipRef.setValue(point);
     }
 
-    public List<PointOfInterest> getPoints(String buildingId, final IndoorActivity indoorActivity) {
+    public List<PointOfInterest> getPoints(String buildingId, final DataSetChanged indoorActivity) {
         final List<PointOfInterest> list = new ArrayList<>();
 
         myFirebaseRef.child("building/" + buildingId).addValueEventListener(new ValueEventListener() {

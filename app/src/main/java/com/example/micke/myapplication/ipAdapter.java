@@ -1,5 +1,6 @@
 package com.example.micke.myapplication;
 
+import android.graphics.Rect;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,6 +18,8 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     private List<PointOfInterest> ipDataset;
     public boolean isExpanded = false;
     private int temphHeight;
+    private View tempView;
+    private String TAG = "ipAdapter";
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -90,13 +93,14 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
                 Log.d("ipAdapter","setOnClickListener");
                 if (isExpanded) {
                     collapseView(v);
-                    v.findViewById(R.id.content).setVisibility(View.GONE);
                     isExpanded = false;
                 } else {
-                    Log.d("ipAdapter","setOnClickListener to expand");
+                    if(tempView != null) {
+                        Log.d(TAG, "tempView != null");
+                        collapseView(tempView);
+                    }
+                    Log.d(TAG, "in else");
                     expandView(v);
-                    v.findViewById(R.id.content).setVisibility(View.VISIBLE);
-                    //v.findViewById(R.id.content).setPadding(0,temphHeight,0,0);
                     isExpanded = true;
                 }
 
@@ -123,17 +127,33 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
         };
 
-        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density)*4);
         v.startAnimation(a);
 
+        v.findViewById(R.id.content).setVisibility(View.GONE);
     }
 
     public void expandView(final View v) {
-        Log.d("ipAdapter", "expandView: ");
+        tempView = v;
 
         v.measure(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT);
-        final int targetHeight = v.getMeasuredHeight();
-        temphHeight = targetHeight;
+        final int initHeight = v.getMeasuredHeight();
+        temphHeight = initHeight;
+
+
+        //must set to visible AFTER the extraction of the height
+        TextView contentView = (TextView)v.findViewById(R.id.content);
+        contentView.setVisibility(View.VISIBLE);
+
+        //get length of text by bounds.width after these two lines
+        Rect bounds = new Rect();
+        contentView.getPaint().getTextBounds((String) contentView.getText(), 0, contentView.getText().length(), bounds);
+
+        int cardwidth = v.getWidth() - R.dimen.list_margin * 2;
+        int textHeight = v.getHeight() - R.dimen.list_margin *2;
+
+        //get desired size of card by calculating number of rows
+        final int targetHeight = initHeight + (bounds.width()/v.getWidth()+1)*initHeight;
 
         // Older versions of android (pre API 21) cancel animations for views with a height of 0.
         v.getLayoutParams().height = 1;
@@ -145,8 +165,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 //Make it expand in a more "adaptive way".
-                v.getLayoutParams().height = (int) (targetHeight * interpolatedTime * 10);
-
+                v.getLayoutParams().height = (int) (initHeight * interpolatedTime * (targetHeight/initHeight));
                 v.requestLayout();
             }
 
@@ -158,7 +177,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         };
 
         // 1dp/ms
-        a.setDuration(((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density)) * 10);
+        a.setDuration(((int) (initHeight / v.getContext().getResources().getDisplayMetrics().density)) * 10);
         v.startAnimation(a);
     }
 

@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.SearchView;
 
 import java.util.List;
@@ -133,5 +134,9 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
     public boolean onQueryTextChange(String newText) {
         Log.d("text", newText);
         return false;
+    }
+
+    public ipAdapter getAdapter(){
+        return ipadapter;
     }
 }

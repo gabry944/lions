@@ -15,7 +15,7 @@
         <TextView
             android:id="@+id/title"
             android:textSize="20sp"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/list_margin"
             android:textAppearance="?attr/textAppearanceListItem" />
@@ -32,10 +32,10 @@
         <TextView
             android:id="@+id/content"
             android:textSize="20sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_margin="@dimen/list_margin"
             android:paddingTop="@dimen/icon_size"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:textAppearance="?attr/textAppearanceListItem"
             android:visibility="gone"/>
 
