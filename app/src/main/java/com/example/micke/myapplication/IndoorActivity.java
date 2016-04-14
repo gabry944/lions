@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -131,7 +132,27 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        Log.d("text", newText);
-        return false;
+        final List<PointOfInterest> filteredDataset = filter(myDataset, newText);
+
+      /*  if(myDataset.get(4).title.contains(newText)){
+            Log.d("text matched in dataset", newText);
+
+        }*/
+        Log.d("new filtered list", filteredDataset.get(0).title);
+        return true;
+    }
+
+    private List<PointOfInterest> filter(List<PointOfInterest> myDataset, String query){
+        query = query.toLowerCase();
+        final List<PointOfInterest> filteredDataset = new ArrayList<>();
+
+        for(PointOfInterest ip: myDataset){
+            final String text = ip.title.toLowerCase();
+            if(text.contains(query)){
+                filteredDataset.add(ip);
+            }
+        }
+        return  filteredDataset;
+
     }
 }

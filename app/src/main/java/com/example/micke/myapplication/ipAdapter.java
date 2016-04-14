@@ -161,4 +161,8 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     public int getItemCount() {
         return ipDataset.size();
     }
+
+    public void updateList(List<PointOfInterest> newList){
+        ipDataset = newList;
+    }
 }
