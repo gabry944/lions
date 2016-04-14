@@ -1,5 +1,6 @@
 package com.example.micke.myapplication;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -10,19 +11,24 @@ import android.util.Log;
  * one of the sections/tabs/pages.
  */
 public class IndoorPageSliderAdapter extends FragmentPagerAdapter {
+    public Context mContext;
 
-    public IndoorPageSliderAdapter(FragmentManager fm) {
+    public IndoorPageSliderAdapter(FragmentManager fm, Context con) {
         super(fm);
+        mContext = con;
     }
 
     @Override
     public Fragment getItem(int position) {
         if(position == 0) {
-            return IndoorMapFragment.newInstance(position + 1);
+            ((IndoorActivity)mContext).map = IndoorMapFragment.newInstance(position + 1);
+            return ((IndoorActivity)mContext).map;
         } else if(position == 1) {
-            return IndoorListFragment.newInstance(position + 1);
+            ((IndoorActivity)mContext).list = IndoorListFragment.newInstance(position + 1);
+            return ((IndoorActivity)mContext).list;
         } else {
-            return QRFragment.newInstance(position + 1);
+            ((IndoorActivity)mContext).qr = QRFragment.newInstance(position + 1);
+            return ((IndoorActivity)mContext).qr;
         }
     }
 
