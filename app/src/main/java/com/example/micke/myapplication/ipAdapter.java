@@ -162,10 +162,10 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         return ipDataset.size();
     }
 
-    public PointOfInterest removeItem(int position) {
-        final PointOfInterest ip = ipDataset.remove(position);
+    public void removeItem(int position) {
+        ipDataset.remove(position);
         notifyItemRemoved(position);
-        return ip;
+        notifyItemRangeChanged(position, ipDataset.size());
     }
 
     public void addItem(int position, PointOfInterest ip) {
@@ -179,9 +179,10 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         notifyItemMoved(fromPosition, toPosition);
     }
 
-    public void animateTo(List<PointOfInterest> ipSet) {
+    public void updateAdapter(List<PointOfInterest> ipSet) {
         applyAndAnimateRemovals(ipSet);
-        applyAndAnimateAdditions(ipSet);
+      //  applyAndAnimateAdditions(ipSet);
+        Log.d("new", "---");
         for(PointOfInterest ip: ipDataset){
             Log.d("new filtered list", ip.title);
         }

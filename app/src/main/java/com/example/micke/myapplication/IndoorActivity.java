@@ -133,8 +133,8 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
     @Override
     public boolean onQueryTextChange(String newText) {
         final List<PointOfInterest> filteredDataset = filter(myDataset, newText);
-        ipadapter.animateTo(filteredDataset);
-        ipadapter.notifyDataSetChanged();
+        ipadapter.updateAdapter(filteredDataset);
+        dataSetChanged();
       //  getSupportFragmentManager().findFragmentById(R.id.ip_recycler_view).getView().scrollToPosition(0);
         //ipRecyclerView.scrollToPosition(0);
 
