@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Adapter;
 import android.widget.SearchView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -65,6 +66,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
         // specify an adapter
         ipadapter = new ipAdapter(this, myDataset);
         //ipRecyclerView.setAdapter(ipadapter);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         assert fab != null;
@@ -135,10 +137,31 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        Log.d("text", newText);
-        return false;
+        final List<PointOfInterest> filteredDataset = filter(myDataset, newText);
+        ipadapter.updateAdapter(filteredDataset);
+       // dataSetChanged();
+      //  getSupportFragmentManager().findFragmentById(R.id.ip_recycler_view).getView().scrollToPosition(0);
+        //ipRecyclerView.scrollToPosition(0);
+
+      //  Log.d("new filtered list", filteredDataset.get(0).title);
+        return true;
+    }
+
+    private List<PointOfInterest> filter(List<PointOfInterest> myDataset, String query){
+        query = query.toLowerCase();
+        final List<PointOfInterest> filteredDataset = new ArrayList<>();
+
+        for(PointOfInterest ip: myDataset){
+            final String text = ip.title.toLowerCase();
+            if(text.contains(query)){
+                filteredDataset.add(ip);
+            }
+        }
+        return  filteredDataset;
+
     }
 
     public ipAdapter getAdapter(){ return ipadapter; }
     public List<PointOfInterest> getData() { return myDataset; }
+
 }
