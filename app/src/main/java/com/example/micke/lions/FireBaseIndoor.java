@@ -20,7 +20,7 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
 
     private String buildingId;
 
-    FireBaseIndoor(Context context, String buildingId) {
+    public FireBaseIndoor(Context context, String buildingId) {
         super(context);
         this.buildingId = buildingId;
     }

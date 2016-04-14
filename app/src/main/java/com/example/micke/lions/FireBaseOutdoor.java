@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class FireBaseOutdoor extends FireBaseHandler implements Serializable {
 
-    FireBaseOutdoor(Context context) {
+    public FireBaseOutdoor(Context context) {
         super(context);
     }
 

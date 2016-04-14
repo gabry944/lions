@@ -78,10 +78,10 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        holder.mTitleView.setText(ipDataset.get(position).title);
+        holder.mTitleView.setText(ipDataset.get(position).getTitle());
         holder.mContentView.setText(ipDataset.get(position).getDescription());
         holder.mIDView.setText(ipDataset.get(position).getId());
-        Log.d("index", ipDataset.get(position).title + " size: " + ipDataset.size());
+        Log.d("index", ipDataset.get(position).getTitle() + " size: " + ipDataset.size());
 
         holder.goToMapImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -227,7 +227,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         applyAndAnimateAdditions(ipSet);
         Log.d("new", "---");
         for(PointOfInterest ip: ipDataset){
-            Log.d("new filtered list", ip.title);
+            Log.d("new filtered list", ip.getTitle());
         }
 
         applyAndAnimateMovedItems(ipSet);
