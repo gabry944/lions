@@ -86,12 +86,14 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             public void onClick(final View v) {
 
                 if (isExpanded) {
-                    /*if(tempView != null)
-                        collapseView(tempView);*/
-
                     collapseView(v);
                     isExpanded = false;
                 } else {
+                    if(tempView != null) {
+                        Log.d("TAG", "tempView != null");
+                        collapseView(tempView);
+                    }
+                    Log.d("TAG", "in else");
                     expandView(v);
                     isExpanded = true;
                 }
@@ -119,7 +121,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
         };
 
-        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density)*4);
         v.startAnimation(a);
 
     }
@@ -139,7 +141,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 //Make it expand in a more "adaptive way".
-                v.getLayoutParams().height = (int) (targetHeight * interpolatedTime * 10);
+                v.getLayoutParams().height = (int) (targetHeight * interpolatedTime * 5);
 
                 v.requestLayout();
             }
