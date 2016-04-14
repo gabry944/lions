@@ -24,6 +24,9 @@ public class OutdoorActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private FireBaseOutdoor fireBaseHandler;
     private List<Building> myDataset;
+    public OutdoorMapFragment map;
+    public OutdoorListFragment list;
+    public QRFragment qr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +64,7 @@ public class OutdoorActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new OutdoorPageSliderAdapter(getSupportFragmentManager());
+        mSectionsPagerAdapter = new OutdoorPageSliderAdapter(getSupportFragmentManager(), this);
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);

@@ -33,6 +33,9 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
     private List<PointOfInterest> myDataset;
     private String buildingId;
     private String ipId;
+    public IndoorMapFragment map;
+    public IndoorListFragment list;
+    public QRFragment qr;
 
     @Override
     public void onCreate(Bundle state) {
@@ -50,7 +53,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new IndoorPageSliderAdapter(getSupportFragmentManager());
+        mSectionsPagerAdapter = new IndoorPageSliderAdapter(getSupportFragmentManager(), this);
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -60,7 +63,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
         myDataset = fireBaseHandler.getPoints(buildingId, this);
 
         // specify an adapter
-        ipadapter = new ipAdapter(myDataset);
+        ipadapter = new ipAdapter(this, myDataset);
         //ipRecyclerView.setAdapter(ipadapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

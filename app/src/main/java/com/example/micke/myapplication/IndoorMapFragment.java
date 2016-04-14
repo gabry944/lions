@@ -21,6 +21,7 @@ public class IndoorMapFragment extends Fragment {
 
     private float mx;
     private float my;
+    public String hej;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -79,5 +80,9 @@ public class IndoorMapFragment extends Fragment {
 
 
         return rootView;
+    }
+
+    public void highlightIP(String ipID){
+        Log.d("IndoorMapFragment", "highlightIP: ipID = " + ipID);
     }
 }
