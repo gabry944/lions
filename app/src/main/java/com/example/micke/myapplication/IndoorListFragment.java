@@ -18,7 +18,7 @@ import android.widget.TextView;
  * A placeholder fragment containing a simple view.
  */
 
-public class IndoorListFragment extends Fragment implements DataSetChanged {
+public class IndoorListFragment extends Fragment {
 
     String ILF = "IndoorListFragment";
 
@@ -28,15 +28,9 @@ public class IndoorListFragment extends Fragment implements DataSetChanged {
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
 
-
     //ip stands for interest points.
     private RecyclerView ipRecyclerView;
-    private ipAdapter ipadapter;
     private RecyclerView.LayoutManager ipLayoutManager;
-
-    private FireBaseIndoor fireBaseHandler;
-
-    private List<PointOfInterest> myDataset;
 
     public IndoorListFragment() {
     }
@@ -59,11 +53,6 @@ public class IndoorListFragment extends Fragment implements DataSetChanged {
 
         String buildingId = "1";
 
-        fireBaseHandler = new FireBaseIndoor(getContext(), buildingId);
-        fireBaseHandler.test();
-
-        myDataset = fireBaseHandler.getPoints(buildingId, (IndoorActivity) getActivity());
-
         View rootView = inflater.inflate(R.layout.fragment_indoor_list, container, false);
 
         ipRecyclerView = (RecyclerView) rootView.findViewById(R.id.ip_recycler_view);
@@ -71,17 +60,11 @@ public class IndoorListFragment extends Fragment implements DataSetChanged {
         ipLayoutManager = new LinearLayoutManager(getActivity());
         ipRecyclerView.setLayoutManager(ipLayoutManager);
 
-        ipadapter = new ipAdapter(myDataset);
-        ipRecyclerView.setAdapter(ipadapter);
+        ipRecyclerView.setAdapter(((IndoorActivity) getActivity()).getAdapter());
 
         TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
 
         return rootView;
-    }
-
-    @Override
-    public void dataSetChanged() {
-        ipadapter.notifyDataSetChanged();
     }
 }

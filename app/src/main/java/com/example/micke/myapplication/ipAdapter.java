@@ -1,5 +1,6 @@
 package com.example.micke.myapplication;
 
+import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,6 +19,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     public boolean isExpanded = false;
     private int temphHeight;
     private View tempView;
+    private Context mContext;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -27,18 +29,21 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         public final View mView;
         public final TextView mContentView;
         public final ImageButton goToMapImage;
+        public final TextView mIDView;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mContentView = (TextView) view.findViewById(R.id.title);
             goToMapImage = (ImageButton) view.findViewById(R.id.goToMapImage);
+            mIDView = (TextView) view.findViewById(R.id.id);
         }
     }
 
     //empty constructor
-    public ipAdapter() {
-
+    public ipAdapter(Context con, List<PointOfInterest> myDataset) {
+        mContext = con;
+        ipDataset = myDataset;
     }
 
     public void setIpDataset(List<PointOfInterest> ipDataset) {
@@ -68,14 +73,15 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         // - replace the contents of the view with that element
 
         holder.mContentView.setText(ipDataset.get(position).title);
+        holder.mIDView.setText(ipDataset.get(position).getId());
         Log.d("index", ipDataset.get(position).title + " size: " + ipDataset.size());
-
 
         holder.goToMapImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
                 mPager.setCurrentItem(0, true);
+                ((IndoorActivity)mContext).map.highlightIP(((TextView)((View)v.getParent()).findViewById(R.id.id)).getText().toString());
             }
         });
 
@@ -85,20 +91,26 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             @Override
             public void onClick(final View v) {
 
-                if (isExpanded) {
-                    /*if(tempView != null)
-                        collapseView(tempView);*/
+                if(isExpanded){
 
-                    collapseView(v);
-                    isExpanded = false;
-                } else {
+                    if (tempView != null && tempView != v) {
+                        collapseView(tempView);
+                        expandView(v);
+                    }
+
+                    else if(tempView == v){
+                        collapseView(v);
+                        isExpanded = false;
+                    }
+                }
+
+                //if(isExpanded == false)
+                else{
                     expandView(v);
                     isExpanded = true;
                 }
-
             }
         });
-
     }
 
     public void collapseView(final View v) {
@@ -119,7 +131,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
         };
 
-        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density) * 4);
         v.startAnimation(a);
 
     }
@@ -139,7 +151,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 //Make it expand in a more "adaptive way".
-                v.getLayoutParams().height = (int) (targetHeight * interpolatedTime * 10);
+                v.getLayoutParams().height = (int) (targetHeight * interpolatedTime * 5);
 
                 v.requestLayout();
             }
