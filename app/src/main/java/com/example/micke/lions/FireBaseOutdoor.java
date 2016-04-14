@@ -1,8 +1,10 @@
-package com.example.micke.myapplication;
+package com.example.micke.lions;
 
 import android.content.Context;
 import android.util.Log;
 
+import com.example.micke.lions.outdoor.Building;
+import com.example.micke.lions.outdoor.BuildingDataSetChanged;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -58,7 +60,7 @@ public class FireBaseOutdoor extends FireBaseHandler implements Serializable {
             @Override
             public void onDataChange(DataSnapshot buildings) {
                 list.clear();
-                Log.d("outdoor", "data changed");
+                Log.d("com/example/micke/lions/outdoor", "data changed");
                 for (DataSnapshot building : buildings.getChildren()) {
                     Log.d("outdoorb", building.toString());
                     Building b = new Building(building.getValue(Building.class));

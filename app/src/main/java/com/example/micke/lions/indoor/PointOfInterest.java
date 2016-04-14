@@ -1,11 +1,11 @@
-package com.example.micke.myapplication;
+package com.example.micke.lions.indoor;
 
 public class PointOfInterest {
-    public String category;
-    public String title;
-    public String description;
-    public float latitude;
-    public float longitude;
+    private String category;
+    private String title;
+    private String description;
+    private float latitude;
+    private float longitude;
     private String id;
 
     public PointOfInterest() {

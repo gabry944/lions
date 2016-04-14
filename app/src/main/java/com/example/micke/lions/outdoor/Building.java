@@ -1,8 +1,6 @@
-package com.example.micke.myapplication;
+package com.example.micke.lions.outdoor;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import java.util.List;
 
 /**
  * Created by iSirux on 2016-04-12.

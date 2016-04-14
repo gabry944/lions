@@ -1,4 +1,4 @@
-package com.example.micke.myapplication;
+package com.example.micke.lions.indoor;
 
 import android.graphics.Rect;
 import android.content.Context;
@@ -12,6 +12,8 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.example.micke.lions.R;
 
 import java.util.List;
 

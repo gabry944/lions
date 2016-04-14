@@ -1,11 +1,9 @@
-package com.example.micke.myapplication;
+package com.example.micke.lions.indoor;
 
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -16,8 +14,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.SearchView;
+
+import com.example.micke.lions.DataSetChanged;
+import com.example.micke.lions.FireBaseIndoor;
+import com.example.micke.lions.QRFragment;
+import com.example.micke.lions.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -152,7 +154,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
         final List<PointOfInterest> filteredDataset = new ArrayList<>();
 
         for(PointOfInterest ip: myDataset){
-            final String text = ip.title.toLowerCase();
+            final String text = ip.getTitle().toLowerCase();
             if(text.contains(query)){
                 filteredDataset.add(ip);
             }

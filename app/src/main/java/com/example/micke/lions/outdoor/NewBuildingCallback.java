@@ -1,4 +1,6 @@
-package com.example.micke.myapplication;
+package com.example.micke.lions.outdoor;
+
+import com.example.micke.lions.outdoor.Building;
 
 /**
  * Created by Administrator on 05/04/2016.

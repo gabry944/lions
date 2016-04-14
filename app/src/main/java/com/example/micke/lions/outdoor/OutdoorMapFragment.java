@@ -1,9 +1,8 @@
-package com.example.micke.myapplication;
+package com.example.micke.lions.outdoor;
 
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.InflateException;
@@ -11,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.micke.lions.indoor.IndoorActivity;
+import com.example.micke.lions.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -109,7 +110,6 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onMapLongClick(LatLng point) {
-
         DialogFragment newFragment = new AddBuildingDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("firebase", ((OutdoorActivity) getActivity()).getFireBaseHandler());
