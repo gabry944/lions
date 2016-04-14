@@ -84,36 +84,26 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             @Override
             public void onClick(final View v) {
 
-                if (tempView != null && tempView != v) {
-                    Log.d("TAG", "In if");
-                    collapseView(tempView);
-                    expandView(v);
-                    isExpanded = false;
-                }
-                else if(tempView == v){
+                if(isExpanded){
 
-                    if(isExpanded) {
-                        Log.d("TAG", "isExpanded");
+                    if (tempView != null && tempView != v) {
+                        collapseView(tempView);
+                        expandView(v);
+                    }
+
+                    else if(tempView == v){
                         collapseView(v);
                         isExpanded = false;
                     }
-                    else {
-
-                        Log.d("TAG", "isExpanded is false");
-                        expandView(v);
-                        isExpanded = true;
-                    }
-
                 }
-                else {
-                    Log.d("TAG", "In else");
 
+                //if(isExpanded == false)
+                else{
                     expandView(v);
                     isExpanded = true;
                 }
             }
         });
-
     }
 
     public void collapseView(final View v) {
