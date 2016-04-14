@@ -114,4 +114,8 @@ public class OutdoorActivity extends AppCompatActivity implements DataSetChanged
     public void dataSetChanged() {
         Log.d("outdoor", "dataSetChanged outdoor");
     }
+
+    public FireBaseOutdoor getFireBaseHandler() {
+        return fireBaseHandler;
+    }
 }
