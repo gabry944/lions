@@ -84,4 +84,8 @@ public class IndoorListFragment extends Fragment implements DataSetChanged {
     public void dataSetChanged() {
         ipadapter.notifyDataSetChanged();
     }
+
+/*    public RecyclerView getView(){
+        return ipRecyclerView;
+    }*/
 }
