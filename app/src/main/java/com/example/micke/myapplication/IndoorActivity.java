@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -15,11 +16,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
 
 import java.util.List;
 
 
-public class IndoorActivity extends AppCompatActivity implements DataSetChanged {
+public class IndoorActivity extends AppCompatActivity implements DataSetChanged, SearchView.OnQueryTextListener {
 
     private FireBaseIndoor fireBaseHandler;
     private IndoorPageSliderAdapter mSectionsPagerAdapter;
@@ -86,7 +88,12 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
         // Inflate the menu; this adds items to the action bar if it is present.
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.list_options, menu);
+
+        final MenuItem item = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setOnQueryTextListener(this);
         return true;
+
     }
 
     @Override
@@ -117,4 +124,14 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged 
         ipadapter.notifyDataSetChanged();
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        Log.d("text", newText);
+        return false;
+    }
 }
