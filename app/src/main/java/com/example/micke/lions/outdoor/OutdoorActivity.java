@@ -1,20 +1,25 @@
-package com.example.micke.myapplication;
+package com.example.micke.lions.outdoor;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
-import android.support.v4.view.ViewPager;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.example.micke.lions.DataSetChanged;
+import com.example.micke.lions.FireBaseOutdoor;
+import com.example.micke.lions.indoor.IndoorActivity;
+import com.example.micke.lions.QRFragment;
+import com.example.micke.lions.R;
 
 import java.util.List;
 
@@ -25,6 +30,9 @@ public class OutdoorActivity extends AppCompatActivity implements DataSetChanged
     private ViewPager mViewPager;
     private FireBaseOutdoor fireBaseHandler;
     private List<Building> myDataset;
+    public OutdoorMapFragment map;
+    public OutdoorListFragment list;
+    public QRFragment qr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +70,7 @@ public class OutdoorActivity extends AppCompatActivity implements DataSetChanged
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new OutdoorPageSliderAdapter(getSupportFragmentManager());
+        mSectionsPagerAdapter = new OutdoorPageSliderAdapter(getSupportFragmentManager(), this);
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -112,7 +120,7 @@ public class OutdoorActivity extends AppCompatActivity implements DataSetChanged
 
     @Override
     public void dataSetChanged() {
-        Log.d("outdoor", "dataSetChanged outdoor");
+        Log.d("com/example/micke/lions/outdoor", "dataSetChanged com.example.micke.lions.outdoor");
     }
 
     public FireBaseOutdoor getFireBaseHandler() {

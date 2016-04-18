@@ -1,11 +1,9 @@
-package com.example.micke.myapplication;
+package com.example.micke.lions.indoor;
 
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -16,9 +14,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.SearchView;
 
+import com.example.micke.lions.DataSetChanged;
+import com.example.micke.lions.FireBaseIndoor;
+import com.example.micke.lions.QRFragment;
+import com.example.micke.lions.R;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,6 +36,9 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
     private List<PointOfInterest> myDataset;
     private String buildingId;
     private String ipId;
+    public IndoorMapFragment map;
+    public IndoorListFragment list;
+    public QRFragment qr;
 
     @Override
     public void onCreate(Bundle state) {
@@ -50,7 +56,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new IndoorPageSliderAdapter(getSupportFragmentManager());
+        mSectionsPagerAdapter = new IndoorPageSliderAdapter(getSupportFragmentManager(), this);
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -60,8 +66,9 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
         myDataset = fireBaseHandler.getPoints(buildingId, this);
 
         // specify an adapter
-        ipadapter = new ipAdapter(myDataset);
+        ipadapter = new ipAdapter(this, myDataset);
         //ipRecyclerView.setAdapter(ipadapter);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         assert fab != null;
@@ -132,10 +139,31 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        Log.d("text", newText);
-        return false;
+        final List<PointOfInterest> filteredDataset = filter(myDataset, newText);
+        ipadapter.updateAdapter(filteredDataset);
+       // dataSetChanged();
+      //  getSupportFragmentManager().findFragmentById(R.id.ip_recycler_view).getView().scrollToPosition(0);
+        //ipRecyclerView.scrollToPosition(0);
+
+      //  Log.d("new filtered list", filteredDataset.get(0).title);
+        return true;
+    }
+
+    private List<PointOfInterest> filter(List<PointOfInterest> myDataset, String query){
+        query = query.toLowerCase();
+        final List<PointOfInterest> filteredDataset = new ArrayList<>();
+
+        for(PointOfInterest ip: myDataset){
+            final String text = ip.getTitle().toLowerCase();
+            if(text.contains(query)){
+                filteredDataset.add(ip);
+            }
+        }
+        return  filteredDataset;
+
     }
 
     public ipAdapter getAdapter(){ return ipadapter; }
     public List<PointOfInterest> getData() { return myDataset; }
+
 }

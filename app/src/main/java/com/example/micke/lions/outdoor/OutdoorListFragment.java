@@ -1,4 +1,4 @@
-package com.example.micke.myapplication;
+package com.example.micke.lions.outdoor;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.micke.lions.R;
 
 /**
  * A placeholder fragment containing a simple view.

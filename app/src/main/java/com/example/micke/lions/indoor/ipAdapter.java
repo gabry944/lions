@@ -1,5 +1,7 @@
-package com.example.micke.myapplication;
+package com.example.micke.lions.indoor;
 
+import android.graphics.Rect;
+import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,6 +13,8 @@ import android.view.animation.Transformation;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.micke.lions.R;
+
 import java.util.List;
 
 public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
@@ -18,6 +22,8 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     public boolean isExpanded = false;
     private int temphHeight;
     private View tempView;
+    private String TAG = "ipAdapter";
+    private Context mContext;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -26,19 +32,24 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         // each data item is just a string in this case
         public final View mView;
         public final TextView mContentView;
+        public final TextView mTitleView;
         public final ImageButton goToMapImage;
+        public final TextView mIDView;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mContentView = (TextView) view.findViewById(R.id.title);
+            mTitleView = (TextView) view.findViewById(R.id.title);
+            mContentView = (TextView) view.findViewById(R.id.content);
             goToMapImage = (ImageButton) view.findViewById(R.id.goToMapImage);
+            mIDView = (TextView) view.findViewById(R.id.id);
         }
     }
 
     //empty constructor
-    public ipAdapter() {
-
+    public ipAdapter(Context con, List<PointOfInterest> myDataset) {
+        mContext = con;
+        ipDataset = myDataset;
     }
 
     public void setIpDataset(List<PointOfInterest> ipDataset) {
@@ -67,20 +78,23 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        holder.mContentView.setText(ipDataset.get(position).title);
-        Log.d("index", ipDataset.get(position).title + " size: " + ipDataset.size());
+        holder.mTitleView.setText(ipDataset.get(position).getTitle());
+        holder.mContentView.setText(ipDataset.get(position).getDescription());
+        holder.mIDView.setText(ipDataset.get(position).getId());
+        Log.d("index", ipDataset.get(position).getTitle() + " size: " + ipDataset.size());
 
         holder.goToMapImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
                 mPager.setCurrentItem(0, true);
+                ((IndoorActivity)mContext).map.highlightIP(((TextView)((View)v.getParent()).findViewById(R.id.id)).getText().toString());
             }
         });
 
 
         //To expand an "item" in the recyclerview
-        holder.mContentView.setOnClickListener(new View.OnClickListener() {
+        holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
 
@@ -127,25 +141,47 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density) * 4);
         v.startAnimation(a);
 
+        v.findViewById(R.id.content).setVisibility(View.GONE);
     }
 
     public void expandView(final View v) {
         tempView = v;
 
         v.measure(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT);
-        final int targetHeight = v.getMeasuredHeight();
-        temphHeight = targetHeight;
+        final int initHeight = v.getMeasuredHeight();
+        temphHeight = initHeight;
+
+
+        //must set to visible AFTER the extraction of the height
+        TextView contentView = (TextView)v.findViewById(R.id.content);
+        contentView.setVisibility(View.VISIBLE);
+
+        //get length of text by bounds.width after these two lines
+        Rect bounds = new Rect();
+        contentView.getPaint().getTextBounds((String) contentView.getText(), 0, contentView.getText().length(), bounds);
+
+        int cardwidth = v.getWidth() - 12 *4;
+        int textHeight = v.getHeight() - 12 *2;
+
+        Log.d(TAG, "expandView: bounds.width()/cardwidth = " + bounds.width()/cardwidth);
+        Log.d(TAG, "expandView: (bounds.width()/cardwidth +1)*textHeight = " + (bounds.width()/cardwidth +1)*textHeight);
+        //get desired size of card by calculating number of rows
+        final int targetHeight = initHeight + (bounds.width()/cardwidth +1)*textHeight;
 
         // Older versions of android (pre API 21) cancel animations for views with a height of 0.
         v.getLayoutParams().height = 1;
         v.setVisibility(View.VISIBLE);
 
+
+
         Animation a = new Animation() {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 //Make it expand in a more "adaptive way".
-                v.getLayoutParams().height = (int) (targetHeight * interpolatedTime * 5);
-
+                if (targetHeight/initHeight <2)
+                    v.getLayoutParams().height = (int) (initHeight * interpolatedTime * 2);
+                else
+                    v.getLayoutParams().height = (int) (initHeight * interpolatedTime * (targetHeight/initHeight));
                 v.requestLayout();
             }
 
@@ -157,7 +193,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         };
 
         // 1dp/ms
-        a.setDuration(((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density)) * 10);
+        a.setDuration(((int) (initHeight / v.getContext().getResources().getDisplayMetrics().density)) * 10);
         v.startAnimation(a);
     }
 
@@ -166,4 +202,63 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     public int getItemCount() {
         return ipDataset.size();
     }
+
+    public void removeItem(int position) {
+        ipDataset.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, ipDataset.size());
+
+    }
+
+    public void addItem(int position, PointOfInterest ip) {
+        ipDataset.add(position, ip);
+        notifyItemInserted(position);
+        notifyItemRangeChanged(position, ipDataset.size());
+    }
+
+    public void moveItem(int fromPosition, int toPosition) {
+        final PointOfInterest ip = ipDataset.remove(fromPosition);
+        ipDataset.add(toPosition, ip);
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
+    public void updateAdapter(List<PointOfInterest> ipSet) {
+        applyAndAnimateRemovals(ipSet);
+        applyAndAnimateAdditions(ipSet);
+        Log.d("new", "---");
+        for(PointOfInterest ip: ipDataset){
+            Log.d("new filtered list", ip.getTitle());
+        }
+
+        applyAndAnimateMovedItems(ipSet);
+    }
+
+    private void applyAndAnimateRemovals(List<PointOfInterest> newips) {
+        for (int i = ipDataset.size() - 1; i >= 0; i--) {
+            final PointOfInterest ip = ipDataset.get(i);
+            if (!newips.contains(ip)) {
+                removeItem(i);
+            }
+        }
+    }
+
+    private void applyAndAnimateAdditions(List<PointOfInterest> newips) {
+        for (int i = 0, count = newips.size(); i < count; i++) {
+            final PointOfInterest ip = newips.get(i);
+            if (!ipDataset.contains(ip)) {
+                addItem(i, ip);
+            }
+        }
+    }
+
+    private void applyAndAnimateMovedItems(List<PointOfInterest> newips) {
+        for (int toPosition = newips.size() - 1; toPosition >= 0; toPosition--) {
+            final PointOfInterest ip = newips.get(toPosition);
+            final int fromPosition = ipDataset.indexOf(ip);
+            if (fromPosition >= 0 && fromPosition != toPosition) {
+                moveItem(fromPosition, toPosition);
+            }
+        }
+    }
+
 }

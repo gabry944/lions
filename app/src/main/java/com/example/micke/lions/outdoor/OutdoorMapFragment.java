@@ -1,6 +1,7 @@
-package com.example.micke.myapplication;
+package com.example.micke.lions.outdoor;
 
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -9,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.micke.lions.indoor.IndoorActivity;
+import com.example.micke.lions.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -86,6 +89,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
         mMap.setOnMapLongClickListener(this);
         mMap.setOnMapClickListener(this);
         mMap.setOnMarkerClickListener(this);
+//        mMap.setInfoWindowAdapter(new BuildingInfoWindowAdapter(getContext()));
 
         Log.d("loadall", "attempting to load buildings...");
         buildings = new ArrayList<Building>();
@@ -106,7 +110,6 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onMapLongClick(LatLng point) {
-
         DialogFragment newFragment = new AddBuildingDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("firebase", ((OutdoorActivity) getActivity()).getFireBaseHandler());
@@ -139,6 +142,12 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public boolean onMarkerClick(Marker marker) {
         Log.d("marker", "marker clicked");
+        Intent intent = new Intent(getContext(), IndoorActivity.class);
+        Bundle bundle = new Bundle();
+        String buildingId = marker.getId();
+        bundle.putString("buildingId", buildingId);
+        intent.putExtras(bundle);
+        startActivity(intent);
         return false;
     }
 

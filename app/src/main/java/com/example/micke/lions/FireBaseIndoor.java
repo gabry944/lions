@@ -1,9 +1,9 @@
-package com.example.micke.myapplication;
+package com.example.micke.lions;
 
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
+import com.example.micke.lions.indoor.PointOfInterest;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -20,7 +20,7 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
 
     private String buildingId;
 
-    FireBaseIndoor(Context context, String buildingId) {
+    public FireBaseIndoor(Context context, String buildingId) {
         super(context);
         this.buildingId = buildingId;
     }

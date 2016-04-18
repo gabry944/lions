@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.micke.myapplication">
+    package="com.example.micke.lions">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -11,6 +11,8 @@
          location permissions for the 'MyLocation' functionality. 
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="com.shop.shoppinglist.permission.MAPS_RECEIVE"/>
+    <permission      android:name="com.shop.shoppinglist.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
 
     <application
         android:allowBackup="true"
@@ -19,13 +21,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".IndoorActivity"
-            android:label="@string/title_activity_indoor"
-            android:parentActivityName=".OutdoorActivity"
+            android:name=".indoor.IndoorActivity"
+            android:parentActivityName=".outdoor.OutdoorActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".OutdoorActivity"
-            android:label="@string/title_activity_outdoor"
+            android:name=".outdoor.OutdoorActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

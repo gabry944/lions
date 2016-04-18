@@ -1,13 +1,4 @@
-package com.example.micke.myapplication;
-
-import android.content.Context;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+package com.example.micke.lions;
 
 import android.content.Context;
 import android.util.Log;
@@ -16,9 +7,6 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Administrator on 05/04/2016.

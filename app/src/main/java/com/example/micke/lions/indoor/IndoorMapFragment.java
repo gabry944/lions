@@ -1,15 +1,7 @@
-package com.example.micke.myapplication;
+package com.example.micke.lions.indoor;
 
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import java.util.List;
+import com.example.micke.lions.R;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -150,6 +142,10 @@ public class IndoorMapFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    public void highlightIP(String ipID) {
+        Log.d("IndoorMapFragment", "highlightIP: ipID = " + ipID);
     }
 
     private void addPoint(RelativeLayout parent, float posX, float posY) {
