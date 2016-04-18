@@ -122,12 +122,21 @@ public class IndoorMapFragment extends Fragment {
 
                             posX = r.getTranslationX();
                             posY = r.getTranslationY();
-                            float deltaX = (scaleFactor/2.0f)*Math.abs(mx - curX) < SCROLLSPEED ? (scaleFactor/2.0f)*(mx - curX) : Math.signum((mx - curX)) * SCROLLSPEED;
-                            float deltaY = (scaleFactor/2.0f)*Math.abs(my - curY) < SCROLLSPEED ? (scaleFactor / 2.0f) * (my - curY) : Math.signum((my - curY)) * SCROLLSPEED;
+//                            float deltaX = (scaleFactor/2.0f)*Math.abs(mx - curX) < SCROLLSPEED ? (scaleFactor/2.0f)*(mx - curX) : Math.signum((mx - curX)) * SCROLLSPEED;
+//                            float deltaY = (scaleFactor/2.0f)*Math.abs(my - curY) < SCROLLSPEED ? (scaleFactor / 2.0f) * (my - curY) : Math.signum((my - curY)) * SCROLLSPEED;
+                            float deltaX = mx-curX;
+                            float deltaY = my-curY;
 
                             Log.d("map_indoor", "One finger: deltaX = " + deltaX + ", deltaY = " + deltaY);
                             Log.d("map_indoor", "posX = " + event.getRawX() + ", posY = " + event.getRawY());
-                            addPoint(r, event.getRawX(), event.getRawY());
+//                            float tempx = event.getRawX();
+//                            float tempy = event.getRawY();
+
+                            int[] viewCoords = new int[2];
+                            r.getLocationOnScreen(viewCoords);
+                            int imageX = (int) event.getX() - viewCoords[0];
+                            int imageY = (int) event.getY() - viewCoords[1];
+                            addPoint(r, imageX, imageY);
 
                             r.setTranslationX(posX - deltaX);
                             r.setTranslationY(posY - deltaY);
