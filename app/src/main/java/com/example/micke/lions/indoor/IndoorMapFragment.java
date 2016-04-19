@@ -34,6 +34,7 @@ public class IndoorMapFragment extends Fragment {
     private float mx, mx2;  //2 is for the second finger. Used for zooming
     private float my, my2;
     private float scaleFactor = 5.0f;
+    private boolean longClick = true;  //turns to false if user moves fingers
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -72,9 +73,12 @@ public class IndoorMapFragment extends Fragment {
         r.setClickable(true);
         r.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View arg0) {
-                Log.d(TAG, "onLongClick: innan");
-                addPoint(r, 0, 0);
-                Log.d(TAG, "onLongClick: efter ");
+
+                if(longClick) {
+                    addPoint(r, mx - r.getWidth() / 2,
+                            my - r.getHeight() / 2 + 60);
+                }
+                        Log.d("map_indoor", "onLongClick: " + longClick);
                 return false;
             }
         });
@@ -82,14 +86,12 @@ public class IndoorMapFragment extends Fragment {
         r.setOnTouchListener(new View.OnTouchListener() {
 
             public boolean onTouch(View arg0, MotionEvent event) {
+
                 float posX, posY;
                 float curX, curY;
 
                 final float SCROLLSPEED = 30.0f;
                 final float ZOOMSPEED = 50.0f;
-
-                boolean handledEvent = false;
-
 
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
@@ -101,17 +103,18 @@ public class IndoorMapFragment extends Fragment {
                             mx2 = event.getX(1);
                             my2 = event.getY(1);
                         }
+
                         break;
                     case MotionEvent.ACTION_MOVE:
-
                         //Check if user want to zoom
                         if (event.getPointerCount() == 2) {
-
+                            longClick = false;
                             float zoomVectorX = mx - mx2;
                             float zoomVectorY = my - my2;
                             float newZoomVectorX = event.getX(0) - event.getX(1);
                             float newZoomVectorY = event.getY(0) - event.getY(1);
 
+                            //diff = distance between finger motion based on percentage difference
                             double diff = (double) scaleFactor * 20 *
                                     ((Math.sqrt(Math.pow(newZoomVectorX, 2.0) + Math.pow(newZoomVectorY, 2.0)) -
                                             Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)))
@@ -132,8 +135,6 @@ public class IndoorMapFragment extends Fragment {
                             my = event.getY(0);
                             mx2 = event.getX(1);
                             my2 = event.getY(1);
-
-                            handledEvent = true;
                         }
                         //Check if user want to drag the map
                         else if (event.getPointerCount() == 1) {
@@ -147,10 +148,13 @@ public class IndoorMapFragment extends Fragment {
                             float deltaY = my - curY;
 
                             Log.d("map_indoor", "posX = " + event.getRawX() + ", posY = " + event.getRawY());
-                            Log.d("map_indoor", "transX = " + r.getTranslationX() + ", transY = " + r.getTranslationY());
+                            Log.d("map_indoor", "deltaX = " + deltaX + ", deltaY = " + deltaY);
 
+                            if(deltaX+deltaY > 0.1)
+                                longClick = false;
                             //This coordinate transformation should be moved into its own function
-                            //addPoint(r, (event.getRawX() - r.getWidth() / 2 - r.getTranslationX())/scaleFactor, (event.getRawY() - r.getHeight() / 2 - 100 - r.getTranslationY())/scaleFactor);
+                            //addPoint(r, (event.getRawX() - r.getWidth() / 2 - r.getTranslationX())/scaleFactor,
+                            // (event.getRawY() - r.getHeight() / 2 - 100 - r.getTranslationY())/scaleFactor);
 
                             r.setTranslationX(posX - deltaX);
                             r.setTranslationY(posY - deltaY);
@@ -159,9 +163,13 @@ public class IndoorMapFragment extends Fragment {
                             mx = curX;
                             my = curY;
                         }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        longClick = true;
+                        break;
                 }
 
-                return handledEvent;
+                return false;
             }
         });
 
