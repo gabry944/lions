@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +55,8 @@ public class IndoorMapFragment extends Fragment {
         r.setScaleX(5.0f);
         r.setScaleY(5.0f);
 
+        setHasOptionsMenu(true);
+
         //List<PointOfInterest> l = ((IndoorActivity) getActivity()).getData();
         //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
         //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
@@ -89,9 +94,9 @@ public class IndoorMapFragment extends Fragment {
                             float newZoomVectorX = event.getX(0) - event.getX(1);
                             float newZoomVectorY = event.getY(0) - event.getY(1);
 
-                            double diff = ((double)scaleFactor/5.0) *
+                            double diff = ((double) scaleFactor / 5.0) *
                                     (Math.sqrt(Math.pow(newZoomVectorX, 2.0) + Math.pow(newZoomVectorY, 2.0)) -
-                                    Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)));
+                                            Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)));
 
                             diff = (diff < -ZOOMSPEED) ? -ZOOMSPEED : diff;
                             diff = (diff > ZOOMSPEED) ? ZOOMSPEED : diff;
@@ -114,8 +119,8 @@ public class IndoorMapFragment extends Fragment {
 
                             posX = r.getTranslationX();
                             posY = r.getTranslationY();
-                            float deltaX = (scaleFactor/2.0f)*Math.abs(mx - curX) < SCROLLSPEED ? (scaleFactor/2.0f)*(mx - curX) : Math.signum((mx - curX)) * SCROLLSPEED;
-                            float deltaY = (scaleFactor/2.0f)*Math.abs(my - curY) < SCROLLSPEED ? (scaleFactor / 2.0f) * (my - curY) : Math.signum((my - curY)) * SCROLLSPEED;
+                            float deltaX = (scaleFactor / 2.0f) * Math.abs(mx - curX) < SCROLLSPEED ? (scaleFactor / 2.0f) * (mx - curX) : Math.signum((mx - curX)) * SCROLLSPEED;
+                            float deltaY = (scaleFactor / 2.0f) * Math.abs(my - curY) < SCROLLSPEED ? (scaleFactor / 2.0f) * (my - curY) : Math.signum((my - curY)) * SCROLLSPEED;
 
                             Log.d("map_indoor", "One finger: deltaX = " + deltaX + ", deltaY = " + deltaY);
                             Log.d("map_indoor", "posX = " + event.getRawX() + ", posY = " + event.getRawY());
@@ -148,4 +153,11 @@ public class IndoorMapFragment extends Fragment {
         point.setImageResource(R.drawable.map_marker);
         parent.addView(point);
     }
+
+    @Override
+    public void onCreateOptionsMenu(
+            Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_indoor_map, menu);
+    }
+
 }

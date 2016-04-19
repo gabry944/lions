@@ -66,4 +66,6 @@ public class IndoorListFragment extends Fragment {
         return rootView;
     }
 
+
+
 }
