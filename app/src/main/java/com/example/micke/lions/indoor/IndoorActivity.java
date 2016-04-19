@@ -176,7 +176,6 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
     @Override
     public void onBackPressed()
     {
-        Log.d("back", "current: " + mViewPager.getCurrentItem());
         if(mViewPager.getCurrentItem() != 1)
             mViewPager.setCurrentItem(1);
         else
