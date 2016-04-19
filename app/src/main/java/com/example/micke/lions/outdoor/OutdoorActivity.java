@@ -94,4 +94,13 @@ public class OutdoorActivity extends AppCompatActivity implements DataSetChanged
     public ViewPager getViewPager() {
         return mViewPager;
     }
+
+    @Override
+    public void onBackPressed()
+    {
+        if(mViewPager.getCurrentItem() != 1)
+            mViewPager.setCurrentItem(1);
+        else
+            super.onBackPressed();
+    }
 }
