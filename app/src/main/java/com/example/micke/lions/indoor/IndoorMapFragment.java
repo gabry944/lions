@@ -22,6 +22,8 @@ import android.widget.RelativeLayout;
 
 import com.example.micke.lions.R;
 
+import java.util.List;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -68,7 +70,10 @@ public class IndoorMapFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-        //List<PointOfInterest> l = ((IndoorActivity) getActivity()).getData();
+        List<PointOfInterest> l = ((IndoorActivity) getActivity()).getData();
+        for(PointOfInterest p : l) {
+            addPoint(r, p.getLatitude(), p.getLongitude());
+        }
 
         r.setLongClickable(true);
         r.setClickable(true);
@@ -76,12 +81,17 @@ public class IndoorMapFragment extends Fragment {
             public boolean onLongClick(View arg0) {
 
                 if(longClick) {
-                    addPoint(r, mx - r.getWidth() / 2,
-                            my - r.getHeight() / 2 + 60);
+//                    addPoint(r, mx - r.getWidth() / 2,
+//                            my - r.getHeight() / 2 + 60);
 
+                    float[] point = new float[2];
+                    point[0] = mx - r.getWidth() / 2;
+                    point[1] = my - r.getHeight() / 2 + 60;
                     DialogFragment newFragment = new AddPointDialogFragment();
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("firebase", ((IndoorActivity) getActivity()).getFireBaseHandler());
+                    bundle.putFloat("lat", point[0]);
+                    bundle.putFloat("lng", point[1]);
                     newFragment.setArguments(bundle);
                     newFragment.show(getActivity().getFragmentManager(), "add_point_layout");
                 }

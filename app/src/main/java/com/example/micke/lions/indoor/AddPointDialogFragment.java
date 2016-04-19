@@ -30,6 +30,9 @@ public class AddPointDialogFragment extends DialogFragment {
         Bundle bundle = this.getArguments();
         final FireBaseIndoor fireBaseBuilding = (FireBaseIndoor) bundle.getSerializable("firebase");
 
+        final float point1 = bundle.getFloat("lat", 0);
+        final float point2 = bundle.getFloat("lng", 0);
+
         dialogBuilder
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -41,9 +44,13 @@ public class AddPointDialogFragment extends DialogFragment {
                         EditText category = (EditText) dialogView.findViewById(R.id.add_point_category);
                         String ipId = fireBaseBuilding.generateId();
 
-                        PointOfInterest point = new PointOfInterest(title.getText().toString(),
-                                description.getText().toString(), category.getText().toString(), 0, 0, ipId);
-                        fireBaseBuilding.updateIp(point, 4);
+                        if(!title.getText().toString().equals("") &&
+                                !description.getText().toString().equals("") &&
+                                !category.getText().toString().equals("")) {
+                            PointOfInterest point = new PointOfInterest(title.getText().toString(),
+                                    description.getText().toString(), category.getText().toString(), point1, point2, ipId);
+                            fireBaseBuilding.updateIp(point, 4);
+                        }
                     }
                 })
                 .setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
