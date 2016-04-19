@@ -46,6 +46,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     private double longitude, latitude;
     private View rootView;
     private List<Building> buildings;
+    private List<Marker> carMarkerList;
 
     public OutdoorMapFragment() {
 
@@ -72,6 +73,8 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
             /* map is already there, just return view as it is */
             return rootView;
         }
+
+        carMarkerList = new ArrayList<>();
 
         Log.d("map", "OutdoorKartFragment created");
 
@@ -144,16 +147,23 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     public void newMarker(Car car, Location location) {
         LatLng point = new LatLng(car.getLatitude(), car.getLongitude());
 
+        //Hide all other parked cars
+        carMarkerList.clear();
+        //Clear the map, clears all markers and other stuff
+        mMap.clear();
+
         Marker carMarker = mMap.addMarker(new MarkerOptions()
                 .position(point)
                 .title(car.getName())
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
 
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        builder.include(carMarker.getPosition());
-        builder.include(new LatLng(location.getLatitude(), location.getLongitude()));
+        carMarkerList.add(carMarker);
 
-        LatLngBounds bounds = builder.build();
+//        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+//        builder.include(carMarker.getPosition());
+//        builder.include(new LatLng(location.getLatitude(), location.getLongitude()));
+
+//        LatLngBounds bounds = builder.build();
 //        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(car.getLatitude(), car.getLongitude()), 19));
     }
@@ -166,6 +176,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+
         Log.d("marker", "marker clicked");
         Intent intent = new Intent(getContext(), IndoorActivity.class);
         Bundle bundle = new Bundle();
