@@ -14,6 +14,8 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -23,6 +25,7 @@ import com.example.micke.lions.R;
  * A placeholder fragment containing a simple view.
  */
 public class IndoorMapFragment extends Fragment {
+    String TAG = "IndoorMapFragment";
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -59,6 +62,22 @@ public class IndoorMapFragment extends Fragment {
         r.setScaleY(10.0f);
 
         setHasOptionsMenu(true);
+
+        //List<PointOfInterest> l = ((IndoorActivity) getActivity()).getData();
+        //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
+        //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
+        //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
+
+        r.setLongClickable(true);
+        r.setClickable(true);
+        r.setOnLongClickListener(new View.OnLongClickListener() {
+            public boolean onLongClick(View arg0) {
+                Log.d(TAG, "onLongClick: innan");
+                addPoint(r, 0, 0);
+                Log.d(TAG, "onLongClick: efter ");
+                return false;
+            }
+        });
 
         r.setOnTouchListener(new View.OnTouchListener() {
 
@@ -132,12 +151,13 @@ public class IndoorMapFragment extends Fragment {
                             r.setTranslationX(posX - deltaX);
                             r.setTranslationY(posY - deltaY);
 
+
                             mx = curX;
                             my = curY;
                         }
                 }
 
-                return true;
+                return false;
             }
         });
 
