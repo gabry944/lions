@@ -1,10 +1,14 @@
 package com.example.micke.lions.indoor;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -47,10 +51,12 @@ public class IndoorMapFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_indoor_map, container, false);
 
+        //final MyImageView switcherView;
+
         final RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
-        //final ImageView switcherView = (ImageView) rootView.findViewById(R.id.map);
-        r.setScaleX(5.0f);
-        r.setScaleY(5.0f);
+        final ImageView switcherView = (ImageView) rootView.findViewById(R.id.map);
+        //r.setScaleX(5.0f);
+        //r.setScaleY(5.0f);
 
         //List<PointOfInterest> l = ((IndoorActivity) getActivity()).getData();
         //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
@@ -100,8 +106,8 @@ public class IndoorMapFragment extends Fragment {
                             scaleFactor = (scaleFactor < 1.0f) ? 1.0f : scaleFactor;
 
                             Log.d("map_indoor", "Two fingers: scaleFactor = " + scaleFactor + ", diff = " + diff);
-                            r.setScaleX(scaleFactor);
-                            r.setScaleY(scaleFactor);
+                            //r.setScaleX(scaleFactor);
+                            //r.setScaleY(scaleFactor);
                             mx = event.getX(0);
                             my = event.getY(0);
                             mx2 = event.getX(1);
@@ -119,16 +125,19 @@ public class IndoorMapFragment extends Fragment {
                             float deltaX = mx-curX;
                             float deltaY = my-curY;
 
-                            Log.d("map_indoor", "One finger: deltaX = " + deltaX + ", deltaY = " + deltaY);
+                            //Log.d("map_indoor", "One finger: deltaX = " + deltaX + ", deltaY = " + deltaY);
                             Log.d("map_indoor", "posX = " + event.getRawX() + ", posY = " + event.getRawY());
+                            Log.d("map_indoor", "transX = " + r.getTranslationX() + ", transY = " + r.getTranslationY());
 //                            float tempx = event.getRawX();
 //                            float tempy = event.getRawY();
 
                             int[] viewCoords = new int[2];
                             r.getLocationOnScreen(viewCoords);
-                            int imageX = (int) event.getX() - viewCoords[0];
-                            int imageY = (int) event.getY() - viewCoords[1];
-                            addPoint(r, imageX, imageY);
+                            int imageX = viewCoords[0];
+                            int imageY = viewCoords[1];
+
+                            //This coordinate transformation should be moved into its own function
+                            addPoint(r, event.getRawX()-r.getWidth()/2-r.getTranslationX(), event.getRawY()-r.getHeight()/2-100-r.getTranslationY());
 
                             r.setTranslationX(posX - deltaX);
                             r.setTranslationY(posY - deltaY);
@@ -157,4 +166,112 @@ public class IndoorMapFragment extends Fragment {
         point.setImageResource(R.drawable.map_marker);
         parent.addView(point);
     }
+
+
+
+
+/*
+    public class MyImageView extends ImageView {
+        private ScaleGestureDetector mScaleDetector;
+        private static final int MAX_SIZE = 1024;
+
+        private static final String TAG = "MyImageView";
+        PointF DownPT = new PointF(); // Record Mouse Position When Pressed Down
+        PointF StartPT = new PointF(); // Record Start Position of 'img'
+
+        public MyImageView(Context context) {
+            super(context);
+            mScaleDetector = new ScaleGestureDetector(context, new MySimpleOnScaleGestureListener());
+            setBackgroundColor(Color.RED);
+            setScaleType(ScaleType.MATRIX);
+            setAdjustViewBounds(true);
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+            lp.setMargins(-MAX_SIZE, -MAX_SIZE, -MAX_SIZE, -MAX_SIZE);
+            this.setLayoutParams(lp);
+            this.setX(MAX_SIZE);
+            this.setY(MAX_SIZE);
+
+        }
+
+        int firstPointerID;
+        boolean inScaling = false;
+
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+            // get pointer index from the event object
+            int pointerIndex = event.getActionIndex();
+            // get pointer ID
+            int pointerId = event.getPointerId(pointerIndex);
+            //First send event to scale detector to find out, if it's a scale
+            boolean res = mScaleDetector.onTouchEvent(event);
+
+            if (!mScaleDetector.isInProgress()) {
+                int eid = event.getAction();
+                switch (eid & MotionEvent.ACTION_MASK) {
+                    case MotionEvent.ACTION_MOVE:
+                        if (pointerId == firstPointerID) {
+
+                            PointF mv = new PointF((int) (event.getX() - DownPT.x), (int) (event.getY() - DownPT.y));
+
+                            this.setX((int) (StartPT.x + mv.x));
+                            this.setY((int) (StartPT.y + mv.y));
+                            StartPT = new PointF(this.getX(), this.getY());
+
+                        }
+                        break;
+                    case MotionEvent.ACTION_DOWN: {
+                        firstPointerID = pointerId;
+                        DownPT.x = (int) event.getX();
+                        DownPT.y = (int) event.getY();
+                        StartPT = new PointF(this.getX(), this.getY());
+                        break;
+                    }
+                    case MotionEvent.ACTION_POINTER_DOWN: {
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_POINTER_UP:
+                    case MotionEvent.ACTION_CANCEL: {
+                        firstPointerID = -1;
+                        break;
+                    }
+                    default:
+                        break;
+                }
+                return true;
+            }
+            return true;
+
+        }
+
+        public boolean onScaling(ScaleGestureDetector detector) {
+
+            this.setScaleX(this.getScaleX() * detector.getScaleFactor());
+            this.setScaleY(this.getScaleY() * detector.getScaleFactor());
+            invalidate();
+            return true;
+        }
+
+        private class MySimpleOnScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+
+
+            @Override
+            public boolean onScale(ScaleGestureDetector detector) {
+                return onScaling(detector);
+            }
+
+            @Override
+            public boolean onScaleBegin(ScaleGestureDetector detector) {
+                Log.d(TAG, "onScaleBegin");
+                return true;
+            }
+
+            @Override
+            public void onScaleEnd(ScaleGestureDetector arg0) {
+                Log.d(TAG, "onScaleEnd");
+            }
+        }
+    }
+*/
 }
