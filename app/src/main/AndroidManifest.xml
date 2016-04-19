@@ -22,12 +22,10 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".indoor.IndoorActivity"
-            android:label="@string/title_activity_indoor"
             android:parentActivityName=".outdoor.OutdoorActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".outdoor.OutdoorActivity"
-            android:label="@string/title_activity_outdoor"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

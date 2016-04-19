@@ -1,9 +1,11 @@
 package com.example.micke.lions.indoor;
 
 import android.app.DialogFragment;
+import android.app.ListFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -38,6 +40,9 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
     public IndoorMapFragment map;
     public IndoorListFragment list;
     public IndoorQRFragment qr;
+    public QRFragment qr;
+    public FloorAdapter floorAdapter;
+    private String filterText;
 
     @Override
     public void onCreate(Bundle state) {
@@ -62,12 +67,10 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(1);
 
-        myDataset = fireBaseHandler.getPoints(buildingId, this);
+        myDataset = fireBaseHandler.getPoints(buildingId, this, false);
 
-        // specify an adapter
         ipadapter = new ipAdapter(this, myDataset);
-        //ipRecyclerView.setAdapter(ipadapter);
-
+        floorAdapter = new FloorAdapter(this, myDataset);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         assert fab != null;
@@ -112,7 +115,6 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
         // return super.onOptionsItemSelected(item);
 
         int id = item.getItemId();
-        Log.d("ItemClicked", "Item: " + item.toString());
         if (id == R.id.item_add) {
             AddPointDialogFragment newFragment = new AddPointDialogFragment();
             Bundle bundle = new Bundle();
@@ -132,20 +134,26 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
     }
 
     @Override
+    public void fetchDataDone() {
+        filterTextFunction(filterText);
+    }
+
+    @Override
     public boolean onQueryTextSubmit(String query) {
         return false;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        final List<PointOfInterest> filteredDataset = filter(myDataset, newText);
-        ipadapter.updateAdapter(filteredDataset);
-       // dataSetChanged();
-      //  getSupportFragmentManager().findFragmentById(R.id.ip_recycler_view).getView().scrollToPosition(0);
-        //ipRecyclerView.scrollToPosition(0);
+        filterText = newText;
+        myDataset = fireBaseHandler.getPoints(buildingId, this, true);
 
-      //  Log.d("new filtered list", filteredDataset.get(0).title);
         return true;
+    }
+
+    public void filterTextFunction(String text) {
+        final List<PointOfInterest> filteredDataset = filter(myDataset, text);
+        ipadapter.updateAdapter(filteredDataset);
     }
 
     private List<PointOfInterest> filter(List<PointOfInterest> myDataset, String query){
