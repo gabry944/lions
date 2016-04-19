@@ -7,4 +7,5 @@ public interface DataSetChanged {
 
     public void dataSetChanged();
 
+    void fetchDataDone();
 }
