@@ -146,4 +146,8 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
         else
             super.onBackPressed();
     }
+
+    public String getBuildingId() {
+        return buildingId;
+    }
 }

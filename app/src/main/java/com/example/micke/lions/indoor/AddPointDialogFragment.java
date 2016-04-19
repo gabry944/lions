@@ -28,8 +28,8 @@ public class AddPointDialogFragment extends DialogFragment {
 
         //Get arguments - reference to firebase database
         Bundle bundle = this.getArguments();
-        final FireBaseIndoor fireBaseBuilding = (FireBaseIndoor) bundle.getSerializable("firebase");
-
+        //final FireBaseIndoor fireBaseBuilding = (FireBaseIndoor) bundle.getSerializable("firebase");
+        final FireBaseIndoor fireBaseIndoor = ((IndoorActivity) getActivity()).getFireBaseHandler();
         final float point1 = bundle.getFloat("lat", 0);
         final float point2 = bundle.getFloat("lng", 0);
 
@@ -42,14 +42,14 @@ public class AddPointDialogFragment extends DialogFragment {
                         EditText title = (EditText) dialogView.findViewById(R.id.add_point_title);
                         EditText description = (EditText) dialogView.findViewById(R.id.add_point_description);
                         EditText category = (EditText) dialogView.findViewById(R.id.add_point_category);
-                        String ipId = fireBaseBuilding.generateId();
+                        String ipId = fireBaseIndoor.generateId();
 
                         if(!title.getText().toString().equals("") &&
                                 !description.getText().toString().equals("") &&
                                 !category.getText().toString().equals("")) {
                             PointOfInterest point = new PointOfInterest(title.getText().toString(),
                                     description.getText().toString(), category.getText().toString(), point1, point2, ipId);
-                            fireBaseBuilding.updateIp(point, 4);
+                            fireBaseIndoor.updateIp(point, 4);
                         }
                     }
                 })
