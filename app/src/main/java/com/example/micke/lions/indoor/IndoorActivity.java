@@ -1,9 +1,11 @@
 package com.example.micke.lions.indoor;
 
 import android.app.DialogFragment;
+import android.app.ListFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -39,6 +41,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
     public IndoorMapFragment map;
     public IndoorListFragment list;
     public QRFragment qr;
+    public FloorAdapter floorAdapter;
 
     @Override
     public void onCreate(Bundle state) {
@@ -67,6 +70,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
 
         // specify an adapter
         ipadapter = new ipAdapter(this, myDataset);
+        floorAdapter = new FloorAdapter(this, myDataset);
         //ipRecyclerView.setAdapter(ipadapter);
 
 
@@ -75,13 +79,16 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment newFragment = new AddPointDialogFragment();
+                /*DialogFragment newFragment = new AddPointDialogFragment();
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("firebase", fireBaseHandler);
                 newFragment.setArguments(bundle);
                 newFragment.show(getFragmentManager(), "add_point_layout");
 //                Snackbar.make(view, "BLablabla", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
+//                        .setAction("Action", null).show();*/
+
+                Fragment newFragment = new ShowFloorsFragment();
+                //newFragment.show(getFragmentManager(), "add_point_layout");
             }
         });
 

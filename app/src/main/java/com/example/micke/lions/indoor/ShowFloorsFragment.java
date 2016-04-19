@@ -16,7 +16,7 @@ import com.example.micke.lions.R;
  * A placeholder fragment containing a simple view.
  */
 
-public class IndoorListFragment extends Fragment {
+public class ShowFloorsFragment extends Fragment {
 
     String ILF = "IndoorListFragment";
 
@@ -30,15 +30,15 @@ public class IndoorListFragment extends Fragment {
     private RecyclerView ipRecyclerView;
     private RecyclerView.LayoutManager ipLayoutManager;
 
-    public IndoorListFragment() {
+    public ShowFloorsFragment() {
     }
 
     /**
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static IndoorListFragment newInstance(int sectionNumber) {
-        IndoorListFragment fragment = new IndoorListFragment();
+    public static ShowFloorsFragment newInstance(int sectionNumber) {
+        ShowFloorsFragment fragment = new ShowFloorsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
@@ -51,14 +51,14 @@ public class IndoorListFragment extends Fragment {
 
         String buildingId = "1";
 
-        View rootView = inflater.inflate(R.layout.fragment_indoor_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_show_floors, container, false);
 
         ipRecyclerView = (RecyclerView) rootView.findViewById(R.id.ip_recycler_view);
         ipRecyclerView.setHasFixedSize(true);
         ipLayoutManager = new LinearLayoutManager(getActivity());
         ipRecyclerView.setLayoutManager(ipLayoutManager);
 
-        ipRecyclerView.setAdapter(((IndoorActivity) getActivity()).getAdapter());
+        ipRecyclerView.setAdapter(((IndoorActivity) getActivity()).floorAdapter);
 
         return rootView;
     }
