@@ -120,7 +120,12 @@ public class OutdoorActivity extends AppCompatActivity implements DataSetChanged
 
     @Override
     public void dataSetChanged() {
-        Log.d("com/example/micke/lions/outdoor", "dataSetChanged com.example.micke.lions.outdoor");
+        Log.d("com", "dataSetChanged com.example.micke.lions.outdoor");
+    }
+
+    @Override
+    public void fetchDataDone() {
+
     }
 
     public FireBaseOutdoor getFireBaseHandler() {
