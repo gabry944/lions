@@ -20,7 +20,6 @@
             android:id="@+id/map"
             android:scaleType="fitCenter"
             android:background="#fff"
-            android:src="@drawable/map"
             />
 
     </RelativeLayout>

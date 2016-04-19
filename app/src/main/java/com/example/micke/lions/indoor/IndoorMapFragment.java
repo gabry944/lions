@@ -14,6 +14,8 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -23,6 +25,7 @@ import com.example.micke.lions.R;
  * A placeholder fragment containing a simple view.
  */
 public class IndoorMapFragment extends Fragment {
+    String TAG = "IndoorMapFragment";
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -55,10 +58,26 @@ public class IndoorMapFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.activity_indoor_map, container, false);
 
         final RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
-        //r.setScaleX(5.0f);
-        //r.setScaleY(5.0f);
+        r.setScaleX(5.0f);
+        r.setScaleY(5.0f);
+
+        final ImageView i = (ImageView) rootView.findViewById(R.id.map);
+        i.setImageResource(R.drawable.map_t3);
 
         setHasOptionsMenu(true);
+
+        //List<PointOfInterest> l = ((IndoorActivity) getActivity()).getData();
+
+        r.setLongClickable(true);
+        r.setClickable(true);
+        r.setOnLongClickListener(new View.OnLongClickListener() {
+            public boolean onLongClick(View arg0) {
+                Log.d(TAG, "onLongClick: innan");
+                addPoint(r, 0, 0);
+                Log.d(TAG, "onLongClick: efter ");
+                return false;
+            }
+        });
 
         r.setOnTouchListener(new View.OnTouchListener() {
 
@@ -68,6 +87,8 @@ public class IndoorMapFragment extends Fragment {
 
                 final float SCROLLSPEED = 30.0f;
                 final float ZOOMSPEED = 50.0f;
+
+                boolean handledEvent = false;
 
 
                 switch (event.getActionMasked()) {
@@ -91,25 +112,28 @@ public class IndoorMapFragment extends Fragment {
                             float newZoomVectorX = event.getX(0) - event.getX(1);
                             float newZoomVectorY = event.getY(0) - event.getY(1);
 
-                            double diff = ((double) scaleFactor / 5.0) *
-                                    (Math.sqrt(Math.pow(newZoomVectorX, 2.0) + Math.pow(newZoomVectorY, 2.0)) -
-                                            Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)));
+                            double diff = (double) scaleFactor * 20 *
+                                    ((Math.sqrt(Math.pow(newZoomVectorX, 2.0) + Math.pow(newZoomVectorY, 2.0)) -
+                                            Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)))
+                                            / Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)));
 
-                            if (diff != 0)
-                                diff = 25* Math.signum(diff) * 1 / Math.pow(diff, 2.0);
+                            //if (diff != 0)
+                            //    diff = 25* Math.signum(diff) * 1 / Math.pow(diff, 2.0);
                             diff = (diff < -ZOOMSPEED) ? -ZOOMSPEED : diff;
                             diff = (diff > ZOOMSPEED) ? ZOOMSPEED : diff;
-                            scaleFactor += 0.01 * diff;
+                            scaleFactor += 0.02 * diff;
                             scaleFactor = (scaleFactor > 10.0f) ? 10.0f : scaleFactor;
                             scaleFactor = (scaleFactor < 1.0f) ? 1.0f : scaleFactor;
 
                             Log.d("map_indoor", "Two fingers: scaleFactor = " + scaleFactor + ", diff = " + diff);
-                            //r.setScaleX(scaleFactor);
-                            //r.setScaleY(scaleFactor);
+                            r.setScaleX(scaleFactor);
+                            r.setScaleY(scaleFactor);
                             mx = event.getX(0);
                             my = event.getY(0);
                             mx2 = event.getX(1);
                             my2 = event.getY(1);
+
+                            handledEvent = true;
                         }
                         //Check if user want to drag the map
                         else if (event.getPointerCount() == 1) {
@@ -126,21 +150,18 @@ public class IndoorMapFragment extends Fragment {
                             Log.d("map_indoor", "transX = " + r.getTranslationX() + ", transY = " + r.getTranslationY());
 
                             //This coordinate transformation should be moved into its own function
-                            addPoint(r, event.getRawX() - r.getWidth() / 2 - r.getTranslationX(), event.getRawY() - r.getHeight() / 2 - 100 - r.getTranslationY());
+                            //addPoint(r, (event.getRawX() - r.getWidth() / 2 - r.getTranslationX())/scaleFactor, (event.getRawY() - r.getHeight() / 2 - 100 - r.getTranslationY())/scaleFactor);
 
-                            posX = (posX > 1000) ? 999 : posX;
-                            posX = (posX < -1000) ? -999 : posX;
-                            posY = (posY > 1000) ? 999 : posY;
-                            posY = (posY < -1000) ? -999 : posY;
-                            r.setTranslationX(posX - deltaX*0.5f);
-                            r.setTranslationY(posY - deltaY*0.5f);
+                            r.setTranslationX(posX - deltaX);
+                            r.setTranslationY(posY - deltaY);
+
 
                             mx = curX;
                             my = curY;
                         }
                 }
 
-                return true;
+                return handledEvent;
             }
         });
 
