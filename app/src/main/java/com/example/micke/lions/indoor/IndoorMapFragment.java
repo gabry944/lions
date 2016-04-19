@@ -1,26 +1,23 @@
 package com.example.micke.lions.indoor;
 
 import android.app.DialogFragment;
-import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-
 import com.example.micke.lions.R;
+
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -31,6 +28,8 @@ public class IndoorMapFragment extends Fragment {
      * The fragment argument representing the section number for this
      * fragment.
      */
+    private RecyclerView mFloorRecyclerView;
+    private RecyclerView.LayoutManager mFloorLayoutManager;
 
     private float mx, mx2;  //2 is for the second finger. Used for zooming
     private float my, my2;
@@ -57,8 +56,18 @@ public class IndoorMapFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.activity_indoor_map, container, false);
 
+        //For list of floors
+        mFloorRecyclerView = (RecyclerView) rootView.findViewById(R.id.floor_recycler_view);
+        mFloorRecyclerView.setHasFixedSize(true);
+        mFloorLayoutManager = new LinearLayoutManager(getActivity());
+        mFloorRecyclerView.setLayoutManager(mFloorLayoutManager);
+
+        mFloorRecyclerView.setAdapter(((IndoorActivity) getActivity()).floorAdapter);
+
+        //For the map
         final RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
         r.setScaleX(5.0f);
         r.setScaleY(5.0f);
@@ -68,7 +77,10 @@ public class IndoorMapFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-        //List<PointOfInterest> l = ((IndoorActivity) getActivity()).getData();
+        List<PointOfInterest> l = ((IndoorActivity) getActivity()).getData();
+        for(PointOfInterest p : l) {
+            addPoint(r, p.getLatitude(), p.getLongitude());
+        }
 
         r.setLongClickable(true);
         r.setClickable(true);
@@ -76,12 +88,17 @@ public class IndoorMapFragment extends Fragment {
             public boolean onLongClick(View arg0) {
 
                 if(longClick) {
-                    addPoint(r, mx - r.getWidth() / 2,
-                            my - r.getHeight() / 2 + 60);
+//                    addPoint(r, mx - r.getWidth() / 2,
+//                            my - r.getHeight() / 2 + 60);
 
+                    float[] point = new float[2];
+                    point[0] = mx - r.getWidth() / 2;
+                    point[1] = my - r.getHeight() / 2 + 60;
                     DialogFragment newFragment = new AddPointDialogFragment();
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("firebase", ((IndoorActivity) getActivity()).getFireBaseHandler());
+                    bundle.putFloat("lat", point[0]);
+                    bundle.putFloat("lng", point[1]);
                     newFragment.setArguments(bundle);
                     newFragment.show(getActivity().getFragmentManager(), "add_point_layout");
                 }
@@ -199,7 +216,7 @@ public class IndoorMapFragment extends Fragment {
         point.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("TAG", "Klickar på pungtjävel " + "posX = " + posX  + " posY = " + posY );
+                Log.d("TAG", "Klickar på pungtjävel " + "posX = " + posX + " posY = " + posY);
             }
         });
     }
@@ -208,6 +225,24 @@ public class IndoorMapFragment extends Fragment {
     public void onCreateOptionsMenu(
             Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_indoor_map, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+        // return super.onOptionsItemSelected(item);
+
+        int id = item.getItemId();
+        if (id == R.id.floors) {
+            if(getActivity().findViewById(R.id.floor_recycler_view).getVisibility() == View.GONE)
+                getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.VISIBLE);
+            else
+                getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.GONE);
+        }
+        return false;
     }
 }
 

@@ -12,7 +12,7 @@ public class PointOfInterest {
 
     }
 
-    public PointOfInterest(String title, String description, String category, float longitude, float latitude, String id){
+    public PointOfInterest(String title, String description, String category, float latitude, float longitude, String id){
         this.category = category;
         if(title == "")
             this.title = category;

@@ -22,7 +22,7 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
     public boolean isExpanded = false;
     private int temphHeight;
     private View tempView;
-    private String TAG = "ipAdapter";
+    private String TAG = "FloorAdapter";
     private Context mContext;
 
     // Provide a reference to the views for each data item
@@ -72,7 +72,7 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        holder.mContentView.setText(ipDataset.get(position).getDescription());
+        holder.mContentView.setText("Floor 1");
 
 
         //To expand an "item" in the recyclerview
