@@ -163,16 +163,14 @@ public class IndoorMapFragment extends Fragment {
         Log.d("IndoorMapFragment", "highlightIP: ipID = " + ipID);
     }
 
-    private void addPoint(RelativeLayout parent, final float posX, final float posY) {
-        ImageView point = new ImageView(getContext());
-        point.setX(posX);
-        point.setY(posY);
-        point.setScaleX(0.05f);
-        point.setScaleY(0.05f);
-        point.setImageResource(R.drawable.map_marker);
-        parent.addView(point);
 
-        point.setOnClickListener(new View.OnClickListener() {
+    private void addPoint(RelativeLayout parent, final float posX, final float posY) {
+
+        PointOfInterest dummyPoint = new PointOfInterest("dummyTitle", "dummyDescription", "dummyCategory", 0, 0, "dummyId");
+        IndoormapMarker point = new IndoormapMarker(dummyPoint, posX, posY, getContext());
+        parent.addView(point.getMarker());
+
+        point.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("TAG", "Klickar på pungtjävel " + "posX = " + posX  + " posY = " + posY );
