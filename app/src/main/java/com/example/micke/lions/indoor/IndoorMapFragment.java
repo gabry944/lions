@@ -1,5 +1,8 @@
 package com.example.micke.lions.indoor;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -8,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -50,10 +54,12 @@ public class IndoorMapFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_indoor_map, container, false);
 
+        //final MyImageView switcherView;
+
         final RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
-        //final ImageView switcherView = (ImageView) rootView.findViewById(R.id.map);
-        r.setScaleX(5.0f);
-        r.setScaleY(5.0f);
+        final ImageView switcherView = (ImageView) rootView.findViewById(R.id.map);
+        //r.setScaleX(5.0f);
+        //r.setScaleY(5.0f);
 
         setHasOptionsMenu(true);
 
@@ -105,8 +111,8 @@ public class IndoorMapFragment extends Fragment {
                             scaleFactor = (scaleFactor < 1.0f) ? 1.0f : scaleFactor;
 
                             Log.d("map_indoor", "Two fingers: scaleFactor = " + scaleFactor + ", diff = " + diff);
-                            r.setScaleX(scaleFactor);
-                            r.setScaleY(scaleFactor);
+                            //r.setScaleX(scaleFactor);
+                            //r.setScaleY(scaleFactor);
                             mx = event.getX(0);
                             my = event.getY(0);
                             mx2 = event.getX(1);
@@ -119,12 +125,25 @@ public class IndoorMapFragment extends Fragment {
 
                             posX = r.getTranslationX();
                             posY = r.getTranslationY();
-                            float deltaX = (scaleFactor / 2.0f) * Math.abs(mx - curX) < SCROLLSPEED ? (scaleFactor / 2.0f) * (mx - curX) : Math.signum((mx - curX)) * SCROLLSPEED;
-                            float deltaY = (scaleFactor / 2.0f) * Math.abs(my - curY) < SCROLLSPEED ? (scaleFactor / 2.0f) * (my - curY) : Math.signum((my - curY)) * SCROLLSPEED;
 
-                            Log.d("map_indoor", "One finger: deltaX = " + deltaX + ", deltaY = " + deltaY);
+//                            float deltaX = (scaleFactor/2.0f)*Math.abs(mx - curX) < SCROLLSPEED ? (scaleFactor/2.0f)*(mx - curX) : Math.signum((mx - curX)) * SCROLLSPEED;
+//                            float deltaY = (scaleFactor/2.0f)*Math.abs(my - curY) < SCROLLSPEED ? (scaleFactor / 2.0f) * (my - curY) : Math.signum((my - curY)) * SCROLLSPEED;
+                            float deltaX = mx-curX;
+                            float deltaY = my-curY;
+
+                            //Log.d("map_indoor", "One finger: deltaX = " + deltaX + ", deltaY = " + deltaY);
                             Log.d("map_indoor", "posX = " + event.getRawX() + ", posY = " + event.getRawY());
-                            addPoint(r, event.getRawX(), event.getRawY());
+                            Log.d("map_indoor", "transX = " + r.getTranslationX() + ", transY = " + r.getTranslationY());
+//                            float tempx = event.getRawX();
+//                            float tempy = event.getRawY();
+
+                            int[] viewCoords = new int[2];
+                            r.getLocationOnScreen(viewCoords);
+                            int imageX = viewCoords[0];
+                            int imageY = viewCoords[1];
+
+                            //This coordinate transformation should be moved into its own function
+                            addPoint(r, event.getRawX()-r.getWidth()/2-r.getTranslationX(), event.getRawY()-r.getHeight()/2-100-r.getTranslationY());
 
                             r.setTranslationX(posX - deltaX);
                             r.setTranslationY(posY - deltaY);
