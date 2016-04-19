@@ -74,7 +74,7 @@ public class IndoorMapFragment extends Fragment {
         r.setClickable(true);
         r.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View arg0) {
-                
+
                 if(longClick) {
                     addPoint(r, mx - r.getWidth() / 2,
                             my - r.getHeight() / 2 + 60);
