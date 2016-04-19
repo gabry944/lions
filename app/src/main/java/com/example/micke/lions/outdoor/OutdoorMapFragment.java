@@ -181,4 +181,9 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
         buildings = list;
         loadAllBuildings();
     }
+
+    @Override
+    public void panToMarker(LatLng point) {
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 18));
+    }
 }

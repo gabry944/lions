@@ -35,6 +35,7 @@ public class IndoorMapFragment extends Fragment {
     private float mx, mx2;  //2 is for the second finger. Used for zooming
     private float my, my2;
     private float scaleFactor = 5.0f;
+    private boolean longClick = true;  //turns to false if user moves fingers
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -59,42 +60,49 @@ public class IndoorMapFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.activity_indoor_map, container, false);
 
         final RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
-        r.setScaleX(10.0f);
-        r.setScaleY(10.0f);
+        r.setScaleX(5.0f);
+        r.setScaleY(5.0f);
+
+        final ImageView i = (ImageView) rootView.findViewById(R.id.map);
+        i.setImageResource(R.drawable.map_t3);
 
         setHasOptionsMenu(true);
 
         //List<PointOfInterest> l = ((IndoorActivity) getActivity()).getData();
-        //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
-        //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
-        //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
 
         r.setLongClickable(true);
         r.setClickable(true);
         r.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View arg0) {
+
                 Log.d(TAG, "onLongClick: innan");
                 addPoint(r, 0, 0);
                 Log.d(TAG, "onLongClick: efter ");
 
-                DialogFragment newFragment = new AddPointDialogFragment();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("firebase", ((IndoorActivity) getActivity()).getFireBaseHandler());
-                newFragment.setArguments(bundle);
-                newFragment.show(getActivity().getFragmentManager(), "add_point_layout");
-                return true;
+                if(longClick) {
+                    addPoint(r, mx - r.getWidth() / 2,
+                            my - r.getHeight() / 2 + 60);
+
+                    DialogFragment newFragment = new AddPointDialogFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("firebase", ((IndoorActivity) getActivity()).getFireBaseHandler());
+                    newFragment.setArguments(bundle);
+                    newFragment.show(getActivity().getFragmentManager(), "add_point_layout");
+                }
+                        Log.d("map_indoor", "onLongClick: " + longClick);
+                return false;
             }
         });
 
         r.setOnTouchListener(new View.OnTouchListener() {
 
             public boolean onTouch(View arg0, MotionEvent event) {
+
                 float posX, posY;
                 float curX, curY;
 
                 final float SCROLLSPEED = 30.0f;
                 final float ZOOMSPEED = 50.0f;
-
 
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
@@ -109,15 +117,15 @@ public class IndoorMapFragment extends Fragment {
 
                         break;
                     case MotionEvent.ACTION_MOVE:
-
                         //Check if user want to zoom
                         if (event.getPointerCount() == 2) {
-
+                            longClick = false;
                             float zoomVectorX = mx - mx2;
                             float zoomVectorY = my - my2;
                             float newZoomVectorX = event.getX(0) - event.getX(1);
                             float newZoomVectorY = event.getY(0) - event.getY(1);
 
+                            //diff = distance between finger motion based on percentage difference
                             double diff = (double) scaleFactor * 20 *
                                     ((Math.sqrt(Math.pow(newZoomVectorX, 2.0) + Math.pow(newZoomVectorY, 2.0)) -
                                             Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)))
@@ -151,10 +159,13 @@ public class IndoorMapFragment extends Fragment {
                             float deltaY = my - curY;
 
                             Log.d("map_indoor", "posX = " + event.getRawX() + ", posY = " + event.getRawY());
-                            Log.d("map_indoor", "transX = " + r.getTranslationX() + ", transY = " + r.getTranslationY());
+                            Log.d("map_indoor", "deltaX = " + deltaX + ", deltaY = " + deltaY);
 
+                            if(deltaX+deltaY > 0.1)
+                                longClick = false;
                             //This coordinate transformation should be moved into its own function
-                            //addPoint(r, (event.getRawX() - r.getWidth() / 2 - r.getTranslationX())/scaleFactor, (event.getRawY() - r.getHeight() / 2 - 100 - r.getTranslationY())/scaleFactor);
+                            //addPoint(r, (event.getRawX() - r.getWidth() / 2 - r.getTranslationX())/scaleFactor,
+                            // (event.getRawY() - r.getHeight() / 2 - 100 - r.getTranslationY())/scaleFactor);
 
                             r.setTranslationX(posX - deltaX);
                             r.setTranslationY(posY - deltaY);
@@ -163,6 +174,12 @@ public class IndoorMapFragment extends Fragment {
                             mx = curX;
                             my = curY;
                         }
+
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        longClick = true;
+                        break;
 
                 }
 
