@@ -9,6 +9,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -94,11 +95,22 @@ public class FireBaseOutdoor extends FireBaseHandler implements Serializable {
             }
 
             @Override
-            public void onCancelled(FirebaseError error) {
-            }
+            public void onCancelled(FirebaseError error) {}
         });
 
 //        return car;
     }
 
+    public void goToBuilding(String id, final BuildingDataSetChanged map) {
+        myFirebaseRef.child("building/" + id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Building building = new Building(snapshot.getValue(Building.class));
+                map.panToMarker(new LatLng(building.getLatitude(), building.getLongitude()));
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {}
+        });
+    }
 }
