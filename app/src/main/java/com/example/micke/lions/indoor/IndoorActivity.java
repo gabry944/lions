@@ -171,5 +171,6 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
 
     public ipAdapter getAdapter(){ return ipadapter; }
     public List<PointOfInterest> getData() { return myDataset; }
+    public FireBaseIndoor getFireBaseHandler() { return fireBaseHandler; }
 
 }
