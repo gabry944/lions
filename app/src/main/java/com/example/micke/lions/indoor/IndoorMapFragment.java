@@ -58,15 +58,15 @@ public class IndoorMapFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.activity_indoor_map, container, false);
 
         final RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
-        r.setScaleX(10.0f);
-        r.setScaleY(10.0f);
+        r.setScaleX(5.0f);
+        r.setScaleY(5.0f);
+
+        final ImageView i = (ImageView) rootView.findViewById(R.id.map);
+        i.setImageResource(R.drawable.map_t3);
 
         setHasOptionsMenu(true);
 
         //List<PointOfInterest> l = ((IndoorActivity) getActivity()).getData();
-        //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
-        //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
-        //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
 
         r.setLongClickable(true);
         r.setClickable(true);
