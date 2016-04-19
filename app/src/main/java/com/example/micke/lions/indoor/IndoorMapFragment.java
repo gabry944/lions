@@ -88,6 +88,8 @@ public class IndoorMapFragment extends Fragment {
                 final float SCROLLSPEED = 30.0f;
                 final float ZOOMSPEED = 50.0f;
 
+                boolean handledEvent = false;
+
 
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
@@ -130,6 +132,8 @@ public class IndoorMapFragment extends Fragment {
                             my = event.getY(0);
                             mx2 = event.getX(1);
                             my2 = event.getY(1);
+
+                            handledEvent = true;
                         }
                         //Check if user want to drag the map
                         else if (event.getPointerCount() == 1) {
@@ -157,7 +161,7 @@ public class IndoorMapFragment extends Fragment {
                         }
                 }
 
-                return false;
+                return handledEvent;
             }
         });
 
