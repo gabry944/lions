@@ -14,6 +14,8 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -23,6 +25,7 @@ import com.example.micke.lions.R;
  * A placeholder fragment containing a simple view.
  */
 public class IndoorMapFragment extends Fragment {
+    String TAG = "IndoorMapFragment";
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -68,6 +71,16 @@ public class IndoorMapFragment extends Fragment {
         //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
         //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
 
+        r.setLongClickable(true);
+        r.setClickable(true);
+        r.setOnLongClickListener(new View.OnLongClickListener() {
+            public boolean onLongClick(View arg0) {
+                Log.d(TAG, "onLongClick: innan");
+                addPoint(r, 0, 0);
+                Log.d(TAG, "onLongClick: efter ");
+                return false;
+            }
+        });
 
         r.setOnTouchListener(new View.OnTouchListener() {
 
@@ -143,7 +156,7 @@ public class IndoorMapFragment extends Fragment {
                             int imageY = viewCoords[1];
 
                             //This coordinate transformation should be moved into its own function
-                            addPoint(r, event.getRawX()-r.getWidth()/2-r.getTranslationX(), event.getRawY()-r.getHeight()/2-100-r.getTranslationY());
+                            //addPoint(r, event.getRawX()-r.getWidth()/2-r.getTranslationX(), event.getRawY()-r.getHeight()/2-100-r.getTranslationY());
 
                             r.setTranslationX(posX - deltaX);
                             r.setTranslationY(posY - deltaY);
@@ -152,7 +165,7 @@ public class IndoorMapFragment extends Fragment {
                         }
                 }
 
-                return true;
+                return false;
             }
         });
 
