@@ -16,9 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.micke.lions.DataSetChanged;
-import com.example.micke.lions.FireBaseOutdoor;
 import com.example.micke.lions.indoor.IndoorActivity;
-import com.example.micke.lions.QRFragment;
 import com.example.micke.lions.R;
 
 import java.util.List;
@@ -32,7 +30,7 @@ public class OutdoorActivity extends AppCompatActivity implements DataSetChanged
     private List<Building> myDataset;
     public OutdoorMapFragment map;
     public OutdoorListFragment list;
-    public QRFragment qr;
+    public OutdoorQRFragment qr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,5 +128,9 @@ public class OutdoorActivity extends AppCompatActivity implements DataSetChanged
 
     public FireBaseOutdoor getFireBaseHandler() {
         return fireBaseHandler;
+    }
+
+    public ViewPager getViewPager() {
+        return mViewPager;
     }
 }

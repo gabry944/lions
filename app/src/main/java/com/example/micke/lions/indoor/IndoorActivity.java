@@ -19,8 +19,7 @@ import android.view.View;
 import android.widget.SearchView;
 
 import com.example.micke.lions.DataSetChanged;
-import com.example.micke.lions.FireBaseIndoor;
-import com.example.micke.lions.QRFragment;
+import com.example.micke.lions.outdoor.OutdoorQRFragment;
 import com.example.micke.lions.R;
 
 import java.util.ArrayList;
@@ -40,7 +39,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
     private String ipId;
     public IndoorMapFragment map;
     public IndoorListFragment list;
-    public QRFragment qr;
+    public IndoorQRFragment qr;
     public FloorAdapter floorAdapter;
     private String filterText;
 
@@ -122,7 +121,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
             newFragment.setArguments(bundle);
             newFragment.show(this.getFragmentManager(), "add_point_layout");
         } else if (id == R.id.item_camera) {
-            Intent intent = new Intent(getApplicationContext(), QRFragment.class);
+            Intent intent = new Intent(getApplicationContext(), OutdoorQRFragment.class);
             startActivity(intent);
         }
         return false;

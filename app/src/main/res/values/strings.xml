@@ -1,4 +1,4 @@
-<resources>
+﻿<resources>
     <string name="app_name">LIONS</string>
     <string name="item_add">Lägg till</string>
     <string name="add_point_title">Titel</string>
@@ -10,6 +10,9 @@
     <string name="title_activity_outdoor">Outdoor</string>
     <string name="title_activity_maps">Map</string>
     <string name="add_building_title">Byggnadsnamn</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+        AIzaSyASHmtMZSJWUzwX9CwMqe81hwAuOYl1lrc
+    </string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

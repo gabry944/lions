@@ -15,7 +15,7 @@ public class FireBaseHandler {
 
     protected Firebase myFirebaseRef;
 
-    FireBaseHandler(Context context) {
+    protected FireBaseHandler(Context context) {
         Firebase.setAndroidContext(context);
         myFirebaseRef = new Firebase("https://torrid-inferno-7041.firebaseio.com/");
     }
@@ -52,4 +52,5 @@ public class FireBaseHandler {
         Log.d("fb:id", temp.getKey().toString());
         return temp.getKey().toString();
     }
+
 }

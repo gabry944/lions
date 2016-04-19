@@ -57,10 +57,7 @@ public class IndoorMapFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_indoor_map, container, false);
 
-        //final MyImageView switcherView;
-
         final RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
-        final ImageView switcherView = (ImageView) rootView.findViewById(R.id.map);
         //r.setScaleX(5.0f);
         //r.setScaleY(5.0f);
 
@@ -89,7 +86,7 @@ public class IndoorMapFragment extends Fragment {
                 float curX, curY;
 
                 final float SCROLLSPEED = 30.0f;
-                final float ZOOMSPEED = 15.0f;
+                final float ZOOMSPEED = 50.0f;
 
 
                 switch (event.getActionMasked()) {
@@ -117,6 +114,8 @@ public class IndoorMapFragment extends Fragment {
                                     (Math.sqrt(Math.pow(newZoomVectorX, 2.0) + Math.pow(newZoomVectorY, 2.0)) -
                                             Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)));
 
+                            if (diff != 0)
+                                diff = 25* Math.signum(diff) * 1 / Math.pow(diff, 2.0);
                             diff = (diff < -ZOOMSPEED) ? -ZOOMSPEED : diff;
                             diff = (diff > ZOOMSPEED) ? ZOOMSPEED : diff;
                             scaleFactor += 0.01 * diff;
@@ -139,27 +138,23 @@ public class IndoorMapFragment extends Fragment {
                             posX = r.getTranslationX();
                             posY = r.getTranslationY();
 
-//                            float deltaX = (scaleFactor/2.0f)*Math.abs(mx - curX) < SCROLLSPEED ? (scaleFactor/2.0f)*(mx - curX) : Math.signum((mx - curX)) * SCROLLSPEED;
-//                            float deltaY = (scaleFactor/2.0f)*Math.abs(my - curY) < SCROLLSPEED ? (scaleFactor / 2.0f) * (my - curY) : Math.signum((my - curY)) * SCROLLSPEED;
-                            float deltaX = mx-curX;
-                            float deltaY = my-curY;
+                            float deltaX = mx - curX;
+                            float deltaY = my - curY;
 
-                            //Log.d("map_indoor", "One finger: deltaX = " + deltaX + ", deltaY = " + deltaY);
                             Log.d("map_indoor", "posX = " + event.getRawX() + ", posY = " + event.getRawY());
                             Log.d("map_indoor", "transX = " + r.getTranslationX() + ", transY = " + r.getTranslationY());
-//                            float tempx = event.getRawX();
-//                            float tempy = event.getRawY();
-
-                            int[] viewCoords = new int[2];
-                            r.getLocationOnScreen(viewCoords);
-                            int imageX = viewCoords[0];
-                            int imageY = viewCoords[1];
 
                             //This coordinate transformation should be moved into its own function
+
                             //addPoint(r, event.getRawX()-r.getWidth()/2-r.getTranslationX(), event.getRawY()-r.getHeight()/2-100-r.getTranslationY());
 
-                            r.setTranslationX(posX - deltaX);
-                            r.setTranslationY(posY - deltaY);
+                            posX = (posX > 1000) ? 999 : posX;
+                            posX = (posX < -1000) ? -999 : posX;
+                            posY = (posY > 1000) ? 999 : posY;
+                            posY = (posY < -1000) ? -999 : posY;
+                            r.setTranslationX(posX - deltaX*0.5f);
+                            r.setTranslationY(posY - deltaY*0.5f);
+
                             mx = curX;
                             my = curY;
                         }
@@ -175,7 +170,6 @@ public class IndoorMapFragment extends Fragment {
     public void highlightIP(String ipID) {
         Log.d("IndoorMapFragment", "highlightIP: ipID = " + ipID);
     }
-
 
     private void addPoint(RelativeLayout parent, final float posX, final float posY) {
 
@@ -196,5 +190,5 @@ public class IndoorMapFragment extends Fragment {
             Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_indoor_map, menu);
     }
-
 }
+
