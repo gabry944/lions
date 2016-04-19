@@ -63,7 +63,6 @@ public class IndoorMapFragment extends Fragment {
         //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
         //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
 
-
         r.setOnTouchListener(new View.OnTouchListener() {
 
             public boolean onTouch(View arg0, MotionEvent event) {
@@ -157,7 +156,7 @@ public class IndoorMapFragment extends Fragment {
         Log.d("IndoorMapFragment", "highlightIP: ipID = " + ipID);
     }
 
-    private void addPoint(RelativeLayout parent, float posX, float posY) {
+    private void addPoint(RelativeLayout parent, final float posX, final float posY) {
         ImageView point = new ImageView(getContext());
         point.setX(posX);
         point.setY(posY);
@@ -165,6 +164,13 @@ public class IndoorMapFragment extends Fragment {
         point.setScaleY(0.05f);
         point.setImageResource(R.drawable.map_marker);
         parent.addView(point);
+
+        point.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("TAG", "Klickar på pungtjävel " + "posX = " + posX + " posY = " + posY );
+            }
+        });
     }
 
 
