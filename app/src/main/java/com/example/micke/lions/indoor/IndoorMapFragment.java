@@ -1,10 +1,17 @@
 package com.example.micke.lions.indoor;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -47,10 +54,14 @@ public class IndoorMapFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_indoor_map, container, false);
 
+        //final MyImageView switcherView;
+
         final RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
-        //final ImageView switcherView = (ImageView) rootView.findViewById(R.id.map);
-        r.setScaleX(5.0f);
-        r.setScaleY(5.0f);
+        final ImageView switcherView = (ImageView) rootView.findViewById(R.id.map);
+        //r.setScaleX(5.0f);
+        //r.setScaleY(5.0f);
+
+        setHasOptionsMenu(true);
 
         //List<PointOfInterest> l = ((IndoorActivity) getActivity()).getData();
         //addPoint(r, 1000 * (float) Math.random(), 1000 * (float) Math.random());
@@ -89,9 +100,9 @@ public class IndoorMapFragment extends Fragment {
                             float newZoomVectorX = event.getX(0) - event.getX(1);
                             float newZoomVectorY = event.getY(0) - event.getY(1);
 
-                            double diff = ((double)scaleFactor/5.0) *
+                            double diff = ((double) scaleFactor / 5.0) *
                                     (Math.sqrt(Math.pow(newZoomVectorX, 2.0) + Math.pow(newZoomVectorY, 2.0)) -
-                                    Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)));
+                                            Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)));
 
                             diff = (diff < -ZOOMSPEED) ? -ZOOMSPEED : diff;
                             diff = (diff > ZOOMSPEED) ? ZOOMSPEED : diff;
@@ -100,8 +111,8 @@ public class IndoorMapFragment extends Fragment {
                             scaleFactor = (scaleFactor < 1.0f) ? 1.0f : scaleFactor;
 
                             Log.d("map_indoor", "Two fingers: scaleFactor = " + scaleFactor + ", diff = " + diff);
-                            r.setScaleX(scaleFactor);
-                            r.setScaleY(scaleFactor);
+                            //r.setScaleX(scaleFactor);
+                            //r.setScaleY(scaleFactor);
                             mx = event.getX(0);
                             my = event.getY(0);
                             mx2 = event.getX(1);
@@ -114,12 +125,25 @@ public class IndoorMapFragment extends Fragment {
 
                             posX = r.getTranslationX();
                             posY = r.getTranslationY();
-                            float deltaX = (scaleFactor/2.0f)*Math.abs(mx - curX) < SCROLLSPEED ? (scaleFactor/2.0f)*(mx - curX) : Math.signum((mx - curX)) * SCROLLSPEED;
-                            float deltaY = (scaleFactor/2.0f)*Math.abs(my - curY) < SCROLLSPEED ? (scaleFactor / 2.0f) * (my - curY) : Math.signum((my - curY)) * SCROLLSPEED;
 
-                            Log.d("map_indoor", "One finger: deltaX = " + deltaX + ", deltaY = " + deltaY);
+//                            float deltaX = (scaleFactor/2.0f)*Math.abs(mx - curX) < SCROLLSPEED ? (scaleFactor/2.0f)*(mx - curX) : Math.signum((mx - curX)) * SCROLLSPEED;
+//                            float deltaY = (scaleFactor/2.0f)*Math.abs(my - curY) < SCROLLSPEED ? (scaleFactor / 2.0f) * (my - curY) : Math.signum((my - curY)) * SCROLLSPEED;
+                            float deltaX = mx-curX;
+                            float deltaY = my-curY;
+
+                            //Log.d("map_indoor", "One finger: deltaX = " + deltaX + ", deltaY = " + deltaY);
                             Log.d("map_indoor", "posX = " + event.getRawX() + ", posY = " + event.getRawY());
-                            addPoint(r, event.getRawX(), event.getRawY());
+                            Log.d("map_indoor", "transX = " + r.getTranslationX() + ", transY = " + r.getTranslationY());
+//                            float tempx = event.getRawX();
+//                            float tempy = event.getRawY();
+
+                            int[] viewCoords = new int[2];
+                            r.getLocationOnScreen(viewCoords);
+                            int imageX = viewCoords[0];
+                            int imageY = viewCoords[1];
+
+                            //This coordinate transformation should be moved into its own function
+                            addPoint(r, event.getRawX()-r.getWidth()/2-r.getTranslationX(), event.getRawY()-r.getHeight()/2-100-r.getTranslationY());
 
                             r.setTranslationX(posX - deltaX);
                             r.setTranslationY(posY - deltaY);
@@ -139,17 +163,25 @@ public class IndoorMapFragment extends Fragment {
         Log.d("IndoorMapFragment", "highlightIP: ipID = " + ipID);
     }
 
-    private void addPoint(RelativeLayout parent, float posX, float posY) {
-        /*ImageView point = new ImageView(getContext());
-        point.setX(posX);
-        point.setY(posY);
-        point.setScaleX(0.05f);
-        point.setScaleY(0.05f);
-        point.setImageResource(R.drawable.map_marker);
-        parent.addView(point);*/
+
+    private void addPoint(RelativeLayout parent, final float posX, final float posY) {
 
         PointOfInterest dummyPoint = new PointOfInterest("dummyTitle", "dummyDescription", "dummyCategory", 0, 0, "dummyId");
         IndoormapMarker point = new IndoormapMarker(dummyPoint, posX, posY, getContext());
         parent.addView(point.getMarker());
+
+        point.getMarker().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("TAG", "Klickar på pungtjävel " + "posX = " + posX  + " posY = " + posY );
+            }
+        });
     }
+
+    @Override
+    public void onCreateOptionsMenu(
+            Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_indoor_map, menu);
+    }
+
 }
