@@ -40,7 +40,6 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
     public IndoorMapFragment map;
     public IndoorListFragment list;
     public IndoorQRFragment qr;
-    public QRFragment qr;
     public FloorAdapter floorAdapter;
     private String filterText;
 
