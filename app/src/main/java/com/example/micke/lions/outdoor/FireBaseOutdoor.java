@@ -1,10 +1,10 @@
-package com.example.micke.lions;
+package com.example.micke.lions.outdoor;
 
 import android.content.Context;
 import android.util.Log;
 
-import com.example.micke.lions.outdoor.Building;
-import com.example.micke.lions.outdoor.BuildingDataSetChanged;
+import com.example.micke.lions.DataSetChanged;
+import com.example.micke.lions.FireBaseHandler;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -60,7 +60,7 @@ public class FireBaseOutdoor extends FireBaseHandler implements Serializable {
             @Override
             public void onDataChange(DataSnapshot buildings) {
                 list.clear();
-                Log.d("com/example/micke/lions/outdoor", "data changed");
+                Log.d("outdoor", "data changed");
                 for (DataSnapshot building : buildings.getChildren()) {
                     Log.d("outdoorb", building.toString());
                     Building b = new Building(building.getValue(Building.class));
@@ -75,6 +75,30 @@ public class FireBaseOutdoor extends FireBaseHandler implements Serializable {
         });
 
         return list;
+    }
+
+    public void newCar(Car car) {
+        Firebase carRef =
+                myFirebaseRef.child("car/" + car.getId());
+        carRef.setValue(car);
+    }
+
+    public void getCar(final FragmentResolver fragmentResolver, String carId) {
+
+        myFirebaseRef.child("car/" + carId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Log.d("car", "done loading car");
+                Car car = new Car(snapshot.getValue(Car.class));
+                fragmentResolver.startCarDialog(car);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
+
+//        return car;
     }
 
 }

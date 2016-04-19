@@ -1,14 +1,20 @@
-package com.example.micke.lions;
+package com.example.micke.lions.outdoor;
 
+import android.app.DialogFragment;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.micke.lions.R;
 import com.example.micke.lions.indoor.IndoorActivity;
 
 import java.util.ArrayList;
@@ -20,12 +26,13 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView;
 /**
  * Created by iSirux on 2016-04-12.
  */
-public class QRFragment extends Fragment implements ZBarScannerView.ResultHandler {
+public class OutdoorQRFragment extends Fragment implements ZBarScannerView.ResultHandler, FragmentResolver {
 
     private static ZBarScannerView mScannerView;
     private static final String ARG_SECTION_NUMBER = "section_number";
+    private FireBaseOutdoor fireBaseHandler;
 
-    public QRFragment() {
+    public OutdoorQRFragment() {
     }
 
     @Override
@@ -45,8 +52,8 @@ public class QRFragment extends Fragment implements ZBarScannerView.ResultHandle
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static QRFragment newInstance(int sectionNumber) {
-        QRFragment fragment = new QRFragment();
+    public static OutdoorQRFragment newInstance(int sectionNumber) {
+        OutdoorQRFragment fragment = new OutdoorQRFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
@@ -56,13 +63,43 @@ public class QRFragment extends Fragment implements ZBarScannerView.ResultHandle
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//            View rootView = inflater.inflate(R.layout.activity_qr_reader, container, false);
+
+        fireBaseHandler = ((OutdoorActivity) getActivity()).getFireBaseHandler();
+        View view = inflater.inflate(R.layout.fragment_outdoor_qr, container, false);
+        LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.qr_linear_layout);
+
         ArrayList<BarcodeFormat> list = new ArrayList<>();
         list.add(BarcodeFormat.QRCODE);
         mScannerView = new ZBarScannerView(getContext());
         mScannerView.setFormats(list);
-        View rootView = mScannerView;
-        return rootView;
+        View scannerView = mScannerView;
+        linearLayout.addView(scannerView);
+
+        final FloatingActionButton fab = (FloatingActionButton) linearLayout.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Car car = new Car("car name", fireBaseHandler.generateId(), 0, 0);
+                fireBaseHandler.newCar(car);
+
+                String url = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=" +
+                        "car/" + car.getId()
+                        + "&qzone=1&margin=0&size=400x400&ecc=L";
+
+                ClipboardManager clipboard = (ClipboardManager) getActivity()
+                        .getSystemService(getActivity().CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("", url);
+                clipboard.setPrimaryClip(clip);
+
+                Toast toast = Toast.makeText(getContext(),
+                        "QR code URL copied to clipboard", Toast.LENGTH_LONG);
+                toast.show();
+
+                Log.d("fab", "clicked");
+            }
+        });
+
+        return linearLayout;
     }
 
     @Override
@@ -103,11 +140,22 @@ public class QRFragment extends Fragment implements ZBarScannerView.ResultHandle
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             } else if(parts[0].equals("car")) {
-                //Implement QR reading for car here
+                fireBaseHandler.getCar(this, parts[1]);
             }
         }
 
         // If you would like to resume scanning, call this method below:
         mScannerView.resumeCameraPreview(this);
+    }
+
+    @Override
+    public void startCarDialog(Car car) {
+        if(((OutdoorActivity) getActivity()).getViewPager().getCurrentItem() == 2) {
+            DialogFragment newFragment = new CarDialogFragment();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("car", car);
+            newFragment.setArguments(bundle);
+            newFragment.show(getActivity().getFragmentManager(), "car_dialog_fragment");
+        }
     }
 }

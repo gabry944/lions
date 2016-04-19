@@ -1,8 +1,10 @@
-package com.example.micke.lions;
+package com.example.micke.lions.indoor;
 
 import android.content.Context;
 import android.util.Log;
 
+import com.example.micke.lions.DataSetChanged;
+import com.example.micke.lions.FireBaseHandler;
 import com.example.micke.lions.indoor.PointOfInterest;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
