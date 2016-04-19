@@ -75,10 +75,6 @@ public class IndoorMapFragment extends Fragment {
         r.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View arg0) {
 
-                Log.d(TAG, "onLongClick: innan");
-                addPoint(r, 0, 0);
-                Log.d(TAG, "onLongClick: efter ");
-
                 if(longClick) {
                     addPoint(r, mx - r.getWidth() / 2,
                             my - r.getHeight() / 2 + 60);
