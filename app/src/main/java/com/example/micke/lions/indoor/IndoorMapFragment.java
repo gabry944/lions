@@ -140,12 +140,16 @@ public class IndoorMapFragment extends Fragment {
     }
 
     private void addPoint(RelativeLayout parent, float posX, float posY) {
-        ImageView point = new ImageView(getContext());
+        /*ImageView point = new ImageView(getContext());
         point.setX(posX);
         point.setY(posY);
         point.setScaleX(0.05f);
         point.setScaleY(0.05f);
         point.setImageResource(R.drawable.map_marker);
-        parent.addView(point);
+        parent.addView(point);*/
+
+        PointOfInterest dummyPoint = new PointOfInterest("dummyTitle", "dummyDescription", "dummyCategory", 0, 0, "dummyId");
+        IndoormapMarker point = new IndoormapMarker(dummyPoint, posX, posY, getContext());
+        parent.addView(point.getMarker());
     }
 }
