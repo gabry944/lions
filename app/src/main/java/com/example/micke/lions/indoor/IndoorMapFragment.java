@@ -1,5 +1,6 @@
 package com.example.micke.lions.indoor;
 
+import android.app.DialogFragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PointF;
@@ -74,9 +75,19 @@ public class IndoorMapFragment extends Fragment {
         r.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View arg0) {
 
+                Log.d(TAG, "onLongClick: innan");
+                addPoint(r, 0, 0);
+                Log.d(TAG, "onLongClick: efter ");
+
                 if(longClick) {
                     addPoint(r, mx - r.getWidth() / 2,
                             my - r.getHeight() / 2 + 60);
+
+                    DialogFragment newFragment = new AddPointDialogFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("firebase", ((IndoorActivity) getActivity()).getFireBaseHandler());
+                    newFragment.setArguments(bundle);
+                    newFragment.show(getActivity().getFragmentManager(), "add_point_layout");
                 }
                         Log.d("map_indoor", "onLongClick: " + longClick);
                 return false;
@@ -163,10 +174,13 @@ public class IndoorMapFragment extends Fragment {
                             mx = curX;
                             my = curY;
                         }
+
                         break;
+
                     case MotionEvent.ACTION_UP:
                         longClick = true;
                         break;
+
                 }
 
                 return false;
