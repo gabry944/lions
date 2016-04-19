@@ -1,5 +1,7 @@
 package com.example.micke.lions.outdoor;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.List;
 
 /**
@@ -7,6 +9,7 @@ import java.util.List;
  */
 public interface BuildingDataSetChanged {
 
-    public void dataSetChanged(List<Building> list);
+    void dataSetChanged(List<Building> list);
+    void panToMarker(LatLng point);
 
 }
