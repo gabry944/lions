@@ -35,9 +35,11 @@ public class CarDialogFragment extends DialogFragment {
 
     FireBaseOutdoor fireBaseHandler;
     Car car;
+    public boolean dismissed;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        dismissed = false;
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
 
@@ -66,21 +68,25 @@ public class CarDialogFragment extends DialogFragment {
         Button findCar = (Button) dialogView.findViewById(R.id.find_car);
         Button parkCar = (Button) dialogView.findViewById(R.id.park_car);
 
-        findCar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (ActivityCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) { return; }
+        if(car.getLongitude() == 0 && car.getLatitude() == 0)
+            findCar.setEnabled(false);
+        else {
+            findCar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (ActivityCompat.checkSelfPermission(getActivity(),
+                            Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                            && ActivityCompat.checkSelfPermission(getActivity(),
+                            Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) { return; }
 
-                Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+                    Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
 
-                ((OutdoorActivity) getActivity()).getViewPager().setCurrentItem(0);
-                ((OutdoorActivity) getActivity()).map.newMarker(car, lastKnownLocation);
-                dismiss();
-            }
-        });
+                    ((OutdoorActivity) getActivity()).getViewPager().setCurrentItem(0);
+                    ((OutdoorActivity) getActivity()).map.newMarker(car, lastKnownLocation);
+                    dismiss();
+                }
+            });
+        }
 
         parkCar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,5 +111,10 @@ public class CarDialogFragment extends DialogFragment {
 
         // Create the AlertDialog object and return it
         return dialogBuilder.create();
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        dismissed = true;
     }
 }

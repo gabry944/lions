@@ -31,6 +31,7 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
     private static ZBarScannerView mScannerView;
     private static final String ARG_SECTION_NUMBER = "section_number";
     private FireBaseOutdoor fireBaseHandler;
+    private DialogFragment newFragment;
 
     public OutdoorQRFragment() {
     }
@@ -79,7 +80,7 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Car car = new Car("car name", fireBaseHandler.generateId(), 0, 0);
+                Car car = new Car("Bil", fireBaseHandler.generateId(), 0, 0);
                 fireBaseHandler.newCar(car);
 
                 String url = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=" +
@@ -104,54 +105,56 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
 
     @Override
     public void handleResult(Result rawResult) {
-        // Do something with the result here
-        Log.v("qr", rawResult.getContents()); // Prints scan results
+        if(((OutdoorActivity) getActivity()).getViewPager().getCurrentItem() == 2) {
+            // Do something with the result here
+            Log.v("qr", rawResult.getContents()); // Prints scan results
 
-        //Toast to show result
-        Toast toast = Toast.makeText(getContext(),
-                rawResult.getContents(), Toast.LENGTH_SHORT);
-        toast.show();
+            //Toast to show result
+            Toast toast = Toast.makeText(getContext(),
+                    rawResult.getContents(), Toast.LENGTH_SHORT);
+            toast.show();
 
-        //
-        String[] parts = rawResult.getContents().split("/");
-        int partsLength = parts.length;
+            //
+            String[] parts = rawResult.getContents().split("/");
+            int partsLength = parts.length;
 
-        for (String part: parts) {
-            Log.d("buildparts", part);
-        }
+            for (String part : parts) {
+                Log.d("buildparts", part);
+            }
 
-        if(partsLength > 1) {
-            if(parts[0].equals("building")) {
-                //Insert code for going to map-fragment here
-                //parts[1] = building id
-                //parts[2] = floors
-                //parts[3] = floor id (1,2,3 etc.)
-                //parts[4] = ips
-                //parts[5] = ip id
+            if (partsLength > 1) {
+                if (parts[0].equals("building")) {
+                    //Insert code for going to map-fragment here
+                    //parts[1] = building id
+                    //parts[2] = floors
+                    //parts[3] = floor id (1,2,3 etc.)
+                    //parts[4] = ips
+                    //parts[5] = ip id
 
-                //Go to map fragment
-                Intent intent = new Intent(getContext(), IndoorActivity.class);
-                Bundle bundle = new Bundle();
-                String ipId = "-1";
-                if(parts[5] != null)
-                    ipId = parts[5];
-                bundle.putString("ipId", ipId);
-                intent.putExtras(bundle);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            } else if(parts[0].equals("car")) {
-                fireBaseHandler.getCar(this, parts[1]);
+                    //Go to map fragment
+                    Intent intent = new Intent(getContext(), IndoorActivity.class);
+                    Bundle bundle = new Bundle();
+                    String ipId = "-1";
+                    if (parts[5] != null)
+                        ipId = parts[5];
+                    bundle.putString("ipId", ipId);
+                    intent.putExtras(bundle);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                } else if (parts[0].equals("car")) {
+                    fireBaseHandler.getCar(this, parts[1]);
+                }
             }
         }
-
         // If you would like to resume scanning, call this method below:
         mScannerView.resumeCameraPreview(this);
     }
 
     @Override
     public void startCarDialog(Car car) {
-        if(((OutdoorActivity) getActivity()).getViewPager().getCurrentItem() == 2) {
-            DialogFragment newFragment = new CarDialogFragment();
+        if(((OutdoorActivity) getActivity()).getViewPager().getCurrentItem() == 2
+                && (newFragment == null || ((CarDialogFragment) newFragment).dismissed)) {
+            newFragment = new CarDialogFragment();
             Bundle bundle = new Bundle();
             bundle.putSerializable("car", car);
             newFragment.setArguments(bundle);
