@@ -1,8 +1,12 @@
 package com.example.micke.lions.outdoor;
 
+import android.Manifest;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.InflateException;
@@ -12,12 +16,14 @@ import android.view.ViewGroup;
 
 import com.example.micke.lions.indoor.IndoorActivity;
 import com.example.micke.lions.R;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -81,17 +87,19 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
         Log.d("map", "outdoorkartfragment - onmapready");
         mMap = googleMap;
 
+        if (ActivityCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) { return; }
+        mMap.setMyLocationEnabled(true);
+
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,
-                longitude), 22.0f));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))
-                .title("Vita Huset").snippet("Det är här det händer"));
+                longitude), 20.0f));
 
         mMap.setOnMapLongClickListener(this);
         mMap.setOnMapClickListener(this);
         mMap.setOnMarkerClickListener(this);
-//        mMap.setInfoWindowAdapter(new BuildingInfoWindowAdapter(getContext()));
 
-        Log.d("loadall", "attempting to load buildings...");
         buildings = new ArrayList<Building>();
         ((OutdoorActivity) getActivity()).getFireBaseHandler().buildingListener(this);
     }
@@ -101,9 +109,9 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
         if (mMap == null) {
             SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                     .findFragmentById(R.id.map);
-            if(mapFragment != null)
+            if(mapFragment != null) {
                 mapFragment.getMapAsync(this);
-            else
+            } else
                 Log.e("map", "mapFragment = null");
         }
     }
@@ -133,6 +141,23 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
     }
 
+    public void newMarker(Car car, Location location) {
+        LatLng point = new LatLng(car.getLatitude(), car.getLongitude());
+
+        Marker carMarker = mMap.addMarker(new MarkerOptions()
+                .position(point)
+                .title(car.getName())
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(carMarker.getPosition());
+        builder.include(new LatLng(location.getLatitude(), location.getLongitude()));
+
+        LatLngBounds bounds = builder.build();
+//        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(car.getLatitude(), car.getLongitude()), 19));
+    }
+
     public void loadAllBuildings() {
         for (Building building:buildings) {
             newMarker(building);
@@ -155,5 +180,10 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     public void dataSetChanged(List<Building> list) {
         buildings = list;
         loadAllBuildings();
+    }
+
+    @Override
+    public void panToMarker(LatLng point) {
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 18));
     }
 }

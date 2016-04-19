@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.example.micke.lions.QRFragment;
+import com.example.micke.lions.outdoor.OutdoorQRFragment;
 
 /**
  * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -28,7 +28,7 @@ public class IndoorPageSliderAdapter extends FragmentPagerAdapter {
             ((IndoorActivity)mContext).list = IndoorListFragment.newInstance(position + 1);
             return ((IndoorActivity)mContext).list;
         } else {
-            ((IndoorActivity)mContext).qr = QRFragment.newInstance(position + 1);
+            ((IndoorActivity)mContext).qr = IndoorQRFragment.newInstance(position + 1);
             return ((IndoorActivity)mContext).qr;
         }
     }

@@ -19,8 +19,7 @@ import android.view.View;
 import android.widget.SearchView;
 
 import com.example.micke.lions.DataSetChanged;
-import com.example.micke.lions.FireBaseIndoor;
-import com.example.micke.lions.QRFragment;
+import com.example.micke.lions.outdoor.OutdoorQRFragment;
 import com.example.micke.lions.R;
 
 import java.util.ArrayList;
@@ -40,7 +39,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
     private String ipId;
     public IndoorMapFragment map;
     public IndoorListFragment list;
-    public QRFragment qr;
+    public IndoorQRFragment qr;
     public FloorAdapter floorAdapter;
     private String filterText;
 
@@ -94,41 +93,6 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.list_options, menu);
-
-        final MenuItem item = menu.findItem(R.id.search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-        searchView.setOnQueryTextListener(this);
-        return true;
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        // return super.onOptionsItemSelected(item);
-
-        int id = item.getItemId();
-        if (id == R.id.item_add) {
-            AddPointDialogFragment newFragment = new AddPointDialogFragment();
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("firebase", fireBaseHandler);
-            newFragment.setArguments(bundle);
-            newFragment.show(this.getFragmentManager(), "add_point_layout");
-        } else if (id == R.id.item_camera) {
-            Intent intent = new Intent(getApplicationContext(), QRFragment.class);
-            startActivity(intent);
-        }
-        return false;
-    }
-
-    @Override
     public void dataSetChanged() {
         ipadapter.notifyDataSetChanged();
     }
@@ -172,5 +136,14 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
 
     public ipAdapter getAdapter(){ return ipadapter; }
     public List<PointOfInterest> getData() { return myDataset; }
+    public FireBaseIndoor getFireBaseHandler() { return fireBaseHandler; }
 
+    @Override
+    public void onBackPressed()
+    {
+        if(mViewPager.getCurrentItem() != 1)
+            mViewPager.setCurrentItem(1);
+        else
+            super.onBackPressed();
+    }
 }

@@ -45,14 +45,17 @@ public class PointOfInterest {
         return description;
     }
 
-    public float getLatitude() {
-        return latitude;
-    }
+    public float getLatitude() { return latitude; }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getTitle() { return title; }
 
     public float getLongitude() { return longitude; }
 
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(float longitude) {
+        this.longitude = longitude;
+    }
 }

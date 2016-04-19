@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-import com.example.micke.lions.FireBaseIndoor;
 import com.example.micke.lions.R;
 
 /**
