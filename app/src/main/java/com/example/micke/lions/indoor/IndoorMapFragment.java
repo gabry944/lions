@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -54,6 +57,8 @@ public class IndoorMapFragment extends Fragment {
         final RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
         //r.setScaleX(5.0f);
         //r.setScaleY(5.0f);
+
+        setHasOptionsMenu(true);
 
         r.setOnTouchListener(new View.OnTouchListener() {
 
@@ -113,6 +118,7 @@ public class IndoorMapFragment extends Fragment {
 
                             posX = r.getTranslationX();
                             posY = r.getTranslationY();
+
                             float deltaX = mx - curX;
                             float deltaY = my - curY;
 
@@ -145,14 +151,24 @@ public class IndoorMapFragment extends Fragment {
         Log.d("IndoorMapFragment", "highlightIP: ipID = " + ipID);
     }
 
-    private void addPoint(RelativeLayout parent, float posX, float posY) {
-        ImageView point = new ImageView(getContext());
-        point.setX(posX);
-        point.setY(posY);
-        point.setScaleX(0.05f);
-        point.setScaleY(0.05f);
-        point.setImageResource(R.drawable.map_marker);
-        parent.addView(point);
+    private void addPoint(RelativeLayout parent, final float posX, final float posY) {
+
+        PointOfInterest dummyPoint = new PointOfInterest("dummyTitle", "dummyDescription", "dummyCategory", 0, 0, "dummyId");
+        IndoormapMarker point = new IndoormapMarker(dummyPoint, posX, posY, getContext());
+        parent.addView(point.getMarker());
+
+        point.getMarker().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("TAG", "Klickar på pungtjävel " + "posX = " + posX  + " posY = " + posY );
+            }
+        });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(
+            Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_indoor_map, menu);
     }
 }
 

@@ -1,9 +1,11 @@
 package com.example.micke.lions.indoor;
 
 import android.app.DialogFragment;
+import android.app.ListFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -39,6 +41,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
     public IndoorMapFragment map;
     public IndoorListFragment list;
     public QRFragment qr;
+    public FloorAdapter floorAdapter;
     private String filterText;
 
     @Override
@@ -67,7 +70,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
         myDataset = fireBaseHandler.getPoints(buildingId, this, false);
 
         ipadapter = new ipAdapter(this, myDataset);
-
+        floorAdapter = new FloorAdapter(this, myDataset);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         assert fab != null;
