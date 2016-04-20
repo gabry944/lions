@@ -1,15 +1,22 @@
-package com.example.micke.lions;
+package com.example.micke.lions.indoor;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.example.micke.lions.indoor.IndoorActivity;
+import com.example.micke.lions.FireBaseHandler;
+import com.example.micke.lions.outdoor.FireBaseOutdoor;
+import com.example.micke.lions.R;
+import com.example.micke.lions.outdoor.Car;
 
 import java.util.ArrayList;
 
@@ -20,12 +27,12 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView;
 /**
  * Created by iSirux on 2016-04-12.
  */
-public class QRFragment extends Fragment implements ZBarScannerView.ResultHandler {
+public class IndoorQRFragment extends Fragment implements ZBarScannerView.ResultHandler {
 
     private static ZBarScannerView mScannerView;
     private static final String ARG_SECTION_NUMBER = "section_number";
 
-    public QRFragment() {
+    public IndoorQRFragment() {
     }
 
     @Override
@@ -45,8 +52,8 @@ public class QRFragment extends Fragment implements ZBarScannerView.ResultHandle
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static QRFragment newInstance(int sectionNumber) {
-        QRFragment fragment = new QRFragment();
+    public static IndoorQRFragment newInstance(int sectionNumber) {
+        IndoorQRFragment fragment = new IndoorQRFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
@@ -56,13 +63,18 @@ public class QRFragment extends Fragment implements ZBarScannerView.ResultHandle
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//            View rootView = inflater.inflate(R.layout.activity_qr_reader, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_indoor_qr, container, false);
+        LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.qr_linear_layout);
+
         ArrayList<BarcodeFormat> list = new ArrayList<>();
         list.add(BarcodeFormat.QRCODE);
         mScannerView = new ZBarScannerView(getContext());
         mScannerView.setFormats(list);
-        View rootView = mScannerView;
-        return rootView;
+        View scannerView = mScannerView;
+        linearLayout.addView(scannerView);
+
+        return linearLayout;
     }
 
     @Override
@@ -103,7 +115,7 @@ public class QRFragment extends Fragment implements ZBarScannerView.ResultHandle
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             } else if(parts[0].equals("car")) {
-                //Implement QR reading for car here
+                //no
             }
         }
 

@@ -19,8 +19,7 @@ import android.view.View;
 import android.widget.SearchView;
 
 import com.example.micke.lions.DataSetChanged;
-import com.example.micke.lions.FireBaseIndoor;
-import com.example.micke.lions.QRFragment;
+import com.example.micke.lions.outdoor.OutdoorQRFragment;
 import com.example.micke.lions.R;
 
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged{
     private String ipId;
     public IndoorMapFragment map;
     public IndoorListFragment list;
-    public QRFragment qr;
+    public IndoorQRFragment qr;
     public FloorAdapter floorAdapter;
 
     @Override
@@ -100,7 +99,19 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged{
 
     }
 
-    public FireBaseIndoor getFireBaseHandler() {
-        return fireBaseHandler;
+    public List<PointOfInterest> getData() { return myDataset; }
+    public FireBaseIndoor getFireBaseHandler() { return fireBaseHandler; }
+
+    @Override
+    public void onBackPressed()
+    {
+        if(mViewPager.getCurrentItem() != 1)
+            mViewPager.setCurrentItem(1);
+        else
+            super.onBackPressed();
+    }
+
+    public String getBuildingId() {
+        return buildingId;
     }
 }

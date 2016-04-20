@@ -16,9 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.micke.lions.DataSetChanged;
-import com.example.micke.lions.FireBaseOutdoor;
 import com.example.micke.lions.indoor.IndoorActivity;
-import com.example.micke.lions.QRFragment;
 import com.example.micke.lions.R;
 
 import java.util.List;
@@ -32,7 +30,7 @@ public class OutdoorActivity extends AppCompatActivity implements DataSetChanged
     private List<Building> myDataset;
     public OutdoorMapFragment map;
     public OutdoorListFragment list;
-    public QRFragment qr;
+    public OutdoorQRFragment qr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,45 +75,6 @@ public class OutdoorActivity extends AppCompatActivity implements DataSetChanged
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(1);
 
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), IndoorActivity.class);
-                Bundle bundle = new Bundle();
-                String buildingId = "1";
-                bundle.putString("buildingId", buildingId);
-                intent.putExtras(bundle);
-                startActivity(intent);
-//                Intent intent = new Intent(getApplicationContext(), IndoorActivity.class);
-//                startActivity(intent);
-            }
-        });
-
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_outdoor, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -130,5 +89,18 @@ public class OutdoorActivity extends AppCompatActivity implements DataSetChanged
 
     public FireBaseOutdoor getFireBaseHandler() {
         return fireBaseHandler;
+    }
+
+    public ViewPager getViewPager() {
+        return mViewPager;
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        if(mViewPager.getCurrentItem() != 1)
+            mViewPager.setCurrentItem(1);
+        else
+            super.onBackPressed();
     }
 }
