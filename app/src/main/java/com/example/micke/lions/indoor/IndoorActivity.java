@@ -26,15 +26,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class IndoorActivity extends AppCompatActivity implements DataSetChanged, SearchView.OnQueryTextListener {
+public class IndoorActivity extends AppCompatActivity implements DataSetChanged{
 
     private FireBaseIndoor fireBaseHandler;
     private IndoorPageSliderAdapter mSectionsPagerAdapter;
     public static ViewPager mViewPager;
-    private RecyclerView ipRecyclerView;
     private ipAdapter ipadapter;
-    private RecyclerView.LayoutManager ipLayoutManager;
-    private List<PointOfInterest> myDataset;
+    public List<PointOfInterest> myDataset;
     private List<String> mFloors;
     private String buildingId;
     private String ipId;
@@ -42,7 +40,6 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
     public IndoorListFragment list;
     public IndoorQRFragment qr;
     public FloorAdapter floorAdapter;
-    private String filterText;
 
     @Override
     public void onCreate(Bundle state) {
@@ -55,6 +52,8 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
         ipId = bundle.getString("ipId", "-1");
 
         fireBaseHandler = new FireBaseIndoor(getApplicationContext(), buildingId);
+
+        myDataset = fireBaseHandler.getPoints(buildingId, this, false);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -102,42 +101,9 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
 
     @Override
     public void fetchDataDone() {
-        filterTextFunction(filterText);
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        filterText = newText;
-        myDataset = fireBaseHandler.getPoints(buildingId, this, true);
-
-        return true;
-    }
-
-    public void filterTextFunction(String text) {
-        final List<PointOfInterest> filteredDataset = filter(myDataset, text);
-        ipadapter.updateAdapter(filteredDataset);
-    }
-
-    private List<PointOfInterest> filter(List<PointOfInterest> myDataset, String query){
-        query = query.toLowerCase();
-        final List<PointOfInterest> filteredDataset = new ArrayList<>();
-
-        for(PointOfInterest ip: myDataset){
-            final String text = ip.getTitle().toLowerCase();
-            if(text.contains(query)){
-                filteredDataset.add(ip);
-            }
-        }
-        return  filteredDataset;
 
     }
 
-    public ipAdapter getAdapter(){ return ipadapter; }
     public List<PointOfInterest> getData() { return myDataset; }
     public FireBaseIndoor getFireBaseHandler() { return fireBaseHandler; }
 
@@ -148,5 +114,9 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
             mViewPager.setCurrentItem(1);
         else
             super.onBackPressed();
+    }
+
+    public String getBuildingId() {
+        return buildingId;
     }
 }

@@ -15,12 +15,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import com.example.micke.lions.DataSetChanged;
 import com.example.micke.lions.R;
+
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class IndoorMapFragment extends Fragment {
+public class IndoorMapFragment extends Fragment implements DataSetChanged {
     String TAG = "IndoorMapFragment";
     /**
      * The fragment argument representing the section number for this
@@ -33,6 +37,8 @@ public class IndoorMapFragment extends Fragment {
     private float my, my2;
     private float scaleFactor = 5.0f;
     private boolean longClick = true;  //turns to false if user moves fingers
+
+    private IndoorActivity indoorActivity;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -75,7 +81,12 @@ public class IndoorMapFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-        //List<PointOfInterest> l = ((IndoorActivity) getActivity()).getData();
+        indoorActivity = ((IndoorActivity) getActivity());
+        FireBaseIndoor fireBaseIndoor = indoorActivity.getFireBaseHandler();
+        List<PointOfInterest> l = indoorActivity.getData();
+        for(PointOfInterest p : l) {
+            addPoint(r, p.getLatitude(), p.getLongitude());
+        }
 
         r.setLongClickable(true);
         r.setClickable(true);
@@ -83,12 +94,16 @@ public class IndoorMapFragment extends Fragment {
             public boolean onLongClick(View arg0) {
 
                 if(longClick) {
-                    addPoint(r, mx - r.getWidth() / 2,
-                            my - r.getHeight() / 2 + 60);
+//                    addPoint(r, mx - r.getWidth() / 2,
+//                            my - r.getHeight() / 2 + 60);
 
+                    float[] point = new float[2];
+                    point[0] = mx - r.getWidth() / 2;
+                    point[1] = my - r.getHeight() / 2 + 60;
                     DialogFragment newFragment = new AddPointDialogFragment();
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("firebase", ((IndoorActivity) getActivity()).getFireBaseHandler());
+                    bundle.putFloat("lat", point[0]);
+                    bundle.putFloat("lng", point[1]);
                     newFragment.setArguments(bundle);
                     newFragment.show(getActivity().getFragmentManager(), "add_point_layout");
                 }
@@ -233,6 +248,19 @@ public class IndoorMapFragment extends Fragment {
                 getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.GONE);
         }
         return false;
+    }
+
+    @Override
+    public void dataSetChanged() {
+        List<PointOfInterest> l = indoorActivity.getData();
+        for(PointOfInterest p : l) {
+            //addPoint(r, p.getLatitude(), p.getLongitude());
+        }
+    }
+
+    @Override
+    public void fetchDataDone() {
+
     }
 }
 
