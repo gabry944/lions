@@ -15,9 +15,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by iSirux on 2016-04-11.
- */
 public class FireBaseIndoor extends FireBaseHandler implements Serializable {
 
     private String buildingId;
@@ -53,7 +50,34 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
                         list.add(point);
                     }
                 }
-                if(search)
+                if (search)
+                    indoorActivity.fetchDataDone();
+                else
+                    indoorActivity.dataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
+
+        return list;
+    }
+
+    public List<String> getFloors(String buildingId, final DataSetChanged indoorActivity, final boolean search) {
+        final List<String> list = new ArrayList<>();
+
+        myFirebaseRef.child("building/" + buildingId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot building) {
+                list.clear();
+                DataSnapshot floors = building.child("floor");
+                Log.d("hej", "data changed");
+                for (DataSnapshot floor : floors.getChildren()) {
+                    list.add(floor.getKey().toString());
+                }
+                if (search)
                     indoorActivity.fetchDataDone();
                 else
                     indoorActivity.dataSetChanged();

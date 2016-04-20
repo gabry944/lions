@@ -35,6 +35,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
     private ipAdapter ipadapter;
     private RecyclerView.LayoutManager ipLayoutManager;
     private List<PointOfInterest> myDataset;
+    private List<String> mFloors;
     private String buildingId;
     private String ipId;
     public IndoorMapFragment map;
@@ -67,9 +68,10 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
         mViewPager.setCurrentItem(1);
 
         myDataset = fireBaseHandler.getPoints(buildingId, this, false);
+        mFloors = fireBaseHandler.getFloors(buildingId, this, false);
 
         ipadapter = new ipAdapter(this, myDataset);
-        floorAdapter = new FloorAdapter(this, myDataset);
+        floorAdapter = new FloorAdapter(this, mFloors);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         assert fab != null;
@@ -95,6 +97,7 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged,
     @Override
     public void dataSetChanged() {
         ipadapter.notifyDataSetChanged();
+        floorAdapter.notifyDataSetChanged();
     }
 
     @Override
