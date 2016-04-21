@@ -22,6 +22,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -122,21 +125,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         floorMap = getResources().getDrawable(R.drawable.map_t3);
         final ImageView i = (ImageView) rootView.findViewById(R.id.map);
-        i.setImageDrawable(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
-//        i.setImageDrawable(floorMap);
+//        i.setImageDrawable(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
+        i.setImageDrawable(floorMap);
 
         setHasOptionsMenu(true);
 
         pointList = fireBaseIndoor.getPoints(buildingId, this);
-
-        TextView textView = new TextView(getContext());
-        textView.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-        textView.setText("Hej");
-
-        r.addView(textView);
-
-        textView.setX(0);
-        textView.setY(0);
 
         r.setLongClickable(true);
         r.setClickable(true);
@@ -302,7 +296,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         final float posY = ip.getLongitude();
 
         IndoorMapMarker point = new IndoorMapMarker(ip, posX, posY, getContext());
+
         parent.addView(point.getMarker());
+
         listOfMarkers.add(point);
 
         if(ip.getCategory().toLowerCase().equals("hiss"))
