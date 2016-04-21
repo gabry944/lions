@@ -88,9 +88,11 @@ public class IndoorMapMarker {
         point.setScaleX(0.05f);
         point.setScaleY(0.05f);
         if(getCategory().equals(context.getString(R.string.Entrance)))
-            point.setImageResource(R.drawable.map_marker_green);
+            point.setImageResource(R.drawable.entrance);
         else if(getCategory().equals(context.getString(R.string.Elevator)))
             point.setImageResource(R.drawable.elevator_marker);
+        else if (getCategory().equals(context.getString(R.string.Stairs)))
+            point.setImageResource(R.drawable.stairs);
         else if (getCategory().equals(context.getString(R.string.Toilet)))
             point.setImageResource(R.drawable.wc);
         else
