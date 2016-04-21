@@ -5,13 +5,15 @@ import android.app.DialogFragment;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +21,9 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -47,6 +52,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private FireBaseIndoor fireBaseIndoor;
     private String buildingId;
     private int currentFloor;
+
+    private int displayWidth;
+    private int displayHeight;
 
     private float mx, mx2;  //2 is for the second finger. Used for zooming
     private float my, my2;
@@ -90,6 +98,13 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         mFloors = fireBaseIndoor.getFloors(buildingId, this);
         floorAdapter = new FloorAdapter(this, mFloors);
 
+        //Get display dimensions
+        Display display = indoorActivity.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        displayWidth = size.x;
+        displayHeight = size.y;
+
         //For list of floors
         mFloorRecyclerView = (RecyclerView) rootView.findViewById(R.id.floor_recycler_view);
         mFloorRecyclerView.setHasFixedSize(true);
@@ -100,26 +115,17 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         //For the map
         final RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
-        r.setScaleX(5.0f);
-        r.setScaleY(5.0f);
-
+        r.setScaleX(1.0f);
+        r.setScaleY(1.0f);
 
         floorMap = getResources().getDrawable(R.drawable.map_t3);
         final ImageView i = (ImageView) rootView.findViewById(R.id.map);
+//        i.setImageDrawable(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
         i.setImageDrawable(floorMap);
 
         setHasOptionsMenu(true);
 
         pointList = fireBaseIndoor.getPoints(buildingId, this);
-
-        TextView textView = new TextView(getContext());
-        textView.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-        textView.setText("Hej");
-
-        r.addView(textView);
-
-        textView.setX(0);
-        textView.setY(0);
 
         r.setLongClickable(true);
         r.setClickable(true);
@@ -206,7 +212,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                             float deltaX = mx - curX;
                             float deltaY = my - curY;
 
-                            if(deltaX+deltaY > 0.2)
+                            if(deltaX+deltaY > 5)
                                 longClick = false;
 
                             r.setTranslationX(posX - deltaX);
@@ -272,7 +278,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         final float posY = ip.getLongitude();
 
         IndoorMapMarker point = new IndoorMapMarker(ip, posX, posY, getContext());
+
         parent.addView(point.getMarker());
+
         listOfMarkers.add(point);
 
         if(ip.getCategory().toLowerCase().equals("hiss"))
@@ -333,17 +341,18 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         if(floor.equals("3")) {
             currentFloor = 3;
             floorMap = getResources().getDrawable(R.drawable.map_t3);
+            floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3));
         }
         if(floor.equals("4")) {
             currentFloor = 4;
             floorMap = getResources().getDrawable(R.drawable.map_t4);
+            floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t4));
         }
         i.setImageDrawable(floorMap);
 
         RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
-        for(IndoorMapMarker p : listOfMarkers) {
+        for(IndoorMapMarker p : listOfMarkers)
             r.removeView(p.getMarker());
-        }
         listOfMarkers.clear();
         for(PointOfInterest p : pointList) {
             if(p.getFloor().equals(floor))
@@ -372,9 +381,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     //Load bitmaps efficiently
     private Bitmap getFloorImage(int resId) {
-        final RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
-        int displayWidth = r.getWidth();
-        int displayHeight = r.getHeight();
+        Log.d("display", "w: " + displayWidth + " h: " + displayHeight);
         return decodeSampledBitmapFromResource(getResources(), resId, displayWidth, displayHeight);
     }
 

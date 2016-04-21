@@ -97,8 +97,6 @@ public class FireBaseOutdoor extends FireBaseHandler implements Serializable {
             @Override
             public void onCancelled(FirebaseError error) {}
         });
-
-//        return car;
     }
 
     public void goToBuilding(String id, final BuildingDataSetChanged map) {
@@ -106,7 +104,8 @@ public class FireBaseOutdoor extends FireBaseHandler implements Serializable {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Building building = new Building(snapshot.getValue(Building.class));
-                map.panToMarker(new LatLng(building.getLatitude(), building.getLongitude()));
+                if(map != null)
+                    map.panToMarker(new LatLng(building.getLatitude(), building.getLongitude()));
             }
 
             @Override
