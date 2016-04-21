@@ -18,6 +18,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string-array name="category_array">
+        <item>Ingen kategori vald</item>
         <item>Hiss</item>
         <item>Konferansrum</item>
         <item>Toalett</item>
