@@ -198,7 +198,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                             Log.d("map_indoor", "posX = " + event.getRawX() + ", posY = " + event.getRawY());
                             Log.d("map_indoor", "deltaX = " + deltaX + ", deltaY = " + deltaY);
 
-                            if(deltaX+deltaY > 0.1)
+                            if(deltaX+deltaY > 0.2)
                                 longClick = false;
                             //This coordinate transformation should be moved into its own function
                             //addPoint(r, (event.getRawX() - r.getWidth() / 2 - r.getTranslationX())/scaleFactor,
@@ -231,7 +231,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         Log.d(TAG, "highlightIP: piID = " + ipID);
         for(IndoorMapMarker m : listOfMarkers) {
             //hide all except chosen ip and entrance
-            if(m.getId().equals(ipID) || m.getCategory().equals("Entrance"))
+            if(m.getId().equals(ipID) || m.getCategory().equals(this.getString(R.string.Entrance)))
                 m.getMarker().setVisibility(View.VISIBLE);
             else
                 m.getMarker().setVisibility(View.GONE);
