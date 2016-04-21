@@ -21,13 +21,13 @@ import com.example.micke.lions.R;
 
 import java.util.List;
 
-public class OutdoorActivity extends AppCompatActivity implements DataSetChanged {
+public class OutdoorActivity extends AppCompatActivity {
 
     private OutdoorPageSliderAdapter mSectionsPagerAdapter;
     int MY_PERMISSIONS_REQUEST_CAMERA = 0;
     private ViewPager mViewPager;
     private FireBaseOutdoor fireBaseHandler;
-    private List<Building> myDataset;
+
     public OutdoorMapFragment map;
     public OutdoorListFragment list;
     public OutdoorQRFragment qr;
@@ -38,8 +38,6 @@ public class OutdoorActivity extends AppCompatActivity implements DataSetChanged
         setContentView(R.layout.activity_outdoor);
 
         fireBaseHandler = new FireBaseOutdoor(getApplicationContext());
-
-        myDataset = fireBaseHandler.getBuildings(this);
 
         //check for permission to use the camera
         //needed for the QRFragment
@@ -66,6 +64,7 @@ public class OutdoorActivity extends AppCompatActivity implements DataSetChanged
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new OutdoorPageSliderAdapter(getSupportFragmentManager(), this);
@@ -74,17 +73,6 @@ public class OutdoorActivity extends AppCompatActivity implements DataSetChanged
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(1);
-
-    }
-
-    @Override
-    public void dataSetChanged() {
-        Log.d("com", "dataSetChanged com.example.micke.lions.outdoor");
-    }
-
-    @Override
-    public void fetchDataDone() {
-
     }
 
     public FireBaseOutdoor getFireBaseHandler() {
