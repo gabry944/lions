@@ -16,4 +16,13 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="cartegory_array">
+        <item></item>
+        <item>Hiss</item>
+        <item>Konferansrum</item>
+        <item>Toalett</item>
+        <item>Trappa</item>
+        <item>Skrivare</item>
+    </string-array>
 </resources>
