@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,11 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.example.micke.lions.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -97,6 +100,15 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             for(PointOfInterest p : l) {
             addPoint(r, p);
         }
+
+        TextView textView = new TextView(getContext());
+        textView.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+        textView.setText("Hej");
+
+        r.addView(textView);
+
+        textView.setX(0);
+        textView.setY(0);
 
         r.setLongClickable(true);
         r.setClickable(true);
@@ -238,12 +250,29 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         parent.addView(point.getMarker());
         listOfMarkers.add(point);
 
+        if(ip.getCategory().toLowerCase().equals("hiss"))
+                    addDescText(parent, ip.getCategory(), point.getX(), point.getY());
+
         point.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("TAG", "Klickar på pungtjävel " + "posX = " + posX + " posY = " + posY);
             }
         });
+    }
+
+    private void addDescText(RelativeLayout parent, String category, float posX, float posY){
+        TextView textView = new TextView(getContext());
+        textView.setText(category);
+        textView.setTextSize(6);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+        textView.setLayoutParams(layoutParams);
+        textView.setX(posX);
+        textView.setY(posY - 130);
+        parent.addView(textView);
     }
 
     @Override
