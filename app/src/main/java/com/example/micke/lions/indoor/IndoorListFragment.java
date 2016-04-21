@@ -64,7 +64,7 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        String buildingId = "1";
+        String buildingId = ((IndoorActivity) getActivity()).buildingId;
         setHasOptionsMenu(true);
 
         myDataset = ((IndoorActivity) getActivity()).getFireBaseHandler().getPoints(buildingId, this, false);

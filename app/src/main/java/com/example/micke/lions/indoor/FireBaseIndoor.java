@@ -35,6 +35,7 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
 
     public List<PointOfInterest> getPoints(String buildingId, final DataSetChanged indoorActivity, final boolean search) {
         final List<PointOfInterest> list = new ArrayList<>();
+        Log.d("indoor", "getting points for " +  buildingId);
 
         myFirebaseRef.child("building/" + buildingId).addValueEventListener(new ValueEventListener() {
             @Override

@@ -49,10 +49,9 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged{
         Bundle bundle = intent.getExtras();
         buildingId = bundle.getString("buildingId", "1");
         ipId = bundle.getString("ipId", "-1");
+        Log.d("indoor", "buldingId: " + buildingId);
 
         fireBaseHandler = new FireBaseIndoor(getApplicationContext(), buildingId);
-
-        myDataset = fireBaseHandler.getPoints(buildingId, this, false);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

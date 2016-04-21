@@ -36,6 +36,7 @@ public class IndoorMapFragment extends Fragment implements DataSetChanged {
     private View rootView;
     private List<String> mFloors;
     public FloorAdapter floorAdapter;
+    private FireBaseIndoor fireBaseIndoor;
     private String buildingId;
 
     private float mx, mx2;  //2 is for the second finger. Used for zooming
@@ -66,16 +67,18 @@ public class IndoorMapFragment extends Fragment implements DataSetChanged {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        buildingId = ((IndoorActivity) getActivity()).buildingId;
+        indoorActivity = ((IndoorActivity) getActivity());
+        fireBaseIndoor = indoorActivity.getFireBaseHandler();
+
+        buildingId = indoorActivity.buildingId;
         rootView = inflater.inflate(R.layout.activity_indoor_map, container, false);
-        mFloors = ((IndoorActivity) getActivity()).getFireBaseHandler()
-                .getFloors(buildingId, this);
-        floorAdapter = new FloorAdapter(getActivity(), mFloors);
+        mFloors = fireBaseIndoor.getFloors(buildingId, this);
+        floorAdapter = new FloorAdapter(indoorActivity, mFloors);
 
         //For list of floors
         mFloorRecyclerView = (RecyclerView) rootView.findViewById(R.id.floor_recycler_view);
         mFloorRecyclerView.setHasFixedSize(true);
-        mFloorLayoutManager = new LinearLayoutManager(getActivity());
+        mFloorLayoutManager = new LinearLayoutManager(indoorActivity);
         mFloorRecyclerView.setLayoutManager(mFloorLayoutManager);
 
         mFloorRecyclerView.setAdapter(floorAdapter);
@@ -90,8 +93,6 @@ public class IndoorMapFragment extends Fragment implements DataSetChanged {
 
         setHasOptionsMenu(true);
 
-        indoorActivity = ((IndoorActivity) getActivity());
-        FireBaseIndoor fireBaseIndoor = indoorActivity.getFireBaseHandler();
         List<PointOfInterest> l = fireBaseIndoor.getPoints(buildingId, this, false);;
         for(PointOfInterest p : l) {
             addPoint(r, p.getLatitude(), p.getLongitude());
@@ -114,7 +115,7 @@ public class IndoorMapFragment extends Fragment implements DataSetChanged {
                     bundle.putFloat("lat", point[0]);
                     bundle.putFloat("lng", point[1]);
                     newFragment.setArguments(bundle);
-                    newFragment.show(getActivity().getFragmentManager(), "add_point_layout");
+                    newFragment.show(indoorActivity.getFragmentManager(), "add_point_layout");
                 }
                         Log.d("map_indoor", "onLongClick: " + longClick);
                 return false;
