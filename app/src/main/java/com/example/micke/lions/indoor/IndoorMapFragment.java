@@ -52,7 +52,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     public FloorAdapter floorAdapter;
     private FireBaseIndoor fireBaseIndoor;
     private String buildingId;
-    private int currentFloor;
+    private String currentFloor = "3"; //TODO
 
     private int displayWidth;
     private int displayHeight;
@@ -352,13 +352,12 @@ Log.d("floor1", ""+pointList.size());
         Log.d("floor", "" + floor + " pointLise size = " + pointList.size());
         fireBaseIndoor.setFloor(floor);
         floorMap = null;
+        currentFloor = floor;
         if(floor.equals("3")) {
-            currentFloor = 3;
             floorMap = getResources().getDrawable(R.drawable.map_t3);
             floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3));
         }
         if(floor.equals("4")) {
-            currentFloor = 4;
             floorMap = getResources().getDrawable(R.drawable.map_t4);
             floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t4));
         }
@@ -383,7 +382,8 @@ Log.d("floor1", ""+pointList.size());
         }
         listOfMarkers.clear();
         for(PointOfInterest p : pointList) {
-            addPoint(r,p);
+            if(p.getFloor().equals(currentFloor))
+                addPoint(r,p);
         }
         floorAdapter.notifyDataSetChanged();
     }
