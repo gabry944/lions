@@ -7,9 +7,7 @@ import android.widget.ImageView;
 
 import com.example.micke.lions.R;
 
-/**
- * Created by Gabriella on 2016-04-19.
- */
+
 public class IndoorMapMarker {
     String TAG = "IndoorMapMarker";
 
@@ -35,6 +33,10 @@ public class IndoorMapMarker {
     //! return the imageView that represent the marker
     public ImageView getMarker() {
         return point;
+    }
+
+    public PointOfInterest getPoint(){
+        return pointOfInterest;
     }
 
     public float getX(){

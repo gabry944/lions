@@ -98,6 +98,7 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
         return list;
     }
 
+    //Used by floor menu in the map
     public List<String> getFloors(String buildingId, final IndoorMapMarkerChange indoorMapMarkerChange) {
         final List<String> list = new ArrayList<>();
 

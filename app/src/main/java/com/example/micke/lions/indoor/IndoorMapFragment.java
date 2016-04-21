@@ -182,15 +182,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                                             Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)))
                                             / Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)));
 
-                            //if (diff != 0)
-                            //    diff = 25* Math.signum(diff) * 1 / Math.pow(diff, 2.0);
                             diff = (diff < -ZOOMSPEED) ? -ZOOMSPEED : diff;
                             diff = (diff > ZOOMSPEED) ? ZOOMSPEED : diff;
                             scaleFactor += 0.02 * diff;
                             scaleFactor = (scaleFactor > 10.0f) ? 10.0f : scaleFactor;
                             scaleFactor = (scaleFactor < 1.0f) ? 1.0f : scaleFactor;
 
-                            //Log.d("map_indoor", "Two fingers: scaleFactor = " + scaleFactor + ", diff = " + diff);
                             r.setScaleX(scaleFactor);
                             r.setScaleY(scaleFactor);
                             mx = event.getX(0);
@@ -209,29 +206,19 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                             float deltaX = mx - curX;
                             float deltaY = my - curY;
 
-                            //Log.d("map_indoor", "posX = " + event.getRawX() + ", posY = " + event.getRawY());
-                            //Log.d("map_indoor", "deltaX = " + deltaX + ", deltaY = " + deltaY);
-
                             if(deltaX+deltaY > 0.2)
                                 longClick = false;
-                            //This coordinate transformation should be moved into its own function
-                            //addPoint(r, (event.getRawX() - r.getWidth() / 2 - r.getTranslationX())/scaleFactor,
-                            // (event.getRawY() - r.getHeight() / 2 - 100 - r.getTranslationY())/scaleFactor);
 
                             r.setTranslationX(posX - deltaX);
                             r.setTranslationY(posY - deltaY);
 
-
                             mx = curX;
                             my = curY;
                         }
-
                         break;
-
                     case MotionEvent.ACTION_UP:
                         longClick = true;
                         break;
-
                 }
 
                 return false;
@@ -243,13 +230,40 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     public void highlightIP(String ipID) {
         Log.d(TAG, "highlightIP: piID = " + ipID);
+
+        IndoorMapMarker start = null, end = null, elevator = null;
+
         for(IndoorMapMarker m : listOfMarkers) {
             //hide all except chosen ip and entrance
-            if(m.getId().equals(ipID) || m.getCategory().equals(this.getString(R.string.Entrance)))
-                m.getMarker().setVisibility(View.VISIBLE);
+            if(m.getId().equals(ipID))
+                end = m;
+            else if(m.getCategory().equals(getString(R.string.Entrance)))
+                start = m;
+            else if(m.getCategory().equals(getString(R.string.Elevator)))
+                elevator = m;
             else
                 m.getMarker().setVisibility(View.GONE);
         }
+
+        if(end != null) {
+            if(start != null) {
+                //if ipID floor != entrance floor
+                /*if (!end.getPoint().getFloor().equals(start.getPoint().getFloor())) {
+                    //show elevator
+                    if (elevator != null) {
+                        elevator.getMarker().setVisibility(View.VISIBLE);
+                        start.getMarker().setVisibility(View.VISIBLE);
+                        end.getMarker().setVisibility(View.GONE);
+                    } else {
+                        Log.d(TAG, "highlightIP: No elevator found");
+                    }
+                }*/
+            }
+            else
+                Log.d(TAG, "highlightIP: Found no start/entrance");
+        }
+        else
+            Log.d(TAG, "highlightIP: Found no IP with the gived ID");
     }
 
     private void addPoint(RelativeLayout parent, PointOfInterest ip) {
@@ -325,12 +339,22 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             floorMap = getResources().getDrawable(R.drawable.map_t4);
         }
         i.setImageDrawable(floorMap);
-        fireBaseIndoor.updateIp(pointList.get(0), Integer.parseInt(floor));
+
+        RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+        for(IndoorMapMarker p : listOfMarkers) {
+            r.removeView(p.getMarker());
+        }
+        listOfMarkers.clear();
+        for(PointOfInterest p : pointList) {
+            if(p.getFloor().equals(floor))
+                addPoint(r,p);
+        }
     }
 
     @Override
     public void getUpdatedDataSet(List<PointOfInterest> pointList) {
         RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+
         for(IndoorMapMarker p : listOfMarkers) {
             r.removeView(p.getMarker());
         }
