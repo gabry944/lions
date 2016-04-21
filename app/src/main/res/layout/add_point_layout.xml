@@ -83,14 +83,14 @@
         android:layout_marginTop="20dp">
 
         <Button android:id="@+id/cancel"
-            android:layout_width="200dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:text="Avbryt"
             android:layout_gravity="center_horizontal"/>
 
         <Button android:id="@+id/submit"
-            android:layout_width="200dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:text="Ok"
