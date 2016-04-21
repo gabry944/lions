@@ -242,7 +242,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     }
 
     public void highlightIP(String ipID) {
-        Log.d(TAG, "highlightIP: piID = " + ipID);
 
         IndoorMapMarker start = null, end = null, elevator = null;
 
@@ -252,8 +251,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 end = m;
             else if(m.getCategory().equals(getString(R.string.Entrance)))
                 start = m;
-            else if(m.getCategory().equals(getString(R.string.Elevator)))
-                elevator = m;
+            else if(m.getCategory().equals(getString(R.string.Elevator))){
+                if(elevator == null)
+                    elevator = m;
+                else
+                    m.getMarker().setVisibility(View.GONE);
+            }
             else
                 m.getMarker().setVisibility(View.GONE);
         }
@@ -261,16 +264,25 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         if(end != null) {
             if(start != null) {
                 //if ipID floor != entrance floor
-                /*if (!end.getPoint().getFloor().equals(start.getPoint().getFloor())) {
+                if (!end.getPoint().getFloor().equals(start.getPoint().getFloor())) {
                     //show elevator
                     if (elevator != null) {
                         elevator.getMarker().setVisibility(View.VISIBLE);
                         start.getMarker().setVisibility(View.VISIBLE);
                         end.getMarker().setVisibility(View.GONE);
+                        Log.d(TAG, "highlightIP: show start and elevator");
                     } else {
                         Log.d(TAG, "highlightIP: No elevator found");
                     }
-                }*/
+                }
+                else {
+                    //show goal
+                    if(elevator != null)
+                        elevator.getMarker().setVisibility(View.GONE);
+                    start.getMarker().setVisibility(View.VISIBLE);
+                    end.getMarker().setVisibility(View.VISIBLE);
+                    Log.d(TAG, "highlightIP: show start and end");
+                }
             }
             else
                 Log.d(TAG, "highlightIP: Found no start/entrance");

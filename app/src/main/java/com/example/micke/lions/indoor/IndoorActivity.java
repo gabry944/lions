@@ -63,19 +63,6 @@ public class IndoorActivity extends AppCompatActivity {
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(1);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        assert fab != null;
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DialogFragment newFragment = new AddPointDialogFragment();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("firebase", fireBaseHandler);
-                newFragment.setArguments(bundle);
-                newFragment.show(getFragmentManager(), "add_point_layout");
-            }
-        });
-
         //If QRFragment gets user here, go to indoor map
         if(!ipId.equals("-1")) {
             mViewPager.setCurrentItem(0);
