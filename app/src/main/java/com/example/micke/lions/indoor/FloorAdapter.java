@@ -23,7 +23,7 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
     private int temphHeight;
     private View tempView;
     private String TAG = "FloorAdapter";
-    private Context mContext;
+    private IndoorMapFragment mIndoorMapFragment;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -41,8 +41,8 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
     }
 
     //empty constructor
-    public FloorAdapter(Context con, List<String> myDataset) {
-        mContext = con;
+    public FloorAdapter(IndoorMapFragment indoorMapFragment, List<String> myDataset) {
+        mIndoorMapFragment = indoorMapFragment;
         ipDataset = myDataset;
     }
 
@@ -68,7 +68,7 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
@@ -79,6 +79,7 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
             @Override
             public void onClick(final View v) {
                 Log.d(TAG, "onClick: Change floor");
+                mIndoorMapFragment.setCurrentFloor(position);
             }
         });
     }

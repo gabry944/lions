@@ -79,8 +79,6 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
 
         carMarkerList = new ArrayList<>();
 
-        Log.d("map", "OutdoorKartFragment created");
-
         latitude = 58.3918064;
         longitude = 15.5654057;
 
@@ -90,7 +88,6 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.d("map", "outdoorkartfragment - onmapready");
         mMap = googleMap;
 
         if (ActivityCompat.checkSelfPermission(getContext(),
@@ -153,6 +150,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
         carMarkerList.clear();
         //Clear the map, clears all markers and other stuff
         mMap.clear();
+        loadAllBuildings();
 
         Marker carMarker = mMap.addMarker(new MarkerOptions()
                 .position(point)
