@@ -47,6 +47,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     private View rootView;
     private List<Building> buildings;
     private List<Marker> carMarkerList;
+    private OutdoorActivity outdoorActivity;
 
     public OutdoorMapFragment() {
 
@@ -67,6 +68,8 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        outdoorActivity = (OutdoorActivity) getActivity();
+
         try {
             rootView = inflater.inflate(R.layout.activity_outdoor_maps, container, false);
         } catch (InflateException e) {
@@ -103,8 +106,8 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
         mMap.setOnMapClickListener(this);
         mMap.setOnMarkerClickListener(this);
 
-        buildings = new ArrayList<Building>();
-        ((OutdoorActivity) getActivity()).getFireBaseHandler().buildingListener(this);
+        buildings = new ArrayList<>();
+        outdoorActivity.getFireBaseHandler().buildingListener(this);
     }
 
     public void setUpMapIfNeeded() {
@@ -123,11 +126,10 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     public void onMapLongClick(LatLng point) {
         DialogFragment newFragment = new AddBuildingDialogFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable("firebase", ((OutdoorActivity) getActivity()).getFireBaseHandler());
         bundle.putParcelable("latlng", point);
         bundle.putSerializable("mapfragment", this);
         newFragment.setArguments(bundle);
-        newFragment.show(getActivity().getFragmentManager(), "add_building_layout");
+        newFragment.show(outdoorActivity.getFragmentManager(), "add_building_layout");
     }
 
     @Override

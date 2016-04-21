@@ -26,15 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class IndoorActivity extends AppCompatActivity implements DataSetChanged{
+public class IndoorActivity extends AppCompatActivity {
 
     private FireBaseIndoor fireBaseHandler;
     private IndoorPageSliderAdapter mSectionsPagerAdapter;
     public static ViewPager mViewPager;
-    private ipAdapter ipadapter;
-    public List<PointOfInterest> myDataset;
+
     private String ipId;
-    public String buildingId;
+    private String buildingId;
     public IndoorMapFragment map;
     public IndoorListFragment list;
     public IndoorQRFragment qr;
@@ -49,10 +48,9 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged{
         Bundle bundle = intent.getExtras();
         buildingId = bundle.getString("buildingId", "1");
         ipId = bundle.getString("ipId", "-1");
+        Log.d("indoor", "buldingId: " + buildingId);
 
         fireBaseHandler = new FireBaseIndoor(getApplicationContext(), buildingId);
-
-        myDataset = fireBaseHandler.getPoints(buildingId, this, false);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -65,10 +63,6 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged{
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(1);
 
-        myDataset = fireBaseHandler.getPoints(buildingId, this, false);
-
-        ipadapter = new ipAdapter(this, myDataset);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         assert fab != null;
         fab.setOnClickListener(new View.OnClickListener() {
@@ -79,8 +73,6 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged{
                 bundle.putSerializable("firebase", fireBaseHandler);
                 newFragment.setArguments(bundle);
                 newFragment.show(getFragmentManager(), "add_point_layout");
-//                Snackbar.make(view, "BLablabla", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
             }
         });
 
@@ -90,18 +82,11 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged{
         }
     }
 
-    @Override
-    public void dataSetChanged() {
-        ipadapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void fetchDataDone() {
-
-    }
-
-    public List<PointOfInterest> getData() { return myDataset; }
     public FireBaseIndoor getFireBaseHandler() { return fireBaseHandler; }
+
+    public String getBuildingId() {
+        return buildingId;
+    }
 
     @Override
     public void onBackPressed()
@@ -110,9 +95,5 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged{
             mViewPager.setCurrentItem(1);
         else
             super.onBackPressed();
-    }
-
-    public String getBuildingId() {
-        return buildingId;
     }
 }

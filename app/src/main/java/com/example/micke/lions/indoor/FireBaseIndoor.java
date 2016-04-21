@@ -35,6 +35,7 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
 
     public List<PointOfInterest> getPoints(String buildingId, final DataSetChanged indoorActivity, final boolean search) {
         final List<PointOfInterest> list = new ArrayList<>();
+        Log.d("indoor", "getting points for " +  buildingId);
 
         myFirebaseRef.child("building/" + buildingId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -65,7 +66,36 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
         return list;
     }
 
-    public List<String> getFloors(String buildingId, final DataSetChanged indoorActivity) {
+    public List<PointOfInterest> getPoints(String buildingId, final IndoorMapMarkerChange indoorMapFragment) {
+        final List<PointOfInterest> list = new ArrayList<>();
+        Log.d("indoor", "getting points for " +  buildingId);
+
+        myFirebaseRef.child("building/" + buildingId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot building) {
+                list.clear();
+                DataSnapshot floors = building.child("floor");
+                Log.d("hej", "data changed");
+                for (DataSnapshot floor : floors.getChildren()) {
+                    DataSnapshot ips = floor.child("ip");
+                    for (DataSnapshot ip : ips.getChildren()) {
+                        Log.d("ip", ip.getValue().toString());
+                        PointOfInterest point = new PointOfInterest(ip.getValue(PointOfInterest.class));
+                        list.add(point);
+                    }
+                }
+                indoorMapFragment.getUpdatedDataSet(list);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
+
+        return list;
+    }
+
+    public List<String> getFloors(String buildingId, final IndoorMapMarkerChange indoorMapMarkerChange) {
         final List<String> list = new ArrayList<>();
 
         myFirebaseRef.child("building/" + buildingId).addValueEventListener(new ValueEventListener() {
@@ -77,7 +107,7 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
                 for (DataSnapshot floor : floors.getChildren()) {
                     list.add(floor.getKey().toString());
                 }
-                indoorActivity.dataSetChanged();
+                indoorMapMarkerChange.dataSetChanged();
 
             }
 

@@ -26,6 +26,8 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged {
     private static final String ARG_SECTION_NUMBER = "section_number";
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
+
+    private OutdoorActivity outdoorActivity;
     private BuildingAdapter buildingAdapter;
     private List<Building> myDataset;
 
@@ -47,15 +49,16 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        outdoorActivity = (OutdoorActivity) getActivity();
         View rootView = inflater.inflate(R.layout.fragment_outdoor_list, container, false);
 
-        myDataset = ((OutdoorActivity) getActivity()).getFireBaseHandler().getBuildings(this);
+        myDataset = outdoorActivity.getFireBaseHandler().getBuildings(this);
 
         buildingAdapter = new BuildingAdapter(getContext(), myDataset);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.building_recycler_view);
         mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getActivity());
+        mLayoutManager = new LinearLayoutManager(outdoorActivity);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mRecyclerView.setAdapter(buildingAdapter);

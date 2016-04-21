@@ -102,6 +102,7 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHo
                 Intent intent = new Intent(mContext, IndoorActivity.class);
                 Bundle bundle = new Bundle();
                 String buildingId = holder.mIDView.getText().toString();
+                Log.d("outdoor", "buldingId: " + buildingId);
                 bundle.putString("buildingId", buildingId);
                 intent.putExtras(bundle);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
