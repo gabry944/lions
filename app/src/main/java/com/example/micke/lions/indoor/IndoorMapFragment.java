@@ -19,6 +19,9 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -258,7 +261,17 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         final float posY = ip.getLongitude();
 
         IndoorMapMarker point = new IndoorMapMarker(ip, posX, posY, getContext());
+
+        RotateAnimation anim = new RotateAnimation(0f, 350f, point.getX(), point.getY());
+        anim.setInterpolator(new LinearInterpolator());
+        anim.setRepeatCount(Animation.INFINITE);
+        anim.setDuration(700);
+        point.getMarker().startAnimation(anim);
+
         parent.addView(point.getMarker());
+
+
+
         listOfMarkers.add(point);
 
         if(ip.getCategory().toLowerCase().equals("hiss"))
