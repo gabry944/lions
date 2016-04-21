@@ -79,7 +79,7 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
             @Override
             public void onClick(final View v) {
                 Log.d(TAG, "onClick: Change floor");
-                mIndoorMapFragment.setCurrentFloor(position);
+                mIndoorMapFragment.setCurrentFloor(ipDataset.get(position));
             }
         });
     }

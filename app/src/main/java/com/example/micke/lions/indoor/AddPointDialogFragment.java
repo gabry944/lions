@@ -15,10 +15,10 @@ import android.widget.TextView;
 import com.example.micke.lions.R;
 
 
-/**
- * Created by iSirux on 2016-04-11.
- */
+
 public class AddPointDialogFragment extends DialogFragment {
+
+    private String TAG = "AddPointDialogFragment";
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -50,7 +50,6 @@ public class AddPointDialogFragment extends DialogFragment {
 
         dialogBuilder.setTitle("Skapa ny intressepunkt!");
 
-
         Button submit = (Button) dialogView.findViewById(R.id.submit);
         Button cancel = (Button) dialogView.findViewById(R.id.cancel);
         final String ipId = fireBaseIndoor.generateId();
@@ -68,7 +67,7 @@ public class AddPointDialogFragment extends DialogFragment {
             public void onClick(View v) {
 
                 if (title.getText().toString().equals("") || description.getText().toString().equals("") ||
-                        category.getSelectedItem().toString().equals("")) {
+                        category.getSelectedItem().toString().equals("Ingen kategori vald")) {
                     if (title.getText().toString().equals("")) {
                         title.setError("** Fyll i en titel");
                     }
@@ -83,7 +82,7 @@ public class AddPointDialogFragment extends DialogFragment {
 
                 } else {
                     PointOfInterest point = new PointOfInterest(title.getText().toString(),
-                            description.getText().toString(), category.getSelectedItem().toString(), point1, point2, ipId);
+                            description.getText().toString(), category.getSelectedItem().toString(), point1, point2, "insert floor here", ipId);
                     fireBaseIndoor.updateIp(point, 4);
                     dialogBuilder.cancel();
                 }
@@ -93,4 +92,3 @@ public class AddPointDialogFragment extends DialogFragment {
        return dialogBuilder;
     }
 }
-
