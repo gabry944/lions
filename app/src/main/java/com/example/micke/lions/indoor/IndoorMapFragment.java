@@ -127,15 +127,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         pointList = fireBaseIndoor.getPoints(buildingId, this);
 
-        TextView textView = new TextView(getContext());
-        textView.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-        textView.setText("Hej");
-
-        r.addView(textView);
-
-        textView.setX(0);
-        textView.setY(0);
-
         r.setLongClickable(true);
         r.setClickable(true);
         r.setOnLongClickListener(new View.OnLongClickListener() {
@@ -301,15 +292,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         IndoorMapMarker point = new IndoorMapMarker(ip, posX, posY, getContext());
 
-        RotateAnimation anim = new RotateAnimation(0f, 350f, point.getX(), point.getY());
-        anim.setInterpolator(new LinearInterpolator());
-        anim.setRepeatCount(Animation.INFINITE);
-        anim.setDuration(700);
-        point.getMarker().startAnimation(anim);
-
         parent.addView(point.getMarker());
-
-
 
         listOfMarkers.add(point);
 
