@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.micke.lions.R;
 
@@ -49,7 +50,6 @@ public class AddPointDialogFragment extends DialogFragment {
 
         dialogBuilder.setTitle("Skapa ny intressepunkt!");
 
-
         Button submit = (Button) dialogView.findViewById(R.id.submit);
         Button cancel = (Button) dialogView.findViewById(R.id.cancel);
         final String ipId = fireBaseIndoor.generateId();
@@ -67,7 +67,7 @@ public class AddPointDialogFragment extends DialogFragment {
             public void onClick(View v) {
 
                 if (title.getText().toString().equals("") || description.getText().toString().equals("") ||
-                        category.getSelectedItem().toString().equals("")) {
+                        category.getSelectedItem().toString().equals("Ingen kategori vald")) {
                     if (title.getText().toString().equals("")) {
                         title.setError("** Fyll i en titel");
                     }
@@ -75,16 +75,16 @@ public class AddPointDialogFragment extends DialogFragment {
                     if (description.getText().toString().equals("")) {
                         description.setError("** Fyll i beskrivning");
                     }
-                    if (category.getSelectedItem().toString().equals("")) {
-                        // category.setError("** Lägg till en kategori");
-                        Log.d("kategorierror", "Här kommer det funktionalitet sen");
+                    if (category.getSelectedItem().toString().equals("Ingen kategori vald")) {
+                        ((TextView)category.getSelectedView()).setError("Fyll i kategori");
                     }
                     dialogBuilder.show();
 
                 } else {
                     PointOfInterest point = new PointOfInterest(title.getText().toString(),
-                            description.getText().toString(), category.getSelectedItem().toString(), point1, point2, "insert floor here", ipId);
-                    fireBaseIndoor.updateIp(point, 4);
+                    description.getText().toString(), category.getSelectedItem().toString(), point1, point2, "insert floor here", ipId);
+                    fireBaseIndoor.updateIp(point, Integer.parseInt(fireBaseIndoor.getFloor()));
+
                     dialogBuilder.cancel();
                 }
             }
