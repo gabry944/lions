@@ -8,14 +8,14 @@ import com.example.micke.lions.R;
 /**
  * Created by Gabriella on 2016-04-19.
  */
-public class IndoormapMarker {
+public class IndoorMapMarker {
 
     private ImageView point;
     private PointOfInterest pointOfInterest;
     private Context context;
     private float[] localCoord;    //[0] = posX, [1] = posY
 
-    public IndoormapMarker(PointOfInterest pointOfInterest, float posX, float posY, Context context) {
+    public IndoorMapMarker(PointOfInterest pointOfInterest, float posX, float posY, Context context) {
         this.context = context;
         this.pointOfInterest = pointOfInterest;
 
