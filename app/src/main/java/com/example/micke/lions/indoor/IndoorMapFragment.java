@@ -221,8 +221,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     public void highlightIP(String ipID) {
         Log.d(TAG, "highlightIP: piID = " + ipID);
         for(IndoormapMarker m : listOfMarkers) {
-            //hide all except chosen ip
-            if(m.getId().equals(ipID))
+            //hide all except chosen ip and entrance
+            if(m.getId().equals(ipID) || m.getCategory().equals("Entrance"))
                 m.getMarker().setVisibility(View.VISIBLE);
             else
                 m.getMarker().setVisibility(View.GONE);
