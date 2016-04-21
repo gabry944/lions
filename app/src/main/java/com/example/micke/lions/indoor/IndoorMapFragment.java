@@ -1,6 +1,8 @@
 package com.example.micke.lions.indoor;
 
 import android.app.DialogFragment;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,15 +18,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.example.micke.lions.DataSetChanged;
 import com.example.micke.lions.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class IndoorMapFragment extends Fragment implements DataSetChanged {
+public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange {
     String TAG = "IndoorMapFragment";
     /**
      * The fragment argument representing the section number for this
@@ -33,14 +35,26 @@ public class IndoorMapFragment extends Fragment implements DataSetChanged {
     private RecyclerView mFloorRecyclerView;
     private RecyclerView.LayoutManager mFloorLayoutManager;
 
+    private View rootView;
+    private List<String> mFloors;
+    public FloorAdapter floorAdapter;
+    private FireBaseIndoor fireBaseIndoor;
+    private String buildingId;
+
     private float mx, mx2;  //2 is for the second finger. Used for zooming
     private float my, my2;
     private float scaleFactor = 5.0f;
     private boolean longClick = true;  //turns to false if user moves fingers
 
+    private List<PointOfInterest> pointList;
+
     private IndoorActivity indoorActivity;
+    private List<IndoormapMarker> listOfMarkers = new ArrayList<IndoormapMarker>();
 
     private static final String ARG_SECTION_NUMBER = "section_number";
+
+    //TODO Change to list
+    private Drawable floor1;
 
     public IndoorMapFragment() {
     }
@@ -61,31 +75,37 @@ public class IndoorMapFragment extends Fragment implements DataSetChanged {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.activity_indoor_map, container, false);
+        indoorActivity = (IndoorActivity) getActivity();
+        fireBaseIndoor = indoorActivity.getFireBaseHandler();
+
+        buildingId = indoorActivity.getBuildingId();
+        rootView = inflater.inflate(R.layout.activity_indoor_map, container, false);
+        mFloors = fireBaseIndoor.getFloors(buildingId, this);
+        floorAdapter = new FloorAdapter(this, mFloors);
 
         //For list of floors
         mFloorRecyclerView = (RecyclerView) rootView.findViewById(R.id.floor_recycler_view);
         mFloorRecyclerView.setHasFixedSize(true);
-        mFloorLayoutManager = new LinearLayoutManager(getActivity());
+        mFloorLayoutManager = new LinearLayoutManager(indoorActivity);
         mFloorRecyclerView.setLayoutManager(mFloorLayoutManager);
 
-        mFloorRecyclerView.setAdapter(((IndoorActivity) getActivity()).floorAdapter);
+        mFloorRecyclerView.setAdapter(floorAdapter);
 
         //For the map
         final RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
         r.setScaleX(5.0f);
         r.setScaleY(5.0f);
 
+
+        floor1 = getResources().getDrawable(R.drawable.map_t3);
         final ImageView i = (ImageView) rootView.findViewById(R.id.map);
-        i.setImageResource(R.drawable.map_t3);
+        i.setImageDrawable(floor1);
 
         setHasOptionsMenu(true);
 
-        indoorActivity = ((IndoorActivity) getActivity());
-        FireBaseIndoor fireBaseIndoor = indoorActivity.getFireBaseHandler();
-        List<PointOfInterest> l = indoorActivity.getData();
-        for(PointOfInterest p : l) {
-            addPoint(r, p.getLatitude(), p.getLongitude());
+        pointList = fireBaseIndoor.getPoints(buildingId, this);
+        for(PointOfInterest p : pointList) {
+            addPoint(r, p);
         }
 
         r.setLongClickable(true);
@@ -105,7 +125,7 @@ public class IndoorMapFragment extends Fragment implements DataSetChanged {
                     bundle.putFloat("lat", point[0]);
                     bundle.putFloat("lng", point[1]);
                     newFragment.setArguments(bundle);
-                    newFragment.show(getActivity().getFragmentManager(), "add_point_layout");
+                    newFragment.show(indoorActivity.getFragmentManager(), "add_point_layout");
                 }
                         Log.d("map_indoor", "onLongClick: " + longClick);
                 return false;
@@ -209,14 +229,24 @@ public class IndoorMapFragment extends Fragment implements DataSetChanged {
     }
 
     public void highlightIP(String ipID) {
-        Log.d("IndoorMapFragment", "highlightIP: ipID = " + ipID);
+        Log.d(TAG, "highlightIP: piID = " + ipID);
+        for(IndoormapMarker m : listOfMarkers) {
+            //hide all except chosen ip and entrance
+            if(m.getId().equals(ipID) || m.getCategory().equals("Entrance"))
+                m.getMarker().setVisibility(View.VISIBLE);
+            else
+                m.getMarker().setVisibility(View.GONE);
+        }
     }
 
-    private void addPoint(RelativeLayout parent, final float posX, final float posY) {
+    private void addPoint(RelativeLayout parent, PointOfInterest ip) {
+        //TODO fixa vettiga värden
+        final float posX = ip.getLatitude();
+        final float posY = ip.getLongitude();
 
-        PointOfInterest dummyPoint = new PointOfInterest("dummyTitle", "dummyDescription", "dummyCategory", 0, 0, "dummyId");
-        IndoormapMarker point = new IndoormapMarker(dummyPoint, posX, posY, getContext());
+        IndoormapMarker point = new IndoormapMarker(ip, posX, posY, getContext());
         parent.addView(point.getMarker());
+        listOfMarkers.add(point);
 
         point.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -250,17 +280,36 @@ public class IndoorMapFragment extends Fragment implements DataSetChanged {
         return false;
     }
 
-    @Override
-    public void dataSetChanged() {
-        List<PointOfInterest> l = indoorActivity.getData();
-        for(PointOfInterest p : l) {
-            //addPoint(r, p.getLatitude(), p.getLongitude());
-        }
+    public void setCurrentFloor(int f) {
+        ImageView i = (ImageView) rootView.findViewById(R.id.map);
+        int id = 0;
+        Log.d("floor", "" + f);
+        floor1 = null;
+        if(f == 0)
+            floor1 = getResources().getDrawable(R.drawable.map_t3);
+        if(f == 1)
+            floor1 = getResources().getDrawable(R.drawable.map_t4);
+        i.setImageDrawable(floor1);
     }
 
     @Override
-    public void fetchDataDone() {
 
+    public void getUpdatedDataSet(List<PointOfInterest> pointOfInterestList) {
+        RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+        Log.d("map", "DATAsETcHANGED");
+        for(IndoormapMarker p : listOfMarkers) {
+            r.removeView(p.getMarker());
+        }
+        listOfMarkers.clear();
+        for(PointOfInterest p : pointOfInterestList) {
+            addPoint(r,p);
+        }
+        floorAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void dataSetChanged() {
+        floorAdapter.notifyDataSetChanged();
     }
 }
 

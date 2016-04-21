@@ -46,6 +46,8 @@ public class IndoormapMarker {
         return pointOfInterest.getId();
     }
 
+    public String getCategory(){ return pointOfInterest.getCategory(); }
+
     public void setX(float x){
         localCoord[0] = x;
         point.setX(x);

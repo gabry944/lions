@@ -18,12 +18,12 @@ import com.example.micke.lions.R;
 import java.util.List;
 
 public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> {
-    private List<PointOfInterest> ipDataset;
+    private List<String> ipDataset;
     public boolean isExpanded = false;
     private int temphHeight;
     private View tempView;
     private String TAG = "FloorAdapter";
-    private Context mContext;
+    private IndoorMapFragment mIndoorMapFragment;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -41,16 +41,16 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
     }
 
     //empty constructor
-    public FloorAdapter(Context con, List<PointOfInterest> myDataset) {
-        mContext = con;
+    public FloorAdapter(IndoorMapFragment indoorMapFragment, List<String> myDataset) {
+        mIndoorMapFragment = indoorMapFragment;
         ipDataset = myDataset;
     }
 
-    public void setFloorDataset(List<PointOfInterest> ipDataset) {
+    public void setFloorDataset(List<String> ipDataset) {
         this.ipDataset = ipDataset;
     }
     // Provide a suitable constructor (depends on the kind of dataset)
-    public FloorAdapter(List<PointOfInterest> myDataset) {
+    public FloorAdapter(List<String> myDataset) {
         ipDataset = myDataset;
     }
 
@@ -68,18 +68,18 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        holder.mContentView.setText("Floor 1");
-
+        holder.mContentView.setText("Floor " + ipDataset.get(position));
 
         //To expand an "item" in the recyclerview
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-
+                Log.d(TAG, "onClick: Change floor");
+                mIndoorMapFragment.setCurrentFloor(position);
             }
         });
     }
@@ -97,50 +97,50 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
 
     }
 
-    public void addItem(int position, PointOfInterest ip) {
+    public void addItem(int position, String ip) {
         ipDataset.add(position, ip);
         notifyItemInserted(position);
         notifyItemRangeChanged(position, ipDataset.size());
     }
 
     public void moveItem(int fromPosition, int toPosition) {
-        final PointOfInterest ip = ipDataset.remove(fromPosition);
+        final String ip = ipDataset.remove(fromPosition);
         ipDataset.add(toPosition, ip);
         notifyItemMoved(fromPosition, toPosition);
     }
 
-    public void updateAdapter(List<PointOfInterest> ipSet) {
+    public void updateAdapter(List<String> ipSet) {
         applyAndAnimateRemovals(ipSet);
         applyAndAnimateAdditions(ipSet);
         Log.d("new", "---");
-        for(PointOfInterest ip: ipDataset){
-            Log.d("new filtered list", ip.getTitle());
+        for(String ip: ipDataset){
+            Log.d("new filtered list", ip);
         }
 
         applyAndAnimateMovedItems(ipSet);
     }
 
-    private void applyAndAnimateRemovals(List<PointOfInterest> newips) {
+    private void applyAndAnimateRemovals(List<String> newips) {
         for (int i = ipDataset.size() - 1; i >= 0; i--) {
-            final PointOfInterest ip = ipDataset.get(i);
+            final String ip = ipDataset.get(i);
             if (!newips.contains(ip)) {
                 removeItem(i);
             }
         }
     }
 
-    private void applyAndAnimateAdditions(List<PointOfInterest> newips) {
+    private void applyAndAnimateAdditions(List<String> newips) {
         for (int i = 0, count = newips.size(); i < count; i++) {
-            final PointOfInterest ip = newips.get(i);
+            final String ip = newips.get(i);
             if (!ipDataset.contains(ip)) {
                 addItem(i, ip);
             }
         }
     }
 
-    private void applyAndAnimateMovedItems(List<PointOfInterest> newips) {
+    private void applyAndAnimateMovedItems(List<String> newips) {
         for (int toPosition = newips.size() - 1; toPosition >= 0; toPosition--) {
-            final PointOfInterest ip = newips.get(toPosition);
+            final String ip = newips.get(toPosition);
             final int fromPosition = ipDataset.indexOf(ip);
             if (fromPosition >= 0 && fromPosition != toPosition) {
                 moveItem(fromPosition, toPosition);
