@@ -1,6 +1,7 @@
 package com.example.micke.lions.indoor;
 
 import android.app.DialogFragment;
+
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,11 +23,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.example.micke.lions.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -58,7 +61,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private List<PointOfInterest> pointList;
 
     private IndoorActivity indoorActivity;
-    private List<IndoormapMarker> listOfMarkers = new ArrayList<IndoormapMarker>();
+    private List<IndoorMapMarker> listOfMarkers = new ArrayList<IndoorMapMarker>();
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -120,6 +123,15 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         setHasOptionsMenu(true);
 
         pointList = fireBaseIndoor.getPoints(buildingId, this);
+
+        TextView textView = new TextView(getContext());
+        textView.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+        textView.setText("Hej");
+
+        r.addView(textView);
+
+        textView.setX(0);
+        textView.setY(0);
 
         r.setLongClickable(true);
         r.setClickable(true);
@@ -243,13 +255,40 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     public void highlightIP(String ipID) {
         Log.d(TAG, "highlightIP: piID = " + ipID);
-        for(IndoormapMarker m : listOfMarkers) {
+
+        IndoorMapMarker start = null, end = null, elevator = null;
+
+        for(IndoorMapMarker m : listOfMarkers) {
             //hide all except chosen ip and entrance
-            if(m.getId().equals(ipID) || m.getCategory().equals("Entrance"))
-                m.getMarker().setVisibility(View.VISIBLE);
+            if(m.getId().equals(ipID))
+                end = m;
+            else if(m.getCategory().equals(getString(R.string.Entrance)))
+                start = m;
+            else if(m.getCategory().equals(getString(R.string.Elevator)))
+                elevator = m;
             else
                 m.getMarker().setVisibility(View.GONE);
         }
+
+        if(end != null) {
+            if(start != null) {
+                //if ipID floor != entrance floor
+                /*if (!end.getPoint().getFloor().equals(start.getPoint().getFloor())) {
+                    //show elevator
+                    if (elevator != null) {
+                        elevator.getMarker().setVisibility(View.VISIBLE);
+                        start.getMarker().setVisibility(View.VISIBLE);
+                        end.getMarker().setVisibility(View.GONE);
+                    } else {
+                        Log.d(TAG, "highlightIP: No elevator found");
+                    }
+                }*/
+            }
+            else
+                Log.d(TAG, "highlightIP: Found no start/entrance");
+        }
+        else
+            Log.d(TAG, "highlightIP: Found no IP with the gived ID");
     }
 
     private void addPoint(RelativeLayout parent, PointOfInterest ip) {
@@ -257,9 +296,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         final float posX = ip.getLatitude();
         final float posY = ip.getLongitude();
 
-        IndoormapMarker point = new IndoormapMarker(ip, posX, posY, getContext());
+        IndoorMapMarker point = new IndoorMapMarker(ip, posX, posY, getContext());
         parent.addView(point.getMarker());
         listOfMarkers.add(point);
+
+        if(ip.getCategory().toLowerCase().equals("hiss"))
+                    addDescText(parent, ip.getCategory(), point.getX(), point.getY());
 
         point.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -267,6 +309,20 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 Log.d("TAG", "Klickar på pungtjävel " + "posX = " + posX + " posY = " + posY);
             }
         });
+    }
+
+    private void addDescText(RelativeLayout parent, String category, float posX, float posY){
+        TextView textView = new TextView(getContext());
+        textView.setText(category);
+        textView.setTextSize(6);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+        textView.setLayoutParams(layoutParams);
+        textView.setX(posX);
+        textView.setY(posY - 130);
+        parent.addView(textView);
     }
 
     @Override
@@ -315,8 +371,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     @Override
     public void getUpdatedDataSet(List<PointOfInterest> pointList) {
         RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
-        Log.d("floor", "pointList size = " + pointList.size());
-        for(IndoormapMarker p : listOfMarkers) {
+
+        for(IndoorMapMarker p : listOfMarkers) {
             r.removeView(p.getMarker());
         }
         listOfMarkers.clear();

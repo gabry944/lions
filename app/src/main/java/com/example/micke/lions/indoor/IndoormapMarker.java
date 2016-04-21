@@ -1,21 +1,22 @@
 package com.example.micke.lions.indoor;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.example.micke.lions.R;
 
-/**
- * Created by Gabriella on 2016-04-19.
- */
-public class IndoormapMarker {
+
+public class IndoorMapMarker {
+    String TAG = "IndoorMapMarker";
 
     private ImageView point;
     private PointOfInterest pointOfInterest;
     private Context context;
     private float[] localCoord;    //[0] = posX, [1] = posY
 
-    public IndoormapMarker(PointOfInterest pointOfInterest, float posX, float posY, Context context) {
+    public IndoorMapMarker(PointOfInterest pointOfInterest, float posX, float posY, Context context) {
         this.context = context;
         this.pointOfInterest = pointOfInterest;
 
@@ -32,6 +33,10 @@ public class IndoormapMarker {
     //! return the imageView that represent the marker
     public ImageView getMarker() {
         return point;
+    }
+
+    public PointOfInterest getPoint(){
+        return pointOfInterest;
     }
 
     public float getX(){
@@ -81,6 +86,9 @@ public class IndoormapMarker {
         point.setY(localCoord[1]);
         point.setScaleX(0.05f);
         point.setScaleY(0.05f);
-        point.setImageResource(R.drawable.map_marker);
+        if(getCategory().equals(context.getString(R.string.Entrance)))
+            point.setImageResource(R.drawable.map_marker_green);
+        else
+            point.setImageResource(R.drawable.map_marker);
     }
 }
