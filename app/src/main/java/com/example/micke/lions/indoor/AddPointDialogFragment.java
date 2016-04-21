@@ -82,7 +82,8 @@ public class AddPointDialogFragment extends DialogFragment {
 
                 } else {
                     PointOfInterest point = new PointOfInterest(title.getText().toString(),
-                    description.getText().toString(), category.getSelectedItem().toString(), point1, point2, "insert floor here", ipId);
+                    description.getText().toString(), category.getSelectedItem().toString(), point1, point2,
+                            fireBaseIndoor.getFloor(), ipId);
                     fireBaseIndoor.updateIp(point, Integer.parseInt(fireBaseIndoor.getFloor()));
 
                     dialogBuilder.cancel();

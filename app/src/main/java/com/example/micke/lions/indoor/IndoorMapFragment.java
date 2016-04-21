@@ -340,7 +340,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     public void setCurrentFloor(String floor) {
         ImageView i = (ImageView) rootView.findViewById(R.id.map);
         int id = 0;
-        Log.d("floor", "" + floor);
+        Log.d("floor", "" + floor + " pointLise size = " + pointList.size());
         fireBaseIndoor.setFloor(floor);
         floorMap = null;
         if(floor.equals("3")) {

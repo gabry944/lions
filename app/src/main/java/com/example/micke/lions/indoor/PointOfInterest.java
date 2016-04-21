@@ -29,6 +29,7 @@ public class PointOfInterest {
     public PointOfInterest(PointOfInterest p) {
         category = p.getCategory();
         title = p.getTitle();
+        floor = p.getFloor();
         description = p.getDescription();
         latitude = p.getLatitude();
         longitude = p.getLongitude();
