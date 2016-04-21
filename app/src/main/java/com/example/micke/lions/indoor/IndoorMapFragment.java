@@ -40,6 +40,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     public FloorAdapter floorAdapter;
     private FireBaseIndoor fireBaseIndoor;
     private String buildingId;
+    private int currentFloor;
 
     private float mx, mx2;  //2 is for the second finger. Used for zooming
     private float my, my2;
@@ -54,7 +55,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     //TODO Change to list
-    private Drawable floor1;
+    private Drawable floorMap;
 
     public IndoorMapFragment() {
     }
@@ -97,16 +98,13 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         r.setScaleY(5.0f);
 
 
-        floor1 = getResources().getDrawable(R.drawable.map_t3);
+        floorMap = getResources().getDrawable(R.drawable.map_t3);
         final ImageView i = (ImageView) rootView.findViewById(R.id.map);
-        i.setImageDrawable(floor1);
+        i.setImageDrawable(floorMap);
 
         setHasOptionsMenu(true);
 
         pointList = fireBaseIndoor.getPoints(buildingId, this);
-        for(PointOfInterest p : pointList) {
-            addPoint(r, p);
-        }
 
         r.setLongClickable(true);
         r.setClickable(true);
@@ -177,7 +175,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                             scaleFactor = (scaleFactor > 10.0f) ? 10.0f : scaleFactor;
                             scaleFactor = (scaleFactor < 1.0f) ? 1.0f : scaleFactor;
 
-                            Log.d("map_indoor", "Two fingers: scaleFactor = " + scaleFactor + ", diff = " + diff);
+                            //Log.d("map_indoor", "Two fingers: scaleFactor = " + scaleFactor + ", diff = " + diff);
                             r.setScaleX(scaleFactor);
                             r.setScaleY(scaleFactor);
                             mx = event.getX(0);
@@ -196,8 +194,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                             float deltaX = mx - curX;
                             float deltaY = my - curY;
 
-                            Log.d("map_indoor", "posX = " + event.getRawX() + ", posY = " + event.getRawY());
-                            Log.d("map_indoor", "deltaX = " + deltaX + ", deltaY = " + deltaY);
+                            //Log.d("map_indoor", "posX = " + event.getRawX() + ", posY = " + event.getRawY());
+                            //Log.d("map_indoor", "deltaX = " + deltaX + ", deltaY = " + deltaY);
 
                             if(deltaX+deltaY > 0.1)
                                 longClick = false;
@@ -280,28 +278,32 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         return false;
     }
 
-    public void setCurrentFloor(int f) {
+    public void setCurrentFloor(String floor) {
         ImageView i = (ImageView) rootView.findViewById(R.id.map);
         int id = 0;
-        Log.d("floor", "" + f);
-        floor1 = null;
-        if(f == 0)
-            floor1 = getResources().getDrawable(R.drawable.map_t3);
-        if(f == 1)
-            floor1 = getResources().getDrawable(R.drawable.map_t4);
-        i.setImageDrawable(floor1);
+        Log.d("floor", "" + floor);
+        fireBaseIndoor.setFloor(floor);
+        floorMap = null;
+        if(floor.equals("3")) {
+            currentFloor = 3;
+            floorMap = getResources().getDrawable(R.drawable.map_t3);
+        }
+        if(floor.equals("4")) {
+            currentFloor = 4;
+            floorMap = getResources().getDrawable(R.drawable.map_t4);
+        }
+        i.setImageDrawable(floorMap);
     }
 
     @Override
-
-    public void getUpdatedDataSet(List<PointOfInterest> pointOfInterestList) {
+    public void getUpdatedDataSet(List<PointOfInterest> pointList) {
         RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
-        Log.d("map", "DATAsETcHANGED");
+        Log.d("floor", "pointList size = " + pointList.size());
         for(IndoormapMarker p : listOfMarkers) {
             r.removeView(p.getMarker());
         }
         listOfMarkers.clear();
-        for(PointOfInterest p : pointOfInterestList) {
+        for(PointOfInterest p : pointList) {
             addPoint(r,p);
         }
         floorAdapter.notifyDataSetChanged();

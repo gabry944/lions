@@ -1,6 +1,7 @@
 package com.example.micke.lions.indoor;
 
 import android.content.Context;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.example.micke.lions.DataSetChanged;
@@ -18,10 +19,12 @@ import java.util.List;
 public class FireBaseIndoor extends FireBaseHandler implements Serializable {
 
     private String buildingId;
+    private String floorId;
 
     public FireBaseIndoor(Context context, String buildingId) {
         super(context);
         this.buildingId = buildingId;
+        floorId = "4";
     }
 
     /*
@@ -33,6 +36,7 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
         ipRef.setValue(point);
     }
 
+    //Used by list fragment
     public List<PointOfInterest> getPoints(String buildingId, final DataSetChanged indoorActivity, final boolean search) {
         final List<PointOfInterest> list = new ArrayList<>();
         Log.d("indoor", "getting points for " +  buildingId);
@@ -66,6 +70,7 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
         return list;
     }
 
+    //Used by map fragment
     public List<PointOfInterest> getPoints(String buildingId, final IndoorMapMarkerChange indoorMapFragment) {
         final List<PointOfInterest> list = new ArrayList<>();
         Log.d("indoor", "getting points for " +  buildingId);
@@ -76,13 +81,11 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
                 list.clear();
                 DataSnapshot floors = building.child("floor");
                 Log.d("hej", "data changed");
-                for (DataSnapshot floor : floors.getChildren()) {
-                    DataSnapshot ips = floor.child("ip");
-                    for (DataSnapshot ip : ips.getChildren()) {
-                        Log.d("ip", ip.getValue().toString());
-                        PointOfInterest point = new PointOfInterest(ip.getValue(PointOfInterest.class));
-                        list.add(point);
-                    }
+                DataSnapshot ips = floors.child(floorId).child("ip");
+                for (DataSnapshot ip : ips.getChildren()) {
+                    Log.d("ip", ip.getValue().toString());
+                    PointOfInterest point = new PointOfInterest(ip.getValue(PointOfInterest.class));
+                    list.add(point);
                 }
                 indoorMapFragment.getUpdatedDataSet(list);
             }
@@ -103,7 +106,7 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
             public void onDataChange(DataSnapshot building) {
                 list.clear();
                 DataSnapshot floors = building.child("floor");
-                Log.d("map", "data changed karta");
+
                 for (DataSnapshot floor : floors.getChildren()) {
                     list.add(floor.getKey().toString());
                 }
@@ -119,4 +122,10 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
         return list;
     }
 
+    public void setFloor(String f) {
+        floorId = f;
+    }
+    public String getFloor() {
+        return floorId;
+    }
 }
