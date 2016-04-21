@@ -51,6 +51,8 @@ public class PointOfInterest {
 
     public float getLongitude() { return longitude; }
 
+    public String getFloor() { return "Insert floor name here"; }
+
     public void setLatitude(float latitude) {
         this.latitude = latitude;
     }

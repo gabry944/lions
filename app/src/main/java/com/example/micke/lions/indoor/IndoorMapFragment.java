@@ -1,7 +1,6 @@
 package com.example.micke.lions.indoor;
 
 import android.app.DialogFragment;
-import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -49,7 +48,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private List<PointOfInterest> pointList;
 
     private IndoorActivity indoorActivity;
-    private List<IndoormapMarker> listOfMarkers = new ArrayList<IndoormapMarker>();
+    private List<IndoorMapMarker> listOfMarkers = new ArrayList<IndoorMapMarker>();
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -230,13 +229,40 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     public void highlightIP(String ipID) {
         Log.d(TAG, "highlightIP: piID = " + ipID);
-        for(IndoormapMarker m : listOfMarkers) {
+
+        IndoorMapMarker start = null, end = null, elevator = null;
+
+        for(IndoorMapMarker m : listOfMarkers) {
             //hide all except chosen ip and entrance
-            if(m.getId().equals(ipID) || m.getCategory().equals("Entrance"))
-                m.getMarker().setVisibility(View.VISIBLE);
+            if(m.getId().equals(ipID))
+                end = m;
+            else if(m.getCategory().equals(R.string.entrance_category))
+                start = m;
+            else if(m.getCategory().equals(R.string.elevator_category))
+                elevator = m;
             else
                 m.getMarker().setVisibility(View.GONE);
         }
+
+        if(end != null) {
+            if(start != null) {
+                //if ipID floor != entrance floor
+                if (!end.getPoint().getFloor().equals(start.getPoint().getFloor())) {
+                    //show elevator
+                    if (elevator != null) {
+                        elevator.getMarker().setVisibility(View.VISIBLE);
+                        start.getMarker().setVisibility(View.VISIBLE);
+                        end.getMarker().setVisibility(View.GONE);
+                    } else {
+                        Log.d(TAG, "highlightIP: No elevator found");
+                    }
+                }
+            }
+            else
+                Log.d(TAG, "highlightIP: Found no start/entrance");
+        }
+        else
+            Log.d(TAG, "highlightIP: Found no IP with the gived ID");
     }
 
     private void addPoint(RelativeLayout parent, PointOfInterest ip) {
@@ -244,7 +270,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         final float posX = ip.getLatitude();
         final float posY = ip.getLongitude();
 
-        IndoormapMarker point = new IndoormapMarker(ip, posX, posY, getContext());
+        IndoorMapMarker point = new IndoorMapMarker(ip, posX, posY, getContext());
         parent.addView(point.getMarker());
         listOfMarkers.add(point);
 
@@ -297,7 +323,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     public void getUpdatedDataSet(List<PointOfInterest> pointOfInterestList) {
         RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
         Log.d("map", "DATAsETcHANGED");
-        for(IndoormapMarker p : listOfMarkers) {
+        for(IndoorMapMarker p : listOfMarkers) {
             r.removeView(p.getMarker());
         }
         listOfMarkers.clear();
