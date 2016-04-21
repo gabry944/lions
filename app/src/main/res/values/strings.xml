@@ -14,6 +14,7 @@
         AIzaSyCutrsxJ6Vh_OdgQvpPQU4C40-UlVca9dI
     </string>
 
+    <string name="non_chosen">Ingen kategori vald</string>
     <string name="Entrance"> Entré </string>
     <string name="Elevator"> Hiss </string>
     <string name="ConferenceRoom"> Konferansrum </string>
@@ -22,6 +23,7 @@
     <string name="Printer"> Skrivare </string>
 
     <string-array name="category_array">
+        <item>@string/non_chosen</item>
         <item>@string/Entrance</item>
         <item>@string/Elevator</item>
         <item>@string/ConferenceRoom</item>
