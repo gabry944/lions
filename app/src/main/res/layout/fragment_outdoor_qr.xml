@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_menu_camera" />
+        android:src="@drawable/car_plus"
+        android:background="@color/blue"/>
 
 </LinearLayout>
