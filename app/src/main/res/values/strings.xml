@@ -13,16 +13,20 @@
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
         AIzaSyCutrsxJ6Vh_OdgQvpPQU4C40-UlVca9dI
     </string>
-    <string name="entrance_category">Entré</string>
-    <string name="elevator_category">Hiss</string>
 
-    <string-array name="cartegory_array">
-        <item></item>
-        <item>Hiss</item>
-        <item>Konferansrum</item>
-        <item>Toalett</item>
-        <item>Trappa</item>
-        <item>Skrivare</item>
-        <item>Entré</item>
+    <string name="Entrance"> Entré </string>
+    <string name="Elevator"> Hiss </string>
+    <string name="ConferenceRoom"> Konferansrum </string>
+    <string name="Toilet"> Toalett </string>
+    <string name="Stairs"> Trappa </string>
+    <string name="Printer"> Skrivare </string>
+
+    <string-array name="category_array">
+        <item>@string/Entrance</item>
+        <item>@string/Elevator</item>
+        <item>@string/ConferenceRoom</item>
+        <item>@string/Toilet</item>
+        <item>@string/Stairs</item>
+        <item>@string/Printer</item>
     </string-array>
 </resources>
