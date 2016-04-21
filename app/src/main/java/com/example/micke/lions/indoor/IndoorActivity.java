@@ -33,13 +33,12 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged{
     public static ViewPager mViewPager;
     private ipAdapter ipadapter;
     public List<PointOfInterest> myDataset;
-    private List<String> mFloors;
-    private String buildingId;
     private String ipId;
+    public String buildingId;
     public IndoorMapFragment map;
     public IndoorListFragment list;
     public IndoorQRFragment qr;
-    public FloorAdapter floorAdapter;
+
 
     @Override
     public void onCreate(Bundle state) {
@@ -67,10 +66,8 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged{
         mViewPager.setCurrentItem(1);
 
         myDataset = fireBaseHandler.getPoints(buildingId, this, false);
-        mFloors = fireBaseHandler.getFloors(buildingId, this, false);
 
         ipadapter = new ipAdapter(this, myDataset);
-        floorAdapter = new FloorAdapter(this, mFloors);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         assert fab != null;
@@ -96,7 +93,6 @@ public class IndoorActivity extends AppCompatActivity implements DataSetChanged{
     @Override
     public void dataSetChanged() {
         ipadapter.notifyDataSetChanged();
-        floorAdapter.notifyDataSetChanged();
     }
 
     @Override

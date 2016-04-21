@@ -33,6 +33,11 @@ public class IndoorMapFragment extends Fragment implements DataSetChanged {
     private RecyclerView mFloorRecyclerView;
     private RecyclerView.LayoutManager mFloorLayoutManager;
 
+    private View rootView;
+    private List<String> mFloors;
+    public FloorAdapter floorAdapter;
+    private String buildingId;
+
     private float mx, mx2;  //2 is for the second finger. Used for zooming
     private float my, my2;
     private float scaleFactor = 5.0f;
@@ -61,7 +66,11 @@ public class IndoorMapFragment extends Fragment implements DataSetChanged {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.activity_indoor_map, container, false);
+        buildingId = ((IndoorActivity) getActivity()).buildingId;
+        rootView = inflater.inflate(R.layout.activity_indoor_map, container, false);
+        mFloors = ((IndoorActivity) getActivity()).getFireBaseHandler()
+                .getFloors(buildingId, this);
+        floorAdapter = new FloorAdapter(getActivity(), mFloors);
 
         //For list of floors
         mFloorRecyclerView = (RecyclerView) rootView.findViewById(R.id.floor_recycler_view);
@@ -69,7 +78,7 @@ public class IndoorMapFragment extends Fragment implements DataSetChanged {
         mFloorLayoutManager = new LinearLayoutManager(getActivity());
         mFloorRecyclerView.setLayoutManager(mFloorLayoutManager);
 
-        mFloorRecyclerView.setAdapter(((IndoorActivity) getActivity()).floorAdapter);
+        mFloorRecyclerView.setAdapter(floorAdapter);
 
         //For the map
         final RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
@@ -83,7 +92,7 @@ public class IndoorMapFragment extends Fragment implements DataSetChanged {
 
         indoorActivity = ((IndoorActivity) getActivity());
         FireBaseIndoor fireBaseIndoor = indoorActivity.getFireBaseHandler();
-        List<PointOfInterest> l = indoorActivity.getData();
+        List<PointOfInterest> l = fireBaseIndoor.getPoints(buildingId, this, false);;
         for(PointOfInterest p : l) {
             addPoint(r, p.getLatitude(), p.getLongitude());
         }
@@ -253,9 +262,12 @@ public class IndoorMapFragment extends Fragment implements DataSetChanged {
     @Override
     public void dataSetChanged() {
         List<PointOfInterest> l = indoorActivity.getData();
+        RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+        Log.d("map", "DATAsETcHANGED");
         for(PointOfInterest p : l) {
-            //addPoint(r, p.getLatitude(), p.getLongitude());
+            addPoint(r, p.getLatitude(), p.getLongitude());
         }
+        floorAdapter.notifyDataSetChanged();
     }
 
     @Override

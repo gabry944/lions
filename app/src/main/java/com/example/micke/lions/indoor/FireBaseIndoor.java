@@ -65,7 +65,7 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
         return list;
     }
 
-    public List<String> getFloors(String buildingId, final DataSetChanged indoorActivity, final boolean search) {
+    public List<String> getFloors(String buildingId, final DataSetChanged indoorActivity) {
         final List<String> list = new ArrayList<>();
 
         myFirebaseRef.child("building/" + buildingId).addValueEventListener(new ValueEventListener() {
@@ -73,14 +73,11 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
             public void onDataChange(DataSnapshot building) {
                 list.clear();
                 DataSnapshot floors = building.child("floor");
-                Log.d("hej", "data changed");
+                Log.d("map", "data changed karta");
                 for (DataSnapshot floor : floors.getChildren()) {
                     list.add(floor.getKey().toString());
                 }
-                if (search)
-                    indoorActivity.fetchDataDone();
-                else
-                    indoorActivity.dataSetChanged();
+                indoorActivity.dataSetChanged();
 
             }
 
