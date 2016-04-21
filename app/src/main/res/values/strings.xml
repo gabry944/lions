@@ -15,4 +15,13 @@
     </string>
     <string name="entrance_category">Entrance</string>
     <string name="elevator_category">Hiss</string>
+
+    <string-array name="cartegory_array">
+        <item></item>
+        <item>Hiss</item>
+        <item>Konferansrum</item>
+        <item>Toalett</item>
+        <item>Trappa</item>
+        <item>Skrivare</item>
+    </string-array>
 </resources>
