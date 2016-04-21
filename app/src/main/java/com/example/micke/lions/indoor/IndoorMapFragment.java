@@ -193,15 +193,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                                             Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)))
                                             / Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)));
 
-                            //if (diff != 0)
-                            //    diff = 25* Math.signum(diff) * 1 / Math.pow(diff, 2.0);
                             diff = (diff < -ZOOMSPEED) ? -ZOOMSPEED : diff;
                             diff = (diff > ZOOMSPEED) ? ZOOMSPEED : diff;
                             scaleFactor += 0.02 * diff;
                             scaleFactor = (scaleFactor > 10.0f) ? 10.0f : scaleFactor;
                             scaleFactor = (scaleFactor < 1.0f) ? 1.0f : scaleFactor;
 
-                            //Log.d("map_indoor", "Two fingers: scaleFactor = " + scaleFactor + ", diff = " + diff);
                             r.setScaleX(scaleFactor);
                             r.setScaleY(scaleFactor);
                             mx = event.getX(0);
@@ -220,29 +217,19 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                             float deltaX = mx - curX;
                             float deltaY = my - curY;
 
-                            //Log.d("map_indoor", "posX = " + event.getRawX() + ", posY = " + event.getRawY());
-                            //Log.d("map_indoor", "deltaX = " + deltaX + ", deltaY = " + deltaY);
-
                             if(deltaX+deltaY > 5)
                                 longClick = false;
-                            //This coordinate transformation should be moved into its own function
-                            //addPoint(r, (event.getRawX() - r.getWidth() / 2 - r.getTranslationX())/scaleFactor,
-                            // (event.getRawY() - r.getHeight() / 2 - 100 - r.getTranslationY())/scaleFactor);
 
                             r.setTranslationX(posX - deltaX);
                             r.setTranslationY(posY - deltaY);
 
-
                             mx = curX;
                             my = curY;
                         }
-
                         break;
-
                     case MotionEvent.ACTION_UP:
                         longClick = true;
                         break;
-
                 }
 
                 return false;
@@ -365,7 +352,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     public void setCurrentFloor(String floor) {
         ImageView i = (ImageView) rootView.findViewById(R.id.map);
         int id = 0;
-        Log.d("floor", "" + floor);
+        Log.d("floor", "" + floor + " pointLise size = " + pointList.size());
         fireBaseIndoor.setFloor(floor);
         floorMap = null;
         if(floor.equals("3")) {
@@ -379,6 +366,15 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t4));
         }
         i.setImageDrawable(floorMap);
+
+        RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+        for(IndoorMapMarker p : listOfMarkers)
+            r.removeView(p.getMarker());
+        listOfMarkers.clear();
+        for(PointOfInterest p : pointList) {
+            if(p.getFloor().equals(floor))
+                addPoint(r,p);
+        }
     }
 
     @Override
