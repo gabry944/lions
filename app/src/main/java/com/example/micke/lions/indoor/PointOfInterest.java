@@ -6,13 +6,14 @@ public class PointOfInterest {
     private String description;
     private float latitude;
     private float longitude;
+    private String floor;
     private String id;
 
     public PointOfInterest() {
 
     }
 
-    public PointOfInterest(String title, String description, String category, float latitude, float longitude, String id){
+    public PointOfInterest(String title, String description, String category, float latitude, float longitude, String floor, String id){
         this.category = category;
         if(title == "")
             this.title = category;
@@ -21,6 +22,7 @@ public class PointOfInterest {
         this.description = description;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.floor = floor;
         this.id = id;
     }
 
@@ -51,7 +53,7 @@ public class PointOfInterest {
 
     public float getLongitude() { return longitude; }
 
-    //public String getFloor() { return "Insert floor name here"; }
+    public String getFloor() { return floor; }
 
     public void setLatitude(float latitude) {
         this.latitude = latitude;
