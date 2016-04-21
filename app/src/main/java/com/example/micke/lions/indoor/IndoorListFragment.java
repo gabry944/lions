@@ -38,6 +38,7 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
 
     //ip stands for interest points.
     private RecyclerView ipRecyclerView;
+    private IndoorActivity indoorActivity;
 
     private RecyclerView.LayoutManager ipLayoutManager;
     private String buildingId;
@@ -64,28 +65,27 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        String buildingId = ((IndoorActivity) getActivity()).buildingId;
+        indoorActivity = (IndoorActivity) getActivity();
+        buildingId = indoorActivity.getBuildingId();
         setHasOptionsMenu(true);
 
-        myDataset = ((IndoorActivity) getActivity()).getFireBaseHandler().getPoints(buildingId, this, false);
+        myDataset = indoorActivity.getFireBaseHandler().getPoints(buildingId, this, false);
         ipadapter = new ipAdapter(getContext(), myDataset);
 
         View rootView = inflater.inflate(R.layout.fragment_indoor_list, container, false);
 
         ipRecyclerView = (RecyclerView) rootView.findViewById(R.id.ip_recycler_view);
         ipRecyclerView.setHasFixedSize(true);
-        ipLayoutManager = new LinearLayoutManager(getActivity());
+        ipLayoutManager = new LinearLayoutManager(indoorActivity);
         ipRecyclerView.setLayoutManager(ipLayoutManager);
 
         ipRecyclerView.setAdapter(ipadapter);
-
 
         return rootView;
     }
 
     @Override
-    public void onCreateOptionsMenu(
-            Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_indoor_list, menu);
 
         final MenuItem item = menu.findItem(R.id.search);
@@ -111,13 +111,13 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
     @Override
     public boolean onQueryTextChange(String newText) {
         filterText = newText;
-        myDataset = ((IndoorActivity) getActivity()).getFireBaseHandler().getPoints(buildingId, this, true);
+        myDataset = indoorActivity.getFireBaseHandler().getPoints(buildingId, this, true);
 
         return true;
     }
 
     public void filterTextFunction(String text) {
-        final List<PointOfInterest> filteredDataset = filter(((IndoorActivity) getActivity()).myDataset, text);
+        final List<PointOfInterest> filteredDataset = filter(myDataset, text);
         ipadapter.updateAdapter(filteredDataset);
     }
 
@@ -132,6 +132,5 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
             }
         }
         return  filteredDataset;
-
     }
 }

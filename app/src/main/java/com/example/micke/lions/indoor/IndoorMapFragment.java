@@ -67,10 +67,10 @@ public class IndoorMapFragment extends Fragment implements DataSetChanged {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        indoorActivity = ((IndoorActivity) getActivity());
+        indoorActivity = (IndoorActivity) getActivity();
         fireBaseIndoor = indoorActivity.getFireBaseHandler();
 
-        buildingId = indoorActivity.buildingId;
+        buildingId = indoorActivity.getBuildingId();
         rootView = inflater.inflate(R.layout.activity_indoor_map, container, false);
         mFloors = fireBaseIndoor.getFloors(buildingId, this);
         floorAdapter = new FloorAdapter(indoorActivity, mFloors);
@@ -262,13 +262,13 @@ public class IndoorMapFragment extends Fragment implements DataSetChanged {
 
     @Override
     public void dataSetChanged() {
-        List<PointOfInterest> l = indoorActivity.getData();
-        RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
-        Log.d("map", "DATAsETcHANGED");
-        for(PointOfInterest p : l) {
-            addPoint(r, p.getLatitude(), p.getLongitude());
-        }
-        floorAdapter.notifyDataSetChanged();
+//        List<PointOfInterest> l = indoorActivity.getData();
+//        RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+//        Log.d("map", "DATAsETcHANGED");
+//        for(PointOfInterest p : l) {
+//            addPoint(r, p.getLatitude(), p.getLongitude());
+//        }
+//        floorAdapter.notifyDataSetChanged();
     }
 
     @Override
