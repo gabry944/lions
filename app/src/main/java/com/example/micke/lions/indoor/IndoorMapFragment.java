@@ -123,15 +123,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         Log.d("point", "getting dimensions...");
         getDimensions(r);
 
-        floorMap = getResources().getDrawable(R.drawable.map_t3);
-        final ImageView i = (ImageView) rootView.findViewById(R.id.map);
-//        i.setImageDrawable(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
-        i.setImageDrawable(floorMap);
-
         setHasOptionsMenu(true);
 
         pointList = fireBaseIndoor.getPoints(buildingId, this);
 
+        setCurrentFloor("3");
+Log.d("floor1", ""+pointList.size());
         r.setLongClickable(true);
         r.setClickable(true);
         r.setOnLongClickListener(new View.OnLongClickListener() {
@@ -301,7 +298,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         listOfMarkers.add(point);
 
         if(ip.getCategory().toLowerCase().equals("hiss"))
-                    addDescText(parent, ip.getCategory(), point.getX(), point.getY());
+            addDescText(parent, ip.getCategory(), point.getX(), point.getY());
 
         point.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
