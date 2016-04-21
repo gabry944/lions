@@ -24,8 +24,7 @@
     <string name="Stairs"> Trappa </string>
     <string name="Printer"> Skrivare </string>
 
-    <string-array name="cartegory_array">
-        <item></item>
+    <string-array name="category_array">
         <item>@string/Entrance</item>
         <item>@string/Elevator</item>
         <item>@string/ConferenceRoom</item>
