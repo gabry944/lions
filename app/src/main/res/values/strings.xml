@@ -17,11 +17,19 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="Entrance"> Entré </string>
+    <string name="Elevator"> Hiss </string>
+    <string name="ConferenceRoom"> Konferansrum </string>
+    <string name="Toilet"> Toalett </string>
+    <string name="Stairs"> Trappa </string>
+    <string name="Printer"> Skrivare </string>
+
     <string-array name="category_array">
-        <item>Hiss</item>
-        <item>Konferansrum</item>
-        <item>Toalett</item>
-        <item>Trappa</item>
-        <item>Skrivare</item>
+        <item>@string/Entrance</item>
+        <item>@string/Elevator</item>
+        <item>@string/ConferenceRoom</item>
+        <item>@string/Toilet</item>
+        <item>@string/Stairs</item>
+        <item>@string/Printer</item>
     </string-array>
 </resources>

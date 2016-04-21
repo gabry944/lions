@@ -1,13 +1,17 @@
 package com.example.micke.lions.indoor;
 
 import android.app.DialogFragment;
+
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,11 +21,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.example.micke.lions.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -50,7 +56,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private List<PointOfInterest> pointList;
 
     private IndoorActivity indoorActivity;
-    private List<IndoormapMarker> listOfMarkers = new ArrayList<IndoormapMarker>();
+    private List<IndoorMapMarker> listOfMarkers = new ArrayList<IndoorMapMarker>();
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -105,6 +111,15 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         setHasOptionsMenu(true);
 
         pointList = fireBaseIndoor.getPoints(buildingId, this);
+
+        TextView textView = new TextView(getContext());
+        textView.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+        textView.setText("Hej");
+
+        r.addView(textView);
+
+        textView.setX(0);
+        textView.setY(0);
 
         r.setLongClickable(true);
         r.setClickable(true);
@@ -197,7 +212,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                             //Log.d("map_indoor", "posX = " + event.getRawX() + ", posY = " + event.getRawY());
                             //Log.d("map_indoor", "deltaX = " + deltaX + ", deltaY = " + deltaY);
 
-                            if(deltaX+deltaY > 0.1)
+                            if(deltaX+deltaY > 0.2)
                                 longClick = false;
                             //This coordinate transformation should be moved into its own function
                             //addPoint(r, (event.getRawX() - r.getWidth() / 2 - r.getTranslationX())/scaleFactor,
@@ -228,9 +243,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     public void highlightIP(String ipID) {
         Log.d(TAG, "highlightIP: piID = " + ipID);
-        for(IndoormapMarker m : listOfMarkers) {
+        for(IndoorMapMarker m : listOfMarkers) {
             //hide all except chosen ip and entrance
-            if(m.getId().equals(ipID) || m.getCategory().equals("Entrance"))
+            if(m.getId().equals(ipID) || m.getCategory().equals(this.getString(R.string.Entrance)))
                 m.getMarker().setVisibility(View.VISIBLE);
             else
                 m.getMarker().setVisibility(View.GONE);
@@ -242,9 +257,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         final float posX = ip.getLatitude();
         final float posY = ip.getLongitude();
 
-        IndoormapMarker point = new IndoormapMarker(ip, posX, posY, getContext());
+        IndoorMapMarker point = new IndoorMapMarker(ip, posX, posY, getContext());
         parent.addView(point.getMarker());
         listOfMarkers.add(point);
+
+        if(ip.getCategory().toLowerCase().equals("hiss"))
+                    addDescText(parent, ip.getCategory(), point.getX(), point.getY());
 
         point.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -252,6 +270,20 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 Log.d("TAG", "Klickar på pungtjävel " + "posX = " + posX + " posY = " + posY);
             }
         });
+    }
+
+    private void addDescText(RelativeLayout parent, String category, float posX, float posY){
+        TextView textView = new TextView(getContext());
+        textView.setText(category);
+        textView.setTextSize(6);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+        textView.setLayoutParams(layoutParams);
+        textView.setX(posX);
+        textView.setY(posY - 130);
+        parent.addView(textView);
     }
 
     @Override
@@ -299,8 +331,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     @Override
     public void getUpdatedDataSet(List<PointOfInterest> pointList) {
         RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
-        Log.d("floor", "pointList size = " + pointList.size());
-        for(IndoormapMarker p : listOfMarkers) {
+        for(IndoorMapMarker p : listOfMarkers) {
             r.removeView(p.getMarker());
         }
         listOfMarkers.clear();
@@ -313,6 +344,52 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     @Override
     public void dataSetChanged() {
         floorAdapter.notifyDataSetChanged();
+    }
+
+    //Load bitmaps efficiently
+    private Bitmap getFloorImage(int resId) {
+        final RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+        int displayWidth = r.getWidth();
+        int displayHeight = r.getHeight();
+        return decodeSampledBitmapFromResource(getResources(), resId, displayWidth, displayHeight);
+    }
+
+    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+                                                         int reqWidth, int reqHeight) {
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, resId, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(res, resId, options);
+    }
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 }
 
