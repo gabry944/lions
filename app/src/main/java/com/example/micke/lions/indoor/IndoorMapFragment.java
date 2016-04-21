@@ -246,13 +246,40 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     public void highlightIP(String ipID) {
         Log.d(TAG, "highlightIP: piID = " + ipID);
+
+        IndoorMapMarker start = null, end = null, elevator = null;
+
         for(IndoorMapMarker m : listOfMarkers) {
             //hide all except chosen ip and entrance
-            if(m.getId().equals(ipID) || m.getCategory().equals(this.getString(R.string.Entrance)))
-                m.getMarker().setVisibility(View.VISIBLE);
+            if(m.getId().equals(ipID))
+                end = m;
+            else if(m.getCategory().equals(getString(R.string.Entrance)))
+                start = m;
+            else if(m.getCategory().equals(getString(R.string.Elevator)))
+                elevator = m;
             else
                 m.getMarker().setVisibility(View.GONE);
         }
+
+        if(end != null) {
+            if(start != null) {
+                //if ipID floor != entrance floor
+                /*if (!end.getPoint().getFloor().equals(start.getPoint().getFloor())) {
+                    //show elevator
+                    if (elevator != null) {
+                        elevator.getMarker().setVisibility(View.VISIBLE);
+                        start.getMarker().setVisibility(View.VISIBLE);
+                        end.getMarker().setVisibility(View.GONE);
+                    } else {
+                        Log.d(TAG, "highlightIP: No elevator found");
+                    }
+                }*/
+            }
+            else
+                Log.d(TAG, "highlightIP: Found no start/entrance");
+        }
+        else
+            Log.d(TAG, "highlightIP: Found no IP with the gived ID");
     }
 
     private void addPoint(RelativeLayout parent, PointOfInterest ip) {
@@ -343,6 +370,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     @Override
     public void getUpdatedDataSet(List<PointOfInterest> pointList) {
         RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+
         for(IndoorMapMarker p : listOfMarkers) {
             r.removeView(p.getMarker());
         }

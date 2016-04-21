@@ -14,10 +14,10 @@ import android.widget.Spinner;
 import com.example.micke.lions.R;
 
 
-/**
- * Created by iSirux on 2016-04-11.
- */
+
 public class AddPointDialogFragment extends DialogFragment {
+
+    private String TAG = "AddPointDialogFragment";
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -83,7 +83,7 @@ public class AddPointDialogFragment extends DialogFragment {
 
                 } else {
                     PointOfInterest point = new PointOfInterest(title.getText().toString(),
-                            description.getText().toString(), category.getSelectedItem().toString(), point1, point2, ipId);
+                            description.getText().toString(), category.getSelectedItem().toString(), point1, point2, "insert floor here", ipId);
                     fireBaseIndoor.updateIp(point, 4);
                     dialogBuilder.cancel();
                 }
