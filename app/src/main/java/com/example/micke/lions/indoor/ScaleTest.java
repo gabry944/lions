@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.example.micke.lions.R;
+
 /**
  * Created by iSirux on 2016-04-21.
  */
@@ -20,16 +22,11 @@ public class ScaleTest extends View {
     private RelativeLayout relativeLayout;
     private ImageView imageView;
 
-    public ScaleTest(Context context, RelativeLayout relativeLayout) {
-        super(context);
-        this.relativeLayout = relativeLayout;
-        mScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
-        imageView = new ImageView(context);
-    }
-
     public ScaleTest(Context context, AttributeSet attrs) {
         super(context, attrs);
-        imageView = new ImageView(context);
+//        imageView = new ImageView(context, attrs);
+        imageView = (ImageView) findViewById(R.id.);
+        mScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
         Log.d("scale", "constructed with context/attrs");
     }
 
