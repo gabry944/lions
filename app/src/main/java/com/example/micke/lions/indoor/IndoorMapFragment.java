@@ -293,6 +293,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             floorMap = getResources().getDrawable(R.drawable.map_t4);
         }
         i.setImageDrawable(floorMap);
+        fireBaseIndoor.updateIp(pointList.get(0), Integer.parseInt(floor));
     }
 
     @Override

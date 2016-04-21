@@ -79,9 +79,9 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
             @Override
             public void onDataChange(DataSnapshot building) {
                 list.clear();
-                DataSnapshot floors = building.child("floor");
                 Log.d("hej", "data changed");
-                DataSnapshot ips = floors.child(floorId).child("ip");
+                Log.d("floor", "getting points for floor " + floorId);
+                DataSnapshot ips = building.child("floor").child(floorId).child("ip");
                 for (DataSnapshot ip : ips.getChildren()) {
                     Log.d("ip", ip.getValue().toString());
                     PointOfInterest point = new PointOfInterest(ip.getValue(PointOfInterest.class));
