@@ -19,6 +19,7 @@
             android:layout_margin="@dimen/list_margin"
             android:paddingLeft="@dimen/fab_margin"
             android:paddingRight="@dimen/fab_margin"
+            android:textColor="@color/white"
             android:textAppearance="?attr/textAppearanceListItem" />
 
 </LinearLayout>

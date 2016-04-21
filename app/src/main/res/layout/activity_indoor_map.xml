@@ -34,6 +34,7 @@
         android:paddingTop="@dimen/fab_margin"
         android:visibility="gone"
         android:background="#7986CB"
+        android:elevation="16dp"
         />
 
 </RelativeLayout>
