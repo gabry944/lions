@@ -79,13 +79,16 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
             @Override
             public void onDataChange(DataSnapshot building) {
                 list.clear();
-                DataSnapshot floors = building.child("floor");
                 Log.d("hej", "data changed");
-                DataSnapshot ips = floors.child(floorId).child("ip");
-                for (DataSnapshot ip : ips.getChildren()) {
-                    Log.d("ip", ip.getValue().toString());
-                    PointOfInterest point = new PointOfInterest(ip.getValue(PointOfInterest.class));
-                    list.add(point);
+                Log.d("floor", "getting points for floor " + floorId);
+                DataSnapshot floors = building.child("floor");
+                for (DataSnapshot floor : floors.getChildren()) {
+                    DataSnapshot ips = floor.child("ip");
+                    for (DataSnapshot ip : ips.getChildren()) {
+                        Log.d("ip", ip.getValue().toString());
+                        PointOfInterest point = new PointOfInterest(ip.getValue(PointOfInterest.class));
+                        list.add(point);
+                    }
                 }
                 indoorMapFragment.getUpdatedDataSet(list);
             }
@@ -98,6 +101,7 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
         return list;
     }
 
+    //Used by floor menu in the map
     public List<String> getFloors(String buildingId, final IndoorMapMarkerChange indoorMapMarkerChange) {
         final List<String> list = new ArrayList<>();
 

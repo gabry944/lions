@@ -21,6 +21,10 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -115,24 +119,16 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         r.setScaleX(1.0f);
         r.setScaleY(1.0f);
 
-        floorMap = getResources().getDrawable(R.drawable.map_t3);
-        final ImageView i = (ImageView) rootView.findViewById(R.id.map);
-//        i.setImageDrawable(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
-        i.setImageDrawable(floorMap);
+        //Get dimensions of r
+        Log.d("point", "getting dimensions...");
+        getDimensions(r);
 
         setHasOptionsMenu(true);
 
         pointList = fireBaseIndoor.getPoints(buildingId, this);
 
-        TextView textView = new TextView(getContext());
-        textView.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-        textView.setText("Hej");
-
-        r.addView(textView);
-
-        textView.setX(0);
-        textView.setY(0);
-
+        setCurrentFloor("3");
+Log.d("floor1", ""+pointList.size());
         r.setLongClickable(true);
         r.setClickable(true);
         r.setOnLongClickListener(new View.OnLongClickListener() {
@@ -194,15 +190,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                                             Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)))
                                             / Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)));
 
-                            //if (diff != 0)
-                            //    diff = 25* Math.signum(diff) * 1 / Math.pow(diff, 2.0);
                             diff = (diff < -ZOOMSPEED) ? -ZOOMSPEED : diff;
                             diff = (diff > ZOOMSPEED) ? ZOOMSPEED : diff;
                             scaleFactor += 0.02 * diff;
                             scaleFactor = (scaleFactor > 10.0f) ? 10.0f : scaleFactor;
                             scaleFactor = (scaleFactor < 1.0f) ? 1.0f : scaleFactor;
 
-                            //Log.d("map_indoor", "Two fingers: scaleFactor = " + scaleFactor + ", diff = " + diff);
                             r.setScaleX(scaleFactor);
                             r.setScaleY(scaleFactor);
                             mx = event.getX(0);
@@ -221,29 +214,19 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                             float deltaX = mx - curX;
                             float deltaY = my - curY;
 
-                            //Log.d("map_indoor", "posX = " + event.getRawX() + ", posY = " + event.getRawY());
-                            //Log.d("map_indoor", "deltaX = " + deltaX + ", deltaY = " + deltaY);
-
                             if(deltaX+deltaY > 5)
                                 longClick = false;
-                            //This coordinate transformation should be moved into its own function
-                            //addPoint(r, (event.getRawX() - r.getWidth() / 2 - r.getTranslationX())/scaleFactor,
-                            // (event.getRawY() - r.getHeight() / 2 - 100 - r.getTranslationY())/scaleFactor);
 
                             r.setTranslationX(posX - deltaX);
                             r.setTranslationY(posY - deltaY);
 
-
                             mx = curX;
                             my = curY;
                         }
-
                         break;
-
                     case MotionEvent.ACTION_UP:
                         longClick = true;
                         break;
-
                 }
 
                 return false;
@@ -297,11 +280,13 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         final float posY = ip.getLongitude();
 
         IndoorMapMarker point = new IndoorMapMarker(ip, posX, posY, getContext());
+
         parent.addView(point.getMarker());
+
         listOfMarkers.add(point);
 
         if(ip.getCategory().toLowerCase().equals("hiss"))
-                    addDescText(parent, ip.getCategory(), point.getX(), point.getY());
+            addDescText(parent, ip.getCategory(), point.getX(), point.getY());
 
         point.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -352,7 +337,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     public void setCurrentFloor(String floor) {
         ImageView i = (ImageView) rootView.findViewById(R.id.map);
         int id = 0;
-        Log.d("floor", "" + floor);
+        Log.d("floor", "" + floor + " pointLise size = " + pointList.size());
         fireBaseIndoor.setFloor(floor);
         floorMap = null;
         if(floor.equals("3")) {
@@ -366,6 +351,15 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t4));
         }
         i.setImageDrawable(floorMap);
+
+        RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+        for(IndoorMapMarker p : listOfMarkers)
+            r.removeView(p.getMarker());
+        listOfMarkers.clear();
+        for(PointOfInterest p : pointList) {
+            if(p.getFloor().equals(floor))
+                addPoint(r,p);
+        }
     }
 
     @Override
@@ -387,6 +381,21 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         floorAdapter.notifyDataSetChanged();
     }
 
+    //Get dimension
+    private void getDimensions(final RelativeLayout relativeLayout) {
+        ViewTreeObserver vto = relativeLayout.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                ViewTreeObserver obs = relativeLayout.getViewTreeObserver();
+
+                obs.removeOnGlobalLayoutListener(this);
+                final Point point = new Point(relativeLayout.getWidth(), relativeLayout.getHeight());
+                Log.d("point", "x " + point.x + " y " + point.y);
+            }
+        });
+    }
+
     //Load bitmaps efficiently
     private Bitmap getFloorImage(int resId) {
         Log.d("display", "w: " + displayWidth + " h: " + displayHeight);
@@ -401,6 +410,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         BitmapFactory.decodeResource(res, resId, options);
 
         // Calculate inSampleSize
+        //temp width & height
+        reqHeight = 256;
+        reqWidth = 256;
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
         // Decode bitmap with inSampleSize set
