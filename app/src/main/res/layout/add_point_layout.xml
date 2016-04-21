@@ -14,13 +14,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/add_point_title" />
+            android:text="@string/add_point_title"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="16dp"/>
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/add_point_title"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginRight="20dp"/>
 
     </LinearLayout>
 
@@ -32,13 +37,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/add_point_description"/>
+            android:text="@string/add_point_description"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="16dp"/>
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/add_point_description"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginRight="20dp"/>
 
     </LinearLayout>
 
@@ -50,14 +60,39 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/add_point_category"/>
+            android:text="@string/add_point_category"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="16dp"/>
 
-        <EditText
-            android:layout_width="match_parent"
+        <Spinner
+            android:id="@+id/category_spinner"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_marginRight="20dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+
+        <Button android:id="@+id/cancel"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:id="@+id/add_point_category"
-            android:layout_gravity="center_horizontal" />
+            android:layout_margin="20dp"
+            android:text="Avbryt"
+            android:layout_gravity="center_horizontal"/>
 
+        <Button android:id="@+id/submit"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="Ok"
+            android:layout_gravity="center_horizontal"/>
     </LinearLayout>
 
 </LinearLayout>
