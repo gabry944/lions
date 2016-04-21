@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -61,6 +63,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private float my, my2;
     private float scaleFactor = 5.0f;
     private boolean longClick = true;  //turns to false if user moves fingers
+
+    //Scaletest
+    private ScaleTest scaleTest;
 
     private List<PointOfInterest> pointList;
 
@@ -126,7 +131,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         floorMap = getResources().getDrawable(R.drawable.map_t3);
         final ImageView i = (ImageView) rootView.findViewById(R.id.map);
 //        i.setImageDrawable(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
-        i.setImageDrawable(floorMap);
+//        i.setImageDrawable(floorMap);
+
+        //Scaletest
+//        scaleTest = new ScaleTest(getContext(), r);
+        scaleTest = (ScaleTest) rootView.findViewById(R.id.scale_test);
+        scaleTest.setImage(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
 
         setHasOptionsMenu(true);
 
@@ -360,13 +370,15 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             currentFloor = 3;
             floorMap = getResources().getDrawable(R.drawable.map_t3);
             floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3));
+            scaleTest.setImage(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
         }
         if(floor.equals("4")) {
             currentFloor = 4;
             floorMap = getResources().getDrawable(R.drawable.map_t4);
             floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t4));
+            scaleTest.setImage(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
         }
-        i.setImageDrawable(floorMap);
+//        i.setImageDrawable(floorMap);
     }
 
     @Override
