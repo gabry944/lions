@@ -93,4 +93,3 @@ public class AddPointDialogFragment extends DialogFragment {
        return dialogBuilder;
     }
 }
-
