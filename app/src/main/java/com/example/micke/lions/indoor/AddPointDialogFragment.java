@@ -27,10 +27,10 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.validation.Validator;
 
-/**
- * Created by iSirux on 2016-04-11.
- */
+
 public class AddPointDialogFragment extends DialogFragment {
+
+    private String TAG = "AddPointDialogFragment";
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -96,6 +96,7 @@ public class AddPointDialogFragment extends DialogFragment {
                     dialogBuilder.show();
 
                 } else {
+                    Log.d(TAG, "onClick: category = " + category.getSelectedItem().toString());
                     done[0] = true;
                     PointOfInterest point = new PointOfInterest(title.getText().toString(),
                             description.getText().toString(), category.getSelectedItem().toString(), point1, point2, ipId);

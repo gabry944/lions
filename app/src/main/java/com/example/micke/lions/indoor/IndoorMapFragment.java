@@ -236,9 +236,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             //hide all except chosen ip and entrance
             if(m.getId().equals(ipID))
                 end = m;
-            else if(m.getCategory().equals(R.string.entrance_category))
+            else if(m.getCategory().equals(getString(R.string.entrance_category)))
                 start = m;
-            else if(m.getCategory().equals(R.string.elevator_category))
+            else if(m.getCategory().equals(getString(R.string.elevator_category)))
                 elevator = m;
             else
                 m.getMarker().setVisibility(View.GONE);
@@ -247,7 +247,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         if(end != null) {
             if(start != null) {
                 //if ipID floor != entrance floor
-                if (!end.getPoint().getFloor().equals(start.getPoint().getFloor())) {
+                /*if (!end.getPoint().getFloor().equals(start.getPoint().getFloor())) {
                     //show elevator
                     if (elevator != null) {
                         elevator.getMarker().setVisibility(View.VISIBLE);
@@ -256,7 +256,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                     } else {
                         Log.d(TAG, "highlightIP: No elevator found");
                     }
-                }
+                }*/
             }
             else
                 Log.d(TAG, "highlightIP: Found no start/entrance");

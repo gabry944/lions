@@ -13,7 +13,7 @@
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
         AIzaSyCutrsxJ6Vh_OdgQvpPQU4C40-UlVca9dI
     </string>
-    <string name="entrance_category">Entrance</string>
+    <string name="entrance_category">Entré</string>
     <string name="elevator_category">Hiss</string>
 
     <string-array name="cartegory_array">
@@ -23,5 +23,6 @@
         <item>Toalett</item>
         <item>Trappa</item>
         <item>Skrivare</item>
+        <item>Entré</item>
     </string-array>
 </resources>
