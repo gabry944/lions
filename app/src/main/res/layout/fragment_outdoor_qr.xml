@@ -31,9 +31,7 @@
     <me.dm7.barcodescanner.zbar.ZBarScannerView
         android:id="@+id/zBarScanner"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_weight="0.52"
-        android:layout_below="@+id/fab"
+        android:layout_height="match_parent"
         android:layout_alignParentBottom="true" />
 
     <ImageButton
@@ -41,8 +39,6 @@
         android:layout_width="37dp"
         android:layout_height="37dp"
         android:background="@drawable/qr_scan"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
         android:layout_marginStart="17dp"
         android:layout_marginBottom="77dp"
         android:layout_alignParentBottom="true"
