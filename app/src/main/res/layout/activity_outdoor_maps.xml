@@ -14,7 +14,7 @@
         tools:context="com.example.micke.lions.outdoor.OutdoorActivity" />
 
     <ImageButton
-        android:id="@+id/goToList1"
+        android:id="@+id/goToOutdoorList1"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:background="@drawable/list_icon_black"

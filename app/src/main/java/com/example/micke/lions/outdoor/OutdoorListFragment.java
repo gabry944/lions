@@ -71,8 +71,8 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged, Sea
 
         myDataset = outdoorActivity.getFireBaseHandler().getBuildings(this, false);
 
-        goToMaps = (ImageButton) rootView.findViewById(R.id.goToMaps);
-        goToQR = (ImageButton) rootView.findViewById(R.id.goToQr);
+        goToMaps = (ImageButton) rootView.findViewById(R.id.goToOutdoorMaps);
+        goToQR = (ImageButton) rootView.findViewById(R.id.goToOutdoorQr);
 
         myDataset = outdoorActivity.getFireBaseHandler().getBuildings(this, false);
 

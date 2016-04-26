@@ -90,7 +90,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
             return rootView;
         }
 
-        goToList = (ImageButton) rootView.findViewById(R.id.goToList1);
+        goToList = (ImageButton) rootView.findViewById(R.id.goToOutdoorList1);
         goToList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
