@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.example.micke.lions.Common;
 import com.example.micke.lions.DataSetChanged;
 import com.example.micke.lions.outdoor.OutdoorQRFragment;
 import com.example.micke.lions.R;
@@ -29,6 +30,8 @@ import java.util.List;
 
 
 public class IndoorActivity extends AppCompatActivity {
+
+    private String TAG = "IndoorActivity";
 
     private FireBaseIndoor fireBaseHandler;
     private IndoorPageSliderAdapter mSectionsPagerAdapter;
@@ -51,7 +54,6 @@ public class IndoorActivity extends AppCompatActivity {
         buildingId = bundle.getString("buildingId", "1");
         ipId = bundle.getString("ipId", "-1");
         Log.d("indoor", "buldingId: " + buildingId);
-
         fireBaseHandler = new FireBaseIndoor(getApplicationContext(), buildingId);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -86,5 +88,24 @@ public class IndoorActivity extends AppCompatActivity {
             mViewPager.setCurrentItem(1);
         else
             super.onBackPressed();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_indoor_activity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.admin) {
+            if(Common.IsAdmin())
+                Common.LogOut();
+            else
+                Common.MakeAdmin();
+        }
+        return false;
     }
 }

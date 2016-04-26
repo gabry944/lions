@@ -37,7 +37,7 @@ public class PointOfInterest {
         longitude = p.getLongitude();
         floor = p.getFloor();
         id = p.getId();
-        official = getOfficial();
+        official = p.getOfficial();
     }
 
     public String getId() {

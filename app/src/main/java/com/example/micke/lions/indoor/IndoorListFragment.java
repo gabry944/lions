@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.example.micke.lions.Common;
 import com.example.micke.lions.DataSetChanged;
 import com.example.micke.lions.R;
 
@@ -28,7 +30,7 @@ import java.util.List;
 
 public class IndoorListFragment extends Fragment implements DataSetChanged, SearchView.OnQueryTextListener {
 
-    String ILF = "IndoorListFragment";
+    String TAG = "IndoorListFragment";
 
     /**
      * The fragment argument representing the section number for this

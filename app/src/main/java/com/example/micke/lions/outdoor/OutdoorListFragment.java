@@ -4,6 +4,7 @@ import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.ScaleAnimation;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.micke.lions.DataSetChanged;
@@ -40,6 +45,9 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged, Sea
     private List<Building> myDataset;
     private String filterText;
 
+    private ImageButton goToQR;
+    private ImageButton goToMaps;
+
     public OutdoorListFragment() {
     }
 
@@ -63,6 +71,9 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged, Sea
 
         myDataset = outdoorActivity.getFireBaseHandler().getBuildings(this, false);
 
+        goToMaps = (ImageButton) rootView.findViewById(R.id.goToMaps);
+        goToQR = (ImageButton) rootView.findViewById(R.id.goToQr);
+
         buildingAdapter = new BuildingAdapter(getContext(), myDataset);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.building_recycler_view);
@@ -73,6 +84,24 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged, Sea
         mRecyclerView.setAdapter(buildingAdapter);
 
         setHasOptionsMenu(true);
+
+        //Goes to QR code scanner fragment when user clicks on button
+        goToMaps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                 mPager.setCurrentItem(0, true);
+            }
+        });
+
+        //Goes to Maps fragment when user clicks on button
+        goToQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                mPager.setCurrentItem(2, true);
+            }
+        });
 
         return rootView;
     }

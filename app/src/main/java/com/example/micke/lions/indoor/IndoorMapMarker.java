@@ -53,6 +53,8 @@ public class IndoorMapMarker {
 
     public String getCategory(){ return pointOfInterest.getCategory(); }
 
+    public boolean getOfficial() { return pointOfInterest.getOfficial(); }
+
     public void setX(float x){
         localCoord[0] = x;
         point.setX(x);
@@ -87,15 +89,16 @@ public class IndoorMapMarker {
         point.setY(localCoord[1]);
         point.setScaleX(0.2f);
         point.setScaleY(0.2f);
+        Log.d("official", "is " + pointOfInterest.getOfficial());
         if(getCategory().equals(context.getString(R.string.Entrance)))
-            point.setImageResource(R.drawable.entrance);
+            point.setImageResource( getOfficial() ? R.drawable.entrance_green : R.drawable.entrance );
         else if(getCategory().equals(context.getString(R.string.Elevator)))
-            point.setImageResource(R.drawable.elevator_marker);
+            point.setImageResource( getOfficial() ? R.drawable.elevator_marker_green : R.drawable.elevator_marker );
         else if (getCategory().equals(context.getString(R.string.Stairs)))
-            point.setImageResource(R.drawable.stairs);
+            point.setImageResource( getOfficial() ? R.drawable.stairs_green : R.drawable.stairs );
         else if (getCategory().equals(context.getString(R.string.Toilet)))
-            point.setImageResource(R.drawable.wc);
+            point.setImageResource( getOfficial() ? R.drawable.wc_green : R.drawable.wc);
         else
-            point.setImageResource(R.drawable.map_marker);
+            point.setImageResource( getOfficial() ? R.drawable.map_marker_green : R.drawable.map_marker);
     }
 }
