@@ -15,8 +15,7 @@
         android:layout_marginLeft="@dimen/fab_margin"
         android:layout_marginRight="@dimen/fab_margin"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/textView"
-        android:layout_marginStart="38dp" />
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -24,21 +23,21 @@
         android:text="@string/skanQrMarker"
         android:id="@+id/textView"
         android:layout_gravity="center"
-        android:layout_above="@+id/zBarScanner"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="19dp" />
+        android:layout_alignBottom="@+id/fab" />
 
     <me.dm7.barcodescanner.zbar.ZBarScannerView
         android:id="@+id/zBarScanner"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/textView" />
 
     <ImageButton
         android:id="@+id/goToList2"
         android:layout_width="37dp"
         android:layout_height="37dp"
-        android:background="@drawable/qr_scan"
+        android:background="@drawable/list_icon"
         android:layout_marginStart="17dp"
         android:layout_marginBottom="77dp"
         android:layout_alignParentBottom="true"
