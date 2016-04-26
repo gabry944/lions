@@ -13,4 +13,15 @@
         android:layout_height="match_parent"
         tools:context="com.example.micke.lions.outdoor.OutdoorActivity" />
 
+    <ImageButton
+        android:id="@+id/goToOutdoorList1"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/list_icon_black"
+        android:layout_alignBottom="@+id/map"
+        android:layout_alignEnd="@+id/map"
+        android:layout_gravity="right|bottom"
+        android:paddingRight="17dp"
+        android:paddingBottom="17dp"/>
+
 </FrameLayout>

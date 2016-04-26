@@ -34,7 +34,7 @@
         android:layout_below="@+id/textView" />
 
     <ImageButton
-        android:id="@+id/goToList2"
+        android:id="@+id/goToOutdoorList2"
         android:layout_width="37dp"
         android:layout_height="37dp"
         android:background="@drawable/list_icon"

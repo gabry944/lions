@@ -6,11 +6,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.micke.lions.FireBaseHandler;
@@ -31,6 +34,7 @@ public class IndoorQRFragment extends Fragment implements ZBarScannerView.Result
 
     private static ZBarScannerView mScannerView;
     private static final String ARG_SECTION_NUMBER = "section_number";
+    private ImageButton goToList;
 
     public IndoorQRFragment() {
     }
@@ -65,16 +69,24 @@ public class IndoorQRFragment extends Fragment implements ZBarScannerView.Result
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_indoor_qr, container, false);
-        LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.qr_linear_layout);
+        RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.qr_linear_layout);
 
+        goToList = (ImageButton) view.findViewById(R.id.goToIndoorList2);
         ArrayList<BarcodeFormat> list = new ArrayList<>();
         list.add(BarcodeFormat.QRCODE);
-        mScannerView = new ZBarScannerView(getContext());
-        mScannerView.setFormats(list);
-        View scannerView = mScannerView;
-        linearLayout.addView(scannerView);
 
-        return linearLayout;
+        mScannerView = (ZBarScannerView) view.findViewById(R.id.zBarScannerIndoor);
+        mScannerView.setFormats(list);
+
+        goToList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                mPager.setCurrentItem(1, true);
+            }
+        });
+
+        return relativeLayout;
     }
 
     @Override

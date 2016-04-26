@@ -9,6 +9,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.InflateException;
@@ -18,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.micke.lions.Common;
@@ -58,6 +60,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     private List<Building> buildings;
     private List<Marker> carMarkerList;
     private OutdoorActivity outdoorActivity;
+    private ImageButton goToList;
 
     public OutdoorMapFragment() {
 
@@ -86,6 +89,15 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
             /* map is already there, just return view as it is */
             return rootView;
         }
+
+        goToList = (ImageButton) rootView.findViewById(R.id.goToOutdoorList1);
+        goToList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                mPager.setCurrentItem(1, true);
+            }
+        });
 
         carMarkerList = new ArrayList<>();
 

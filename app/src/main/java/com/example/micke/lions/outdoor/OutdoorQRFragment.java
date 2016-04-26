@@ -78,7 +78,8 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
         View view = inflater.inflate(R.layout.fragment_outdoor_qr, container, false);
         RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.qr_linear_layout);
 
-        goToList = (ImageButton) view.findViewById(R.id.goToList2);
+        goToList = (ImageButton) view.findViewById(R.id.goToOutdoorList2);
+
         ArrayList<BarcodeFormat> list = new ArrayList<>();
         list.add(BarcodeFormat.QRCODE);
         mScannerView = (ZBarScannerView) view.findViewById(R.id.zBarScanner);
