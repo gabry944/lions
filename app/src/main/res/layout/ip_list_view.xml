@@ -33,6 +33,10 @@
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
             android:src ="@drawable/map_marker"
+            android:scaleType="centerCrop"
+            android:background="@color/white"
+            android:paddingRight="12sp"
+            android:paddingTop="10sp"
             android:maxWidth="@dimen/icon_size"
             android:maxHeight="@dimen/icon_size"
             android:layout_gravity="end"/>
