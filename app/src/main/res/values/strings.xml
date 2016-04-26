@@ -19,7 +19,8 @@
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
         AIzaSyCutrsxJ6Vh_OdgQvpPQU4C40-UlVca9dI
     </string>
-    <string name="info_welcome">Hej och välkommen!</string>
+    <string name="info_welcome">Hej och välkommen till LIONS!</string>
+    <string name="lions">(Local indoor &amp; outdoor navigation system)</string>
     <string name="info_details">Detta är en app som hjälper dig att hitta i nya byggnader. Det kan
     verka skrämmande, men lugn! Vi hjälper dig!</string>
     <string name="non_chosen">Ingen kategori vald</string>
