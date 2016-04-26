@@ -119,19 +119,13 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
     }
 
     @Override
-    public void dataSetChanged() {
-        ipadapter.notifyDataSetChanged();
-    }
+    public void dataSetChanged() { ipadapter.notifyDataSetChanged(); }
 
     @Override
-    public void fetchDataDone() {
-        filterTextFunction(filterText);
-    }
+    public void fetchDataDone() { filterTextFunction(filterText); }
 
     @Override
-    public boolean onQueryTextSubmit(String query) {
-        return false;
-    }
+    public boolean onQueryTextSubmit(String query) { return false; }
 
     @Override
     public boolean onQueryTextChange(String newText) {
