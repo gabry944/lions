@@ -89,7 +89,6 @@ public class IndoorMapMarker {
         point.setY(localCoord[1]);
         point.setScaleX(0.2f);
         point.setScaleY(0.2f);
-        Log.d("official", "is " + pointOfInterest.getOfficial());
         if(getCategory().equals(context.getString(R.string.Entrance)))
             point.setImageResource( getOfficial() ? R.drawable.entrance_green : R.drawable.entrance );
         else if(getCategory().equals(context.getString(R.string.Elevator)))
