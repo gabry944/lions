@@ -18,7 +18,9 @@ import android.widget.TextView;
 import com.example.micke.lions.DataSetChanged;
 import com.example.micke.lions.R;
 import com.example.micke.lions.indoor.IndoorActivity;
+import com.example.micke.lions.indoor.PointOfInterest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,6 +38,7 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged, Sea
     private OutdoorActivity outdoorActivity;
     private BuildingAdapter buildingAdapter;
     private List<Building> myDataset;
+    private String filterText;
 
     public OutdoorListFragment() {
     }
@@ -58,7 +61,7 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged, Sea
         outdoorActivity = (OutdoorActivity) getActivity();
         View rootView = inflater.inflate(R.layout.fragment_outdoor_list, container, false);
 
-        myDataset = outdoorActivity.getFireBaseHandler().getBuildings(this);
+        myDataset = outdoorActivity.getFireBaseHandler().getBuildings(this, false);
 
         buildingAdapter = new BuildingAdapter(getContext(), myDataset);
 
@@ -103,7 +106,7 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged, Sea
 
     @Override
     public void fetchDataDone() {
-
+        filterTextFunction(filterText);
     }
 
     @Override
@@ -113,6 +116,28 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged, Sea
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        return false;
+        filterText = newText;
+        myDataset = outdoorActivity.getFireBaseHandler().getBuildings(this, true);
+        return true;
+    }
+
+    public void filterTextFunction(String text) {
+        final List<Building> filteredDataset = filter(myDataset, text);
+        buildingAdapter.updateAdapter(filteredDataset);
+    }
+
+    private List<Building> filter(List<Building> myDataset, String query){
+        query = query.toLowerCase();
+        final List<Building> filteredDataset = new ArrayList<>();
+
+        for(Building building: myDataset){
+            if(building.getName() != null){
+                final String text = building.getName().toLowerCase();
+                if(text.contains(query)){
+                    filteredDataset.add(building);
+                }
+            }
+        }
+        return  filteredDataset;
     }
 }
