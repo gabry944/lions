@@ -7,6 +7,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 
 import com.example.micke.lions.R;
 
@@ -25,12 +28,17 @@ public class InfoDialogFragment extends DialogFragment {
         final View dialogView = inflater.inflate(R.layout.info_dialog, null);
         dialogBuilder.setView(dialogView);
 
+       // ImageView imageView =(ImageView) dialogView.findViewById(R.id.info);
+
+      //  Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.pulse_button);
+        // imageView.setAnimation(animation);
+
         dialogBuilder
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
+            public void onClick(DialogInterface dialog, int id) {
 
-                    }
-                });
+            }
+        });
 
         return dialogBuilder.create();
     }
