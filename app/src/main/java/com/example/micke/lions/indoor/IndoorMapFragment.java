@@ -29,6 +29,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.micke.lions.Common;
 import com.example.micke.lions.R;
 
 import java.util.ArrayList;
@@ -331,12 +332,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        // return super.onOptionsItemSelected(item);
-
         int id = item.getItemId();
         if (id == R.id.floors) {
             if(getActivity().findViewById(R.id.floor_recycler_view).getVisibility() == View.GONE)
@@ -352,9 +347,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             toast.show();
             toast.setGravity(Gravity.TOP| Gravity.CENTER, 0, 150);
 
-        }
-        else if (id == R.id.admin) {
-            ((IndoorActivity)getActivity()).AdminLogin();
         }
         return false;
     }

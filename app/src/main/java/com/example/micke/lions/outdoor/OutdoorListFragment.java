@@ -2,11 +2,16 @@ package com.example.micke.lions.outdoor;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.ScaleAnimation;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.micke.lions.DataSetChanged;
@@ -31,6 +36,9 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged {
     private BuildingAdapter buildingAdapter;
     private List<Building> myDataset;
 
+    private ImageButton goToQR;
+    private ImageButton goToMaps;
+
     public OutdoorListFragment() {
     }
 
@@ -52,6 +60,9 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged {
         outdoorActivity = (OutdoorActivity) getActivity();
         View rootView = inflater.inflate(R.layout.fragment_outdoor_list, container, false);
 
+        goToMaps = (ImageButton) rootView.findViewById(R.id.goToMaps);
+        goToQR = (ImageButton) rootView.findViewById(R.id.goToQr);
+
         myDataset = outdoorActivity.getFireBaseHandler().getBuildings(this);
 
         buildingAdapter = new BuildingAdapter(getContext(), myDataset);
@@ -62,6 +73,24 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mRecyclerView.setAdapter(buildingAdapter);
+
+        //Goes to QR code scanner fragment when user clicks on button
+        goToMaps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                 mPager.setCurrentItem(0, true);
+            }
+        });
+
+        //Goes to Maps fragment when user clicks on button
+        goToQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                mPager.setCurrentItem(2, true);
+            }
+        });
 
         return rootView;
     }

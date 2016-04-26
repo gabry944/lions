@@ -9,7 +9,7 @@ public class Common {
     private static boolean admin = false;
 
     public static boolean IsAdmin(){
-        return true;
+        return admin;
     }
 
     /** returns true if user is now admin, otherwise false **/
