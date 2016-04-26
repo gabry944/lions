@@ -74,7 +74,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
@@ -100,7 +100,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             public void onClick(View v) {
                 ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
                 mPager.setCurrentItem(0, true);
-                ((IndoorActivity)mContext).map.highlightIP(((TextView)((View)v.getParent()).findViewById(R.id.id)).getText().toString());
+                ((IndoorActivity)mContext).map.highlightIP(ipDataset.get(position).getFloor(), ((TextView)((View)v.getParent()).findViewById(R.id.id)).getText().toString());
             }
         });
 

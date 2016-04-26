@@ -251,54 +251,50 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         return rootView;
     }
 
-    public void highlightIP(String ipID) {
+    public void highlightIP(String goalFloor, String ipID) {
+        setCurrentFloor(goalFloor);
+        //hide all except chosen ip and entrance (or stairs/elevator)
+        IndoorMapMarker start = null, end = null;
 
-        IndoorMapMarker start = null, end = null, elevator = null;
-
+        //Find the goal point
         for(IndoorMapMarker m : listOfMarkers) {
-            //hide all except chosen ip and entrance
             if(m.getId().equals(ipID))
                 end = m;
-            else if(m.getCategory().equals(getString(R.string.Entrance)))
-                start = m;
-            else if(m.getCategory().equals(getString(R.string.Elevator))){
-                if(elevator == null)
-                    elevator = m;
-                else
-                    m.getMarker().setVisibility(View.GONE);
-            }
-            else
-                m.getMarker().setVisibility(View.GONE);
         }
 
-        if(end != null) {
-            if(start != null) {
-                //if ipID floor != entrance floor
-                if (!end.getPoint().getFloor().equals(start.getPoint().getFloor())) {
-                    //show elevator
-                    if (elevator != null) {
-                        elevator.getMarker().setVisibility(View.VISIBLE);
-                        start.getMarker().setVisibility(View.VISIBLE);
-                        end.getMarker().setVisibility(View.GONE);
-                        Log.d(TAG, "highlightIP: show start and elevator");
-                    } else {
-                        Log.d(TAG, "highlightIP: No elevator found");
-                    }
-                }
-                else {
-                    //show goal
-                    if(elevator != null)
-                        elevator.getMarker().setVisibility(View.GONE);
-                    start.getMarker().setVisibility(View.VISIBLE);
-                    end.getMarker().setVisibility(View.VISIBLE);
-                    Log.d(TAG, "highlightIP: show start and end");
+        Log.d("hejhej", "size = " + listOfMarkers.size());
+        //Find the closest entrance (if it exist on this floor)
+        float distance = 1000000;
+        for(IndoorMapMarker m : listOfMarkers) {
+            if (m.getCategory().equals(getString(R.string.Entrance)))
+            Log.d("hejhej", "entre: " + m.getPoint().getTitle() + ". Distance = "  + distance + " > " + calcDistance(m.getX(), m.getY(), end.getX(), end.getY()));
+            if (m.getCategory().equals(getString(R.string.Entrance)) && distance > calcDistance(m.getX(), m.getY(), end.getX(), end.getY())) {
+                start = m;
+                distance = calcDistance(m.getX(), end.getX(), m.getY(), end.getY());
+            }
+        }
+
+        //If we didn't find an entrance we look for the closest elevator or stairs instead
+        if(start == null) {
+            for (IndoorMapMarker m : listOfMarkers) {
+                if ( (m.getCategory().equals(getString(R.string.Elevator)) || m.getCategory().equals(getString(R.string.Stairs)))
+                            && distance > calcDistance(m.getX(), m.getY(), end.getX(), end.getY()) ) {
+                    start = m;
+                    distance = calcDistance(m.getX(), m.getY(), end.getX(), end.getY());
                 }
             }
-            else
-                Log.d(TAG, "highlightIP: Found no start/entrance");
         }
-        else
-            Log.d(TAG, "highlightIP: Found no IP with the gived ID");
+
+        for (IndoorMapMarker m : listOfMarkers) {
+            m.getMarker().setVisibility(View.GONE);
+        }
+        start.getMarker().setVisibility(View.VISIBLE);
+        end.getMarker().setVisibility(View.VISIBLE);
+    }
+
+    //Calculates the distance between two points
+    private float calcDistance(float point1X, float point1Y, float point2X, float point2Y) {
+        return (float) Math.sqrt( Math.pow((point1X-point2X), 2) + Math.pow((point1Y-point2Y), 2) );
     }
 
     private void addPoint(RelativeLayout parent, PointOfInterest ip) {
