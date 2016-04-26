@@ -28,6 +28,9 @@ import android.widget.TextView;
 
 import com.example.micke.lions.Common;
 import com.example.micke.lions.DataSetChanged;
+import com.example.micke.lions.outdoor.Building;
+import com.example.micke.lions.outdoor.BuildingAdapter;
+import com.example.micke.lions.outdoor.OutdoorActivity;
 import com.example.micke.lions.outdoor.OutdoorQRFragment;
 import com.example.micke.lions.R;
 
@@ -44,10 +47,13 @@ public class IndoorActivity extends AppCompatActivity {
     public static ViewPager mViewPager;
 
     private String ipId;
+    private String currentBuilding;
     private String buildingId;
     public IndoorMapFragment map;
     public IndoorListFragment list;
     public IndoorQRFragment qr;
+    public List<PointOfInterest> myDataset;
+    public BuildingAdapter buildingAdapter;
 
     @Override
     public void onCreate(Bundle state) {
@@ -58,12 +64,13 @@ public class IndoorActivity extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
         buildingId = bundle.getString("buildingId", "1");
         ipId = bundle.getString("ipId", "-1");
+        currentBuilding = bundle.getString("buildingTitle");
         Log.d("indoor", "buldingId: " + buildingId);
         fireBaseHandler = new FireBaseIndoor(getApplicationContext(), buildingId);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(null);
+        getSupportActionBar().setTitle(currentBuilding);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -101,6 +108,7 @@ public class IndoorActivity extends AppCompatActivity {
         inflater.inflate(R.menu.menu_indoor_activity, menu);
         MenuItem adminButton = menu.findItem(R.id.admin);
         Common.setAdminButton(adminButton, this);
+
         return true;
     }
 
@@ -109,9 +117,9 @@ public class IndoorActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.admin) {
             if(Common.IsAdmin())
-                Common.LogOut();
+                Common.LogOut(map, list, qr);
             else
-                Common.MakeAdmin();
+                Common.MakeAdmin(map, list, qr);
             MenuView.ItemView adminButton = (MenuView.ItemView) findViewById(R.id.admin);
             Common.setAdminButton(item, this);
         }

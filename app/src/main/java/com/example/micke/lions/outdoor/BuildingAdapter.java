@@ -101,9 +101,11 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHo
             public void onClick(final View v) {
                 Intent intent = new Intent(mContext, IndoorActivity.class);
                 Bundle bundle = new Bundle();
+                String currentBuilding = holder.mTitleView.getText().toString();
                 String buildingId = holder.mIDView.getText().toString();
                 Log.d("outdoor", "buldingId: " + buildingId);
                 bundle.putString("buildingId", buildingId);
+                bundle.putString("buildingTitle", currentBuilding);
                 intent.putExtras(bundle);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
@@ -246,5 +248,6 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHo
             }
         }
     }
+
 
 }

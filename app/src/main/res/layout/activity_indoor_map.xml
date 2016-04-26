@@ -28,6 +28,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@drawable/list_icon_black"
+            android:rotation="180"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true" />
 

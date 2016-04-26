@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.example.micke.lions.Common;
 import com.example.micke.lions.DataSetChanged;
+import com.example.micke.lions.InloggChange;
 import com.example.micke.lions.R;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ import java.util.List;
  * A placeholder fragment containing a simple view.
  */
 
-public class IndoorListFragment extends Fragment implements DataSetChanged, SearchView.OnQueryTextListener {
+public class IndoorListFragment extends Fragment implements DataSetChanged, SearchView.OnQueryTextListener, InloggChange {
 
     String TAG = "IndoorListFragment";
 
@@ -151,5 +152,15 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
             }
         }
         return  filteredDataset;
+    }
+
+    @Override
+    public void adminInlogg() {
+        Log.d(TAG, "adminInlogg: ");
+    }
+
+    @Override
+    public void commonInlogg() {
+        Log.d(TAG, "commonInlogg: ");
     }
 }

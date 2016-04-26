@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.micke.lions.Common;
+import com.example.micke.lions.InloggChange;
 import com.example.micke.lions.R;
 import com.example.micke.lions.indoor.IndoorActivity;
 
@@ -32,7 +33,7 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView;
 /**
  * Created by iSirux on 2016-04-12.
  */
-public class OutdoorQRFragment extends Fragment implements ZBarScannerView.ResultHandler, FragmentResolver {
+public class OutdoorQRFragment extends Fragment implements ZBarScannerView.ResultHandler, FragmentResolver, InloggChange {
 
     private String TAG = "OutdoorQRFragment";
 
@@ -184,6 +185,26 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
             bundle.putSerializable("car", car);
             newFragment.setArguments(bundle);
             newFragment.show(getActivity().getFragmentManager(), "car_dialog_fragment");
+        }
+    }
+
+    @Override
+    public void adminInlogg() {
+        Log.d(TAG, "adminInlogg: ");
+        RelativeLayout relativeLayout = (RelativeLayout) getActivity().findViewById(R.id.qr_linear_layout);
+        if(relativeLayout != null) {
+            FloatingActionButton fab = (FloatingActionButton) relativeLayout.findViewById(R.id.fab);
+            fab.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void commonInlogg() {
+        Log.d(TAG, "commonInlogg: ");
+        RelativeLayout relativeLayout = (RelativeLayout) getActivity().findViewById(R.id.qr_linear_layout);
+        if(relativeLayout!=null) {
+            FloatingActionButton fab = (FloatingActionButton) relativeLayout.findViewById(R.id.fab);
+            fab.setVisibility(View.GONE);
         }
     }
 }
