@@ -345,6 +345,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             else
                 getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.GONE);
         }
+        else if (id == R.id.admin) {
+            ((IndoorActivity)getActivity()).AdminLogin();
+        }
         return false;
     }
 

@@ -34,6 +34,7 @@ public class OutdoorActivity extends AppCompatActivity {
     public OutdoorMapFragment map;
     public OutdoorListFragment list;
     public OutdoorQRFragment qr;
+    public boolean admin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -30,6 +30,8 @@ import java.util.List;
 
 public class IndoorActivity extends AppCompatActivity {
 
+    private String TAG = "IndoorActivity";
+
     private FireBaseIndoor fireBaseHandler;
     private IndoorPageSliderAdapter mSectionsPagerAdapter;
     public static ViewPager mViewPager;
@@ -39,6 +41,7 @@ public class IndoorActivity extends AppCompatActivity {
     public IndoorMapFragment map;
     public IndoorListFragment list;
     public IndoorQRFragment qr;
+    public boolean admin = false;
 
 
     @Override
@@ -86,5 +89,11 @@ public class IndoorActivity extends AppCompatActivity {
             mViewPager.setCurrentItem(1);
         else
             super.onBackPressed();
+    }
+
+    public boolean AdminLogin(){
+        Log.d(TAG, "onOptionsItemSelected: Admin");
+        admin = true;
+        return admin;
     }
 }
