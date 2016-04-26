@@ -11,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,12 +25,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.micke.lions.Common;
+import com.example.micke.lions.InloggChange;
 import com.example.micke.lions.R;
 
 import java.util.ArrayList;
@@ -38,7 +41,7 @@ import java.util.List;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange {
+public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange, InloggChange {
     String TAG = "IndoorMapFragment";
     /**
      * The fragment argument representing the section number for this
@@ -66,6 +69,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     private IndoorActivity indoorActivity;
     private List<IndoorMapMarker> listOfMarkers = new ArrayList<IndoorMapMarker>();
+
+    private ImageButton goToList;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -126,6 +131,15 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         setHasOptionsMenu(true);
 
         pointList = fireBaseIndoor.getPoints(buildingId, this);
+
+        goToList = (ImageButton) rootView.findViewById(R.id.goToIndoorList1);
+        goToList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                mPager.setCurrentItem(1, true);
+            }
+        });
 
         setCurrentFloor("3");
 
@@ -458,6 +472,16 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         }
 
         return inSampleSize;
+    }
+
+    @Override
+    public void adminInlogg() {
+        Log.d(TAG, "adminInlogg: ");
+    }
+
+    @Override
+    public void commonInlogg() {
+        Log.d(TAG, "commonInlogg: ");
     }
 }
 

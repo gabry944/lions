@@ -78,9 +78,23 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        holder.mTitleView.setText(ipDataset.get(position).getTitle());
+        //TODO temporär våningsvisare. Ful men praktisk. Fixa snyggare version
+        holder.mTitleView.setText(ipDataset.get(position).getTitle() + " (Våning " + ipDataset.get(position).getFloor() + ")");
         holder.mContentView.setText(ipDataset.get(position).getDescription());
         holder.mIDView.setText(ipDataset.get(position).getId());
+
+        String category = ipDataset.get(position).getCategory();
+        if(category.equals("Entré"))
+            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.entrance_green : R.drawable.entrance );
+        else if(category.equals("Hiss"))
+            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.elevator_marker_green : R.drawable.elevator_marker );
+        else if (category.equals("Trappa"))
+            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.stairs_green : R.drawable.stairs );
+        else if (category.equals("Toalett"))
+            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.wc_green : R.drawable.wc);
+        else
+            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.map_marker_green : R.drawable.map_marker);
+
         holder.goToMapImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

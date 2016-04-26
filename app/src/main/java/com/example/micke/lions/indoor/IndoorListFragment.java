@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,11 +14,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.example.micke.lions.Common;
 import com.example.micke.lions.DataSetChanged;
+import com.example.micke.lions.InloggChange;
 import com.example.micke.lions.R;
 
 import java.util.ArrayList;
@@ -28,7 +31,7 @@ import java.util.List;
  * A placeholder fragment containing a simple view.
  */
 
-public class IndoorListFragment extends Fragment implements DataSetChanged, SearchView.OnQueryTextListener {
+public class IndoorListFragment extends Fragment implements DataSetChanged, SearchView.OnQueryTextListener, InloggChange {
 
     String TAG = "IndoorListFragment";
 
@@ -47,6 +50,8 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
     private String filterText;
     public List<PointOfInterest> myDataset;
     public ipAdapter ipadapter;
+    private ImageButton goToQR;
+    private ImageButton goToMap;
 
     public IndoorListFragment() {
     }
@@ -76,6 +81,25 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
 
         View rootView = inflater.inflate(R.layout.fragment_indoor_list, container, false);
 
+        goToMap = (ImageButton) rootView.findViewById(R.id.goToIndoorMap);
+        goToQR = (ImageButton) rootView.findViewById(R.id.goToIndoorQr);
+
+        goToMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                mPager.setCurrentItem(0, true);
+            }
+        });
+
+        goToQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                mPager.setCurrentItem(2, true);
+            }
+        });
+
         ipRecyclerView = (RecyclerView) rootView.findViewById(R.id.ip_recycler_view);
         ipRecyclerView.setHasFixedSize(true);
         ipLayoutManager = new LinearLayoutManager(indoorActivity);
@@ -96,19 +120,13 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
     }
 
     @Override
-    public void dataSetChanged() {
-        ipadapter.notifyDataSetChanged();
-    }
+    public void dataSetChanged() { ipadapter.notifyDataSetChanged(); }
 
     @Override
-    public void fetchDataDone() {
-        filterTextFunction(filterText);
-    }
+    public void fetchDataDone() { filterTextFunction(filterText); }
 
     @Override
-    public boolean onQueryTextSubmit(String query) {
-        return false;
-    }
+    public boolean onQueryTextSubmit(String query) { return false; }
 
     @Override
     public boolean onQueryTextChange(String newText) {
@@ -134,5 +152,15 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
             }
         }
         return  filteredDataset;
+    }
+
+    @Override
+    public void adminInlogg() {
+        Log.d(TAG, "adminInlogg: ");
+    }
+
+    @Override
+    public void commonInlogg() {
+        Log.d(TAG, "commonInlogg: ");
     }
 }

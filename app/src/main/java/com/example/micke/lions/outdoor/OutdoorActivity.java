@@ -87,6 +87,13 @@ public class OutdoorActivity extends AppCompatActivity {
         newFragment.show(getFragmentManager(), "info_dialog");
     }
 
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        invalidateOptionsMenu();
+    }
+
     public FireBaseOutdoor getFireBaseHandler() {
         return fireBaseHandler;
     }
@@ -105,7 +112,7 @@ public class OutdoorActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_outdoor_activity, menu);
 
@@ -119,9 +126,9 @@ public class OutdoorActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.admin) {
             if(Common.IsAdmin())
-                Common.LogOut();
+                Common.LogOut(map, list, qr);
             else
-                Common.MakeAdmin();
+                Common.MakeAdmin(map, list, qr);
             Common.setAdminButton(item, this);
         }
         return false;
