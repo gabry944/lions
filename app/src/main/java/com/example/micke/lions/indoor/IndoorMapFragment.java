@@ -129,7 +129,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         getDimensions(r);
 
         floorMap = getResources().getDrawable(R.drawable.map_t3);
-        final ImageView i = (ImageView) rootView.findViewById(R.id.map);
+//        final ImageView i = (ImageView) rootView.findViewById(R.id.map);
 //        i.setImageDrawable(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
 //        i.setImageDrawable(floorMap);
 
@@ -137,127 +137,128 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 //        scaleTest = new ScaleTest(getContext(), r);
         scaleTest = (ScaleTest) rootView.findViewById(R.id.scale_test);
         scaleTest.setImage(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
+        scaleTest.setParent(r);
 
         setHasOptionsMenu(true);
 
         pointList = fireBaseIndoor.getPoints(buildingId, this);
 
-        r.setLongClickable(true);
-        r.setClickable(true);
-        r.setOnLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(View arg0) {
+//        r.setLongClickable(true);
+//        r.setClickable(true);
+//        r.setOnLongClickListener(new View.OnLongClickListener() {
+//            public boolean onLongClick(View arg0) {
+//
+//                if(longClick) {
+////                    addPoint(r, mx - r.getWidth() / 2,
+////                            my - r.getHeight() / 2 + 60);
+//
+//                    float[] point = new float[2];
+//                    point[0] = mx - r.getWidth() / 2;
+//                    point[1] = my - r.getHeight() / 2 + 60;
+//                    DialogFragment newFragment = new AddPointDialogFragment();
+//                    Bundle bundle = new Bundle();
+//                    bundle.putFloat("lat", point[0]);
+//                    bundle.putFloat("lng", point[1]);
+//                    newFragment.setArguments(bundle);
+//                    newFragment.show(indoorActivity.getFragmentManager(), "add_point_layout");
+//                }
+//                        Log.d("map_indoor", "onLongClick: " + longClick);
+//                return false;
+//            }
+//        });
 
-                if(longClick) {
-//                    addPoint(r, mx - r.getWidth() / 2,
-//                            my - r.getHeight() / 2 + 60);
-
-                    float[] point = new float[2];
-                    point[0] = mx - r.getWidth() / 2;
-                    point[1] = my - r.getHeight() / 2 + 60;
-                    DialogFragment newFragment = new AddPointDialogFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putFloat("lat", point[0]);
-                    bundle.putFloat("lng", point[1]);
-                    newFragment.setArguments(bundle);
-                    newFragment.show(indoorActivity.getFragmentManager(), "add_point_layout");
-                }
-                        Log.d("map_indoor", "onLongClick: " + longClick);
-                return false;
-            }
-        });
-
-        r.setOnTouchListener(new View.OnTouchListener() {
-
-            public boolean onTouch(View arg0, MotionEvent event) {
-
-                float posX, posY;
-                float curX, curY;
-
-                final float SCROLLSPEED = 30.0f;
-                final float ZOOMSPEED = 50.0f;
-
-                switch (event.getActionMasked()) {
-                    case MotionEvent.ACTION_DOWN:
-                        mx = event.getX();
-                        my = event.getY();
-
-                        //Special case for two fingers
-                        if (event.getPointerCount() == 2) {
-                            mx2 = event.getX(1);
-                            my2 = event.getY(1);
-                        }
-
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        //Check if user want to zoom
-                        if (event.getPointerCount() == 2) {
-                            longClick = false;
-                            float zoomVectorX = mx - mx2;
-                            float zoomVectorY = my - my2;
-                            float newZoomVectorX = event.getX(0) - event.getX(1);
-                            float newZoomVectorY = event.getY(0) - event.getY(1);
-
-                            //diff = distance between finger motion based on percentage difference
-                            double diff = (double) scaleFactor * 20 *
-                                    ((Math.sqrt(Math.pow(newZoomVectorX, 2.0) + Math.pow(newZoomVectorY, 2.0)) -
-                                            Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)))
-                                            / Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)));
-
-                            //if (diff != 0)
-                            //    diff = 25* Math.signum(diff) * 1 / Math.pow(diff, 2.0);
-                            diff = (diff < -ZOOMSPEED) ? -ZOOMSPEED : diff;
-                            diff = (diff > ZOOMSPEED) ? ZOOMSPEED : diff;
-                            scaleFactor += 0.02 * diff;
-                            scaleFactor = (scaleFactor > 10.0f) ? 10.0f : scaleFactor;
-                            scaleFactor = (scaleFactor < 1.0f) ? 1.0f : scaleFactor;
-
-                            //Log.d("map_indoor", "Two fingers: scaleFactor = " + scaleFactor + ", diff = " + diff);
-                            r.setScaleX(scaleFactor);
-                            r.setScaleY(scaleFactor);
-                            mx = event.getX(0);
-                            my = event.getY(0);
-                            mx2 = event.getX(1);
-                            my2 = event.getY(1);
-                        }
-                        //Check if user want to drag the map
-                        else if (event.getPointerCount() == 1) {
-                            curX = event.getX();
-                            curY = event.getY();
-
-                            posX = r.getTranslationX();
-                            posY = r.getTranslationY();
-
-                            float deltaX = mx - curX;
-                            float deltaY = my - curY;
-
-                            //Log.d("map_indoor", "posX = " + event.getRawX() + ", posY = " + event.getRawY());
-                            //Log.d("map_indoor", "deltaX = " + deltaX + ", deltaY = " + deltaY);
-
-                            if(deltaX+deltaY > 5)
-                                longClick = false;
-                            //This coordinate transformation should be moved into its own function
-                            //addPoint(r, (event.getRawX() - r.getWidth() / 2 - r.getTranslationX())/scaleFactor,
-                            // (event.getRawY() - r.getHeight() / 2 - 100 - r.getTranslationY())/scaleFactor);
-
-                            r.setTranslationX(posX - deltaX);
-                            r.setTranslationY(posY - deltaY);
-
-
-                            mx = curX;
-                            my = curY;
-                        }
-
-                        break;
-
-                    case MotionEvent.ACTION_UP:
-                        longClick = true;
-                        break;
-
-                }
-
-                return false;
-            }
-        });
+//        r.setOnTouchListener(new View.OnTouchListener() {
+//
+//            public boolean onTouch(View arg0, MotionEvent event) {
+//
+//                float posX, posY;
+//                float curX, curY;
+//
+//                final float SCROLLSPEED = 30.0f;
+//                final float ZOOMSPEED = 50.0f;
+//
+//                switch (event.getActionMasked()) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        mx = event.getX();
+//                        my = event.getY();
+//
+//                        //Special case for two fingers
+//                        if (event.getPointerCount() == 2) {
+//                            mx2 = event.getX(1);
+//                            my2 = event.getY(1);
+//                        }
+//
+//                        break;
+//                    case MotionEvent.ACTION_MOVE:
+//                        //Check if user want to zoom
+//                        if (event.getPointerCount() == 2) {
+//                            longClick = false;
+//                            float zoomVectorX = mx - mx2;
+//                            float zoomVectorY = my - my2;
+//                            float newZoomVectorX = event.getX(0) - event.getX(1);
+//                            float newZoomVectorY = event.getY(0) - event.getY(1);
+//
+//                            //diff = distance between finger motion based on percentage difference
+//                            double diff = (double) scaleFactor * 20 *
+//                                    ((Math.sqrt(Math.pow(newZoomVectorX, 2.0) + Math.pow(newZoomVectorY, 2.0)) -
+//                                            Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)))
+//                                            / Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)));
+//
+//                            //if (diff != 0)
+//                            //    diff = 25* Math.signum(diff) * 1 / Math.pow(diff, 2.0);
+//                            diff = (diff < -ZOOMSPEED) ? -ZOOMSPEED : diff;
+//                            diff = (diff > ZOOMSPEED) ? ZOOMSPEED : diff;
+//                            scaleFactor += 0.02 * diff;
+//                            scaleFactor = (scaleFactor > 10.0f) ? 10.0f : scaleFactor;
+//                            scaleFactor = (scaleFactor < 1.0f) ? 1.0f : scaleFactor;
+//
+//                            //Log.d("map_indoor", "Two fingers: scaleFactor = " + scaleFactor + ", diff = " + diff);
+//                            r.setScaleX(scaleFactor);
+//                            r.setScaleY(scaleFactor);
+//                            mx = event.getX(0);
+//                            my = event.getY(0);
+//                            mx2 = event.getX(1);
+//                            my2 = event.getY(1);
+//                        }
+//                        //Check if user want to drag the map
+//                        else if (event.getPointerCount() == 1) {
+//                            curX = event.getX();
+//                            curY = event.getY();
+//
+//                            posX = r.getTranslationX();
+//                            posY = r.getTranslationY();
+//
+//                            float deltaX = mx - curX;
+//                            float deltaY = my - curY;
+//
+//                            //Log.d("map_indoor", "posX = " + event.getRawX() + ", posY = " + event.getRawY());
+//                            //Log.d("map_indoor", "deltaX = " + deltaX + ", deltaY = " + deltaY);
+//
+//                            if(deltaX+deltaY > 5)
+//                                longClick = false;
+//                            //This coordinate transformation should be moved into its own function
+//                            //addPoint(r, (event.getRawX() - r.getWidth() / 2 - r.getTranslationX())/scaleFactor,
+//                            // (event.getRawY() - r.getHeight() / 2 - 100 - r.getTranslationY())/scaleFactor);
+//
+//                            r.setTranslationX(posX - deltaX);
+//                            r.setTranslationY(posY - deltaY);
+//
+//
+//                            mx = curX;
+//                            my = curY;
+//                        }
+//
+//                        break;
+//
+//                    case MotionEvent.ACTION_UP:
+//                        longClick = true;
+//                        break;
+//
+//                }
+//
+//                return false;
+//            }
+//        });
 
         return rootView;
     }
