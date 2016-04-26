@@ -21,7 +21,6 @@
         android:layout_alignBottom="@+id/map"
         android:layout_alignEnd="@+id/map"
         android:layout_gravity="right|bottom"
-        android:paddingRight="17dp"
-        android:paddingBottom="17dp"/>
+        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
 
 </FrameLayout>
