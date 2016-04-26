@@ -190,11 +190,20 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
     @Override
     public void adminInlogg() {
         Log.d(TAG, "adminInlogg: ");
+        RelativeLayout relativeLayout = (RelativeLayout) getActivity().findViewById(R.id.qr_linear_layout);
+        if(relativeLayout != null) {
+            FloatingActionButton fab = (FloatingActionButton) relativeLayout.findViewById(R.id.fab);
+            fab.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void commonInlogg() {
         Log.d(TAG, "commonInlogg: ");
-
+        RelativeLayout relativeLayout = (RelativeLayout) getActivity().findViewById(R.id.qr_linear_layout);
+        if(relativeLayout!=null) {
+            FloatingActionButton fab = (FloatingActionButton) relativeLayout.findViewById(R.id.fab);
+            fab.setVisibility(View.GONE);
+        }
     }
 }
