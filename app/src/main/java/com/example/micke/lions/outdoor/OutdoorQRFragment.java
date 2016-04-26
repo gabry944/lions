@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.micke.lions.Common;
 import com.example.micke.lions.R;
 import com.example.micke.lions.indoor.IndoorActivity;
 
@@ -32,6 +33,8 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView;
  * Created by iSirux on 2016-04-12.
  */
 public class OutdoorQRFragment extends Fragment implements ZBarScannerView.ResultHandler, FragmentResolver {
+
+    private String TAG = "OutdoorQRFragment";
 
     private static ZBarScannerView mScannerView;
     private static final String ARG_SECTION_NUMBER = "section_number";
@@ -93,25 +96,33 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Car car = new Car("Bil", fireBaseHandler.generateId(), 0, 0);
-                fireBaseHandler.updateCar(car);
+                if(Common.IsAdmin()) {
+                    Car car = new Car("Bil", fireBaseHandler.generateId(), 0, 0);
+                    fireBaseHandler.updateCar(car);
 
-                String url = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=" +
-                        "car/" + car.getId()
-                        + "&qzone=1&margin=0&size=400x400&ecc=L";
+                    String url = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=" +
+                            "car/" + car.getId()
+                            + "&qzone=1&margin=0&size=400x400&ecc=L";
 
-                ClipboardManager clipboard = (ClipboardManager) getActivity()
-                        .getSystemService(getActivity().CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("", url);
-                clipboard.setPrimaryClip(clip);
+                    ClipboardManager clipboard = (ClipboardManager) getActivity()
+                            .getSystemService(getActivity().CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText("", url);
+                    clipboard.setPrimaryClip(clip);
 
-                Toast toast = Toast.makeText(getContext(),
-                        "QR code URL copied to clipboard", Toast.LENGTH_LONG);
-                toast.show();
+                    Toast toast = Toast.makeText(getContext(),
+                            "QR code URL copied to clipboard", Toast.LENGTH_LONG);
+                    toast.show();
 
-                Log.d("fab", "clicked");
+                    Log.d("fab", "clicked");
+                }
+                else
+                    Log.d(TAG, "onClick: You must be admin to add a car");
             }
         });
+        if(Common.IsAdmin())
+            fab.setVisibility(View.VISIBLE);
+        else
+            fab.setVisibility(View.GONE);
 
         return relativeLayout;
     }

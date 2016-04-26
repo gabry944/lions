@@ -54,7 +54,7 @@ public class FireBaseOutdoor extends FireBaseHandler implements Serializable {
         });
     }
 
-    public List<Building> getBuildings(final DataSetChanged outdoorActivity) {
+    public List<Building> getBuildings(final DataSetChanged dataSetChangedInterface, final boolean search) {
         final List<Building> list = new ArrayList<>();
 
         myFirebaseRef.child("building").addValueEventListener(new ValueEventListener() {
@@ -67,7 +67,10 @@ public class FireBaseOutdoor extends FireBaseHandler implements Serializable {
                     Building b = new Building(building.getValue(Building.class));
                     list.add(b);
                 }
-                outdoorActivity.dataSetChanged();
+                if (search)
+                    dataSetChangedInterface.fetchDataDone();
+                else
+                    dataSetChangedInterface.dataSetChanged();
             }
 
             @Override

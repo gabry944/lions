@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.micke.lions.Common;
 import com.example.micke.lions.indoor.IndoorActivity;
 import com.example.micke.lions.R;
 import com.google.android.gms.maps.CameraUpdate;
@@ -41,6 +42,9 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
      * The fragment argument representing the section number for this
      * fragment.
      */
+
+    private String TAG = "OutdoorMapFragment";
+
     private static final String ARG_SECTION_NUMBER = "section_number";
     private GoogleMap mMap;
     private double longitude, latitude;

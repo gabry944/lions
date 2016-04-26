@@ -1,13 +1,19 @@
 package com.example.micke.lions.outdoor;
 
+import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
@@ -17,13 +23,15 @@ import android.widget.TextView;
 import com.example.micke.lions.DataSetChanged;
 import com.example.micke.lions.R;
 import com.example.micke.lions.indoor.IndoorActivity;
+import com.example.micke.lions.indoor.PointOfInterest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class OutdoorListFragment extends Fragment implements DataSetChanged {
+public class OutdoorListFragment extends Fragment implements DataSetChanged, SearchView.OnQueryTextListener {
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -35,6 +43,7 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged {
     private OutdoorActivity outdoorActivity;
     private BuildingAdapter buildingAdapter;
     private List<Building> myDataset;
+    private String filterText;
 
     private ImageButton goToQR;
     private ImageButton goToMaps;
@@ -60,18 +69,12 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged {
         outdoorActivity = (OutdoorActivity) getActivity();
         View rootView = inflater.inflate(R.layout.fragment_outdoor_list, container, false);
 
+        myDataset = outdoorActivity.getFireBaseHandler().getBuildings(this, false);
+
         goToMaps = (ImageButton) rootView.findViewById(R.id.goToMaps);
         goToQR = (ImageButton) rootView.findViewById(R.id.goToQr);
 
-        //goToMaps.setElevation(100);
-        //goToQR.setElevation(100);
-
-        //Animation pulseAnim = AnimationUtils.loadAnimation(getContext(), R.anim.pulse_button);
-
-        //goToMaps.startAnimation(pulseAnim);
-        //goToQR.startAnimation(pulseAnim);
-
-        myDataset = outdoorActivity.getFireBaseHandler().getBuildings(this);
+        myDataset = outdoorActivity.getFireBaseHandler().getBuildings(this, false);
 
         buildingAdapter = new BuildingAdapter(getContext(), myDataset);
 
@@ -81,6 +84,8 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mRecyclerView.setAdapter(buildingAdapter);
+
+        setHasOptionsMenu(true);
 
         //Goes to QR code scanner fragment when user clicks on button
         goToMaps.setOnClickListener(new View.OnClickListener() {
@@ -104,12 +109,66 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_outdoor_list, menu);
+
+        final MenuItem item = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setOnQueryTextListener(this);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.info:
+                DialogFragment newFragment = new InfoDialogFragment();
+                newFragment.show(getActivity().getFragmentManager(), "info_dialog");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public void dataSetChanged() {
         buildingAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void fetchDataDone() {
+        filterTextFunction(filterText);
+    }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        filterText = newText;
+        myDataset = outdoorActivity.getFireBaseHandler().getBuildings(this, true);
+        return true;
+    }
+
+    public void filterTextFunction(String text) {
+        final List<Building> filteredDataset = filter(myDataset, text);
+        buildingAdapter.updateAdapter(filteredDataset);
+    }
+
+    private List<Building> filter(List<Building> myDataset, String query){
+        query = query.toLowerCase();
+        final List<Building> filteredDataset = new ArrayList<>();
+
+        for(Building building: myDataset){
+            if(building.getName() != null){
+                final String text = building.getName().toLowerCase();
+                if(text.contains(query)){
+                    filteredDataset.add(building);
+                }
+            }
+        }
+        return  filteredDataset;
     }
 }

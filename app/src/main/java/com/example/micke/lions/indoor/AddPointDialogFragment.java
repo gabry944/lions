@@ -8,12 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.example.micke.lions.Common;
 import com.example.micke.lions.R;
 
+import org.w3c.dom.Text;
 
 
 public class AddPointDialogFragment extends DialogFragment {
@@ -34,6 +38,16 @@ public class AddPointDialogFragment extends DialogFragment {
         final EditText title = (EditText) dialogView.findViewById(R.id.add_point_title);
         final EditText description = (EditText) dialogView.findViewById(R.id.add_point_description);
         final Spinner category = (Spinner) dialogView.findViewById(R.id.category_spinner);
+        final CheckBox official = (CheckBox) dialogView.findViewById(R.id.official);
+        final TextView offText = (TextView) dialogView.findViewById(R.id.official_text);
+        if(Common.IsAdmin()) {
+            official.setVisibility(View.VISIBLE);
+            offText.setVisibility(View.VISIBLE);
+        }
+        else {
+            official.setVisibility(View.GONE);
+            offText.setVisibility(View.GONE);
+        }
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.category_array, android.R.layout.simple_spinner_item);
@@ -83,7 +97,7 @@ public class AddPointDialogFragment extends DialogFragment {
                 } else {
                     PointOfInterest point = new PointOfInterest(title.getText().toString(),
                             description.getText().toString(), category.getSelectedItem().toString(),
-                            point1, point2, fireBaseIndoor.getFloor(), true, ipId);
+                            point1, point2, fireBaseIndoor.getFloor(), official.isChecked(), ipId);
                     fireBaseIndoor.updateIp(point, Integer.parseInt(fireBaseIndoor.getFloor()));
 
                     dialogBuilder.cancel();
