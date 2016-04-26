@@ -1,8 +1,10 @@
 package com.example.micke.lions.indoor;
 
+import android.app.DialogFragment;
 import android.content.Context;
 import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Bundle;
 import android.support.v4.view.ScaleGestureDetectorCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -26,6 +28,7 @@ public class ScaleTest extends RelativeLayout {
     private RelativeLayout relativeLayout;
     private ImageView imageView;
     private View mView;
+    private float mX, mY;
 
     public ScaleTest(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -41,29 +44,47 @@ public class ScaleTest extends RelativeLayout {
     private void init() {
         inflate(getContext(), R.layout.scale_test, this);
         this.imageView = (ImageView) findViewById(R.id.imageView);
+        mX = mY = 0;
+
+//        imageView.setOnTouchListener(new OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                final int action = event.getAction();
+//                switch (action & MotionEvent.ACTION_MASK) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        mX = event.getX();
+//                        mY = event.getY();
+//                        break;
+//                }
+//                return false;
+//            }
+//        });
+
+//        imageView.setOnLongClickListener(new View.OnLongClickListener() {
+//            public boolean onLongClick(View arg0) {
+//                Log.d("scale", "Long click @ " + mX + " " + mY);
+////                    addPoint(r, mx - r.getWidth() / 2,
+////                            my - r.getHeight() / 2 + 60);
+//
+////                    float[] point = new float[2];
+////                    point[0] = mx - r.getWidth() / 2;
+////                    point[1] = my - r.getHeight() / 2 + 60;
+////                    DialogFragment newFragment = new AddPointDialogFragment();
+////                    Bundle bundle = new Bundle();
+////                    bundle.putFloat("lat", point[0]);
+////                    bundle.putFloat("lng", point[1]);
+////                    newFragment.setArguments(bundle);
+////                    newFragment.show(indoorActivity.getFragmentManager(), "add_point_layout");
+//                return false;
+//            }
+//        });
     }
 
-//    @Override
-//    public void onDraw(Canvas canvas) {
-//        super.onDraw(canvas);
-//
-//        canvas.save();
-//        canvas.scale(mScaleFactor, mScaleFactor);
-//        ...
-//        // onDraw() code goes here
-//        ...
-//        canvas.restore();
-//    }
-
-//    @Override
-//    public boolean onTouchEvent(MotionEvent ev) {
-//        Log.d("scale", "onTouchEvent");
-//        // Let the ScaleGestureDetector inspect all events.
-//        mScaleDetector.onTouchEvent(ev);
-//        return true;
-//    }
-
     public boolean onTouchEvent(MotionEvent event) {
+        //Get coordinates for finger
+        mX = event.getX();
+        mY = event.getY();
+
         boolean retVal = mScaleDetector.onTouchEvent(event);
         retVal = mGestureDetector.onTouchEvent(event) || retVal;
         return retVal || super.onTouchEvent(event);
@@ -71,8 +92,6 @@ public class ScaleTest extends RelativeLayout {
 
 
     public void setImage(BitmapDrawable bitmapDrawable) {
-        Log.d("scale", "setting image to a bitmapDrawable");
-//        imageView = new ImageView(getContext());
         imageView.setImageDrawable(bitmapDrawable);
     }
 
@@ -91,7 +110,7 @@ public class ScaleTest extends RelativeLayout {
 
             relativeLayout.setScaleX(mScaleFactor);
             relativeLayout.setScaleY(mScaleFactor);
-            Log.d("scale", "onScale - scalefactor: " + mScaleFactor);
+//            Log.d("scale", "onScale - scalefactor: " + mScaleFactor);
             invalidate();
             return true;
         }
@@ -103,84 +122,15 @@ public class ScaleTest extends RelativeLayout {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2,
                                 float distanceX, float distanceY) {
-//            // Scrolling uses math based on the viewport (as opposed to math using pixels).
-//
-//            // Pixel offset is the offset in screen pixels, while viewport offset is the
-//            // offset within the current viewport.
-//            float viewportOffsetX = distanceX * mCurrentViewport.width()
-//                    / mContentRect.width();
-//            float viewportOffsetY = -distanceY * mCurrentViewport.height()
-//                    / mContentRect.height();
-//
-//            // Updates the viewport, refreshes the display.
-//            setViewportBottomLeft(
-//                    mCurrentViewport.left + viewportOffsetX,
-//                    mCurrentViewport.bottom + viewportOffsetY);
+            float top = relativeLayout.getTranslationY();
+            float left = relativeLayout.getTranslationX();
 
-            relativeLayout.setLeft((int) distanceX);
-//            relativeLayout.setLeft((int) distanceX);
-            Log.d("scale", "onScroll - distanceX: " + distanceX + " distanceY: " + distanceY);
+            float translationX = left - distanceX;
+            float translationY = top - distanceY;
+
+            relativeLayout.setTranslationX(translationX);
+            relativeLayout.setTranslationY(translationY);
             return true;
         }
     }
-
-//    private final ScaleGestureDetector.OnScaleGestureListener mScaleGestureListener
-//            = new ScaleGestureDetector.SimpleOnScaleGestureListener() {
-//    private class ScaleListener
-//        extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-//        /**
-//         * This is the active focal point in terms of the viewport. Could be a local
-//         * variable but kept here to minimize per-frame allocations.
-//         */
-//        private PointF viewportFocus = new PointF();
-//        private float lastSpanX;
-//        private float lastSpanY;
-//
-//        // Detects that new pointers are going down.
-//        @Override
-//        public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
-//            lastSpanX = scaleGestureDetector.getCurrentSpanX();
-//            lastSpanY = scaleGestureDetector.getCurrentSpanY();
-//            return true;
-//        }
-//
-//        @Override
-//        public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
-//
-//            float spanX = scaleGestureDetector.getCurrentSpanX();
-//            float spanY = scaleGestureDetector.getCurrentSpanY();
-//
-////            float newWidth = lastSpanX / spanX * mCurrentViewport.width();
-////            float newHeight = lastSpanY / spanY * mCurrentViewport.height();
-//
-//            float focusX = scaleGestureDetector.getFocusX();
-//            float focusY = scaleGestureDetector.getFocusY();
-//            // Makes sure that the chart point is within the chart region.
-//            // See the sample for the implementation of hitTest().
-////            hitTest(scaleGestureDetector.getFocusX(),
-////                    scaleGestureDetector.getFocusY(),
-////                    viewportFocus);
-////
-////            mCurrentViewport.set(
-////                    viewportFocus.x
-////                            - newWidth * (focusX - mContentRect.left)
-////                            / mContentRect.width(),
-////                    viewportFocus.y
-////                            - newHeight * (mContentRect.bottom - focusY)
-////                            / mContentRect.height(),
-////                    0,
-////                    0);
-////            mCurrentViewport.right = mCurrentViewport.left + newWidth;
-////            mCurrentViewport.bottom = mCurrentViewport.top + newHeight;
-////
-////            // Invalidates the View to update the display.
-////            ViewCompat.postInvalidateOnAnimation(InteractiveLineGraphView.this);
-//
-//            lastSpanX = spanX;
-//            lastSpanY = spanY;
-//
-//            relativeLayout.setScaleX(2f);
-//            return true;
-//        }
-//    };
 }
