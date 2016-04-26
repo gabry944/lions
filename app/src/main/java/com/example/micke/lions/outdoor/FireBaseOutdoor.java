@@ -72,13 +72,15 @@ public class FireBaseOutdoor extends FireBaseHandler implements Serializable {
 
             @Override
             public void onCancelled(FirebaseError error) {
+
             }
         });
 
         return list;
     }
 
-    public void newCar(Car car) {
+    //New car or update car in to database
+    public void updateCar(Car car) {
         Firebase carRef =
                 myFirebaseRef.child("car/" + car.getId());
         carRef.setValue(car);

@@ -1,5 +1,6 @@
 package com.example.micke.lions.indoor;
 
+import android.app.ActionBar;
 import android.app.DialogFragment;
 import android.app.ListFragment;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.example.micke.lions.DataSetChanged;
 import com.example.micke.lions.outdoor.OutdoorQRFragment;
@@ -54,6 +56,8 @@ public class IndoorActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(null);
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new IndoorPageSliderAdapter(getSupportFragmentManager(), this);
