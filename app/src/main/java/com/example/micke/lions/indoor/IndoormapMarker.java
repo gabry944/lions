@@ -85,8 +85,8 @@ public class IndoorMapMarker {
         point = new ImageView(context);
         point.setX(localCoord[0]);
         point.setY(localCoord[1]);
-        point.setScaleX(0.05f);
-        point.setScaleY(0.05f);
+        point.setScaleX(0.2f);
+        point.setScaleY(0.2f);
         if(getCategory().equals(context.getString(R.string.Entrance)))
             point.setImageResource(R.drawable.entrance);
         else if(getCategory().equals(context.getString(R.string.Elevator)))

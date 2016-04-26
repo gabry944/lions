@@ -8,12 +8,13 @@ public class PointOfInterest {
     private float longitude;
     private String floor;
     private String id;
+    private boolean official;
 
     public PointOfInterest() {
 
     }
 
-    public PointOfInterest(String title, String description, String category, float latitude, float longitude, String floor, String id){
+    public PointOfInterest(String title, String description, String category, float latitude, float longitude, String floor, boolean official, String id){
         this.category = category;
         if(title == "")
             this.title = category;
@@ -24,6 +25,7 @@ public class PointOfInterest {
         this.longitude = longitude;
         this.floor = floor;
         this.id = id;
+        this.official = official;
     }
 
     public PointOfInterest(PointOfInterest p) {
@@ -35,11 +37,14 @@ public class PointOfInterest {
         longitude = p.getLongitude();
         floor = p.getFloor();
         id = p.getId();
+        official = getOfficial();
     }
 
     public String getId() {
         return id;
     }
+
+    public boolean getOfficial() { return official; }
 
     public String getCategory() {
         return category;

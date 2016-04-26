@@ -139,8 +139,10 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 //                            my - r.getHeight() / 2 + 60);
 
                     float[] point = new float[2];
-                    point[0] = mx - r.getWidth() / 2;
-                    point[1] = my - r.getHeight() / 2 + 60;
+                    Log.d("map_pos", "mx = " + mx + " r_width = " + r.getWidth());
+                    Log.d("map_pos", "my = " + my + " r_height = " + r.getHeight());
+                    point[0] = mx - r.getWidth() / 4;
+                    point[1] = my - r.getHeight() / 4 + 60;
                     DialogFragment newFragment = new AddPointDialogFragment();
                     Bundle bundle = new Bundle();
                     bundle.putFloat("lat", point[0]);
