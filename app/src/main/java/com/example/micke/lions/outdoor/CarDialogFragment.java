@@ -15,21 +15,27 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.example.micke.lions.Common;
 import com.example.micke.lions.R;
 
-/**
- * Created by iSirux on 2016-04-11.
- */
 public class CarDialogFragment extends DialogFragment {
 
     FireBaseOutdoor fireBaseHandler;
     Car car;
     public boolean dismissed;
+    private boolean canUseLocation;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         dismissed = false;
+        canUseLocation = false;
+
+        if (Common.IsLocationPermitted(getActivity()) == Common.PERMISSION_GRANTED) {
+            canUseLocation = true;
+        }
+
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
 
@@ -43,12 +49,6 @@ public class CarDialogFragment extends DialogFragment {
         final LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         final String locationProvider = LocationManager.NETWORK_PROVIDER;
         // Or use LocationManager.GPS_PROVIDER
-        if (ActivityCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return null;
-        }
 
         //Inflate the layout from xml
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -57,6 +57,7 @@ public class CarDialogFragment extends DialogFragment {
 
         Button findCar = (Button) dialogView.findViewById(R.id.find_car);
         Button parkCar = (Button) dialogView.findViewById(R.id.park_car);
+        TextView permissionMessage = (TextView) dialogView.findViewById(R.id.permission);
 
         if(car.getLongitude() == 0 && car.getLatitude() == 0)
             findCar.setEnabled(false);
@@ -78,26 +79,36 @@ public class CarDialogFragment extends DialogFragment {
             });
         }
 
-        parkCar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (ActivityCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) { return; }
+        if(!canUseLocation){
+            parkCar.setEnabled(false);
+            permissionMessage.setVisibility(View.VISIBLE);
+        }
+        else {
+            parkCar.setEnabled(true);
+            permissionMessage.setVisibility(View.GONE);
+            parkCar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (ActivityCompat.checkSelfPermission(getActivity(),
+                            Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                            && ActivityCompat.checkSelfPermission(getActivity(),
+                            Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
 
-                Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
-                car.setLatitude(lastKnownLocation.getLatitude());
-                car.setLongitude(lastKnownLocation.getLongitude());
-                Log.d("car", "current pos: " + lastKnownLocation.getLatitude() + " " + lastKnownLocation.getLongitude());
-                fireBaseHandler.updateCar(car);
+                    Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+                    car.setLatitude(lastKnownLocation.getLatitude());
+                    car.setLongitude(lastKnownLocation.getLongitude());
+                    Log.d("car", "current pos: " + lastKnownLocation.getLatitude() + " " + lastKnownLocation.getLongitude());
+                    fireBaseHandler.updateCar(car);
 
-                ((OutdoorActivity) getActivity()).getViewPager().setCurrentItem(0);
-                ((OutdoorActivity) getActivity()).map.newMarker(car, lastKnownLocation);
+                    ((OutdoorActivity) getActivity()).getViewPager().setCurrentItem(0);
+                    ((OutdoorActivity) getActivity()).map.newMarker(car, lastKnownLocation);
 
-                dismiss();
-            }
-        });
+                    dismiss();
+                }
+            });
+        }
 
         // Create the AlertDialog object and return it
         return dialogBuilder.create();

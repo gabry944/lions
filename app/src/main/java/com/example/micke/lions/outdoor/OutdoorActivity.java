@@ -31,8 +31,12 @@ import java.util.List;
 
 public class OutdoorActivity extends AppCompatActivity {
 
+    private String TAG = "OutdoorActivity";
+
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 0;
+    private static final int MY_PERMISSIONS_REQUEST_MAP = 1;
+
     private OutdoorPageSliderAdapter mSectionsPagerAdapter;
-    int MY_PERMISSIONS_REQUEST_CAMERA = 0;
     private ViewPager mViewPager;
     private FireBaseOutdoor fireBaseHandler;
 
@@ -43,32 +47,32 @@ public class OutdoorActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_outdoor);
-
-        fireBaseHandler = new FireBaseOutdoor(getApplicationContext());
 
         //check for permission to use the camera
         //needed for the QRFragment
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            /*if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.CAMERA)) {
-
-                Log.d("OutdoorActivity", "onCreate: should show request");
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
-            } else {*/
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.CAMERA},
-                        MY_PERMISSIONS_REQUEST_CAMERA);
-            //}
+            // No explanation needed, we can request the permission.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA},
+                    MY_PERMISSIONS_REQUEST_CAMERA);
         }
+
+        //check for permission to use the location
+        //needed for the MapFragment
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // No explanation needed, we can request the permission.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_MAP);
+        }
+
+        setContentView(R.layout.activity_outdoor);
+
+        fireBaseHandler = new FireBaseOutdoor(getApplicationContext());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -132,5 +136,21 @@ public class OutdoorActivity extends AppCompatActivity {
             Common.setAdminButton(item, this);
         }
         return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_MAP: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+                    Common.LocationPermissionDenied();
+                }
+            }
+        }
     }
 }
