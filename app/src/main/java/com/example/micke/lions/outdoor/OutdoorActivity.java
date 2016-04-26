@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -12,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,7 +39,6 @@ public class OutdoorActivity extends AppCompatActivity {
     public OutdoorMapFragment map;
     public OutdoorListFragment list;
     public OutdoorQRFragment qr;
-    public boolean admin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +87,13 @@ public class OutdoorActivity extends AppCompatActivity {
         newFragment.show(getFragmentManager(), "info_dialog");
     }
 
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        invalidateOptionsMenu();
+    }
+
     public FireBaseOutdoor getFireBaseHandler() {
         return fireBaseHandler;
     }
@@ -104,9 +112,12 @@ public class OutdoorActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_outdoor_activity, menu);
+
+        MenuItem adminButton = menu.findItem(R.id.admin);
+        Common.setAdminButton(adminButton, this);
         return true;
     }
 
@@ -118,6 +129,7 @@ public class OutdoorActivity extends AppCompatActivity {
                 Common.LogOut(map, list, qr);
             else
                 Common.MakeAdmin(map, list, qr);
+            Common.setAdminButton(item, this);
         }
         return false;
     }

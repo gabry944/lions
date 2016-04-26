@@ -3,14 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/addInterestPoint"
-        android:icon="@android:drawable/ic_input_add"
-        android:title="addMarker"
+        android:id="@+id/floors"
+        android:icon="@drawable/stairs_menu"
+        android:title="floors"
         app:showAsAction="always"/>
 
     <item
-        android:id="@+id/floors"
-        android:icon="@android:drawable/ic_menu_sort_by_size"
-        android:title="floors"
+        android:id="@+id/addInterestPoint"
+        android:icon="@drawable/add_button"
+        android:title="addMarker"
         app:showAsAction="always"/>
+
+
 </menu>

@@ -21,7 +21,15 @@
             android:id="@+id/map"
             android:scaleType="fitCenter"
             android:background="#fff"
-            />
+            ></ImageView>
+
+        <ImageButton
+            android:id="@+id/goToIndoorList1"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/list_icon_black"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true" />
 
     </RelativeLayout>
 
@@ -36,5 +44,7 @@
         android:background="#7986CB"
         android:elevation="16dp"
         />
+
+
 
 </RelativeLayout>
