@@ -7,6 +7,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.micke.lions.DataSetChanged;
+import com.example.micke.lions.InloggChange;
 import com.example.micke.lions.R;
 import com.example.micke.lions.indoor.IndoorActivity;
 import com.example.micke.lions.indoor.PointOfInterest;
@@ -31,11 +33,12 @@ import java.util.List;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class OutdoorListFragment extends Fragment implements DataSetChanged, SearchView.OnQueryTextListener {
+public class OutdoorListFragment extends Fragment implements DataSetChanged, SearchView.OnQueryTextListener, InloggChange {
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
+    String TAG = "OutdoorListFragment";
     private static final String ARG_SECTION_NUMBER = "section_number";
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -170,5 +173,15 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged, Sea
             }
         }
         return  filteredDataset;
+    }
+
+    @Override
+    public void adminInlogg() {
+        Log.d(TAG, "adminInlogg: ");
+    }
+
+    @Override
+    public void commonInlogg() {
+        Log.d(TAG, "commonInlogg: ");
     }
 }

@@ -102,9 +102,9 @@ public class IndoorActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.admin) {
             if(Common.IsAdmin())
-                Common.LogOut();
+                Common.LogOut(map, list, qr);
             else
-                Common.MakeAdmin();
+                Common.MakeAdmin(map, list, qr);
         }
         return false;
     }

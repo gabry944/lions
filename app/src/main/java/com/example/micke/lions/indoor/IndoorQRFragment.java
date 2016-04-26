@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.micke.lions.FireBaseHandler;
+import com.example.micke.lions.InloggChange;
 import com.example.micke.lions.outdoor.FireBaseOutdoor;
 import com.example.micke.lions.R;
 import com.example.micke.lions.outdoor.Car;
@@ -27,8 +28,9 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView;
 /**
  * Created by iSirux on 2016-04-12.
  */
-public class IndoorQRFragment extends Fragment implements ZBarScannerView.ResultHandler {
+public class IndoorQRFragment extends Fragment implements ZBarScannerView.ResultHandler,InloggChange {
 
+    String TAG = "IndoorQRFragment";
     private static ZBarScannerView mScannerView;
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -121,5 +123,15 @@ public class IndoorQRFragment extends Fragment implements ZBarScannerView.Result
 
         // If you would like to resume scanning, call this method below:
         mScannerView.resumeCameraPreview(this);
+    }
+
+    @Override
+    public void adminInlogg() {
+        Log.d(TAG, "adminInlogg: ");
+    }
+
+    @Override
+    public void commonInlogg() {
+        Log.d(TAG, "commonInlogg: ");
     }
 }
