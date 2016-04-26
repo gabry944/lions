@@ -13,6 +13,24 @@
         android:id="@+id/ip_recycler_view"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_above="@+id/goToIndoorMap"
+        android:layout_marginBottom="5dp"/>
+
+    <ImageButton
+        android:id="@+id/goToIndoorMap"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/map_marker"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageButton
+        android:id="@+id/goToIndoorQr"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/qr_scan"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>
