@@ -33,6 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src ="@drawable/maps_icon"
+            android:scaleType="centerCrop"
             android:maxWidth="@dimen/maps_icon_size"
             android:maxHeight="@dimen/maps_icon_size"
             android:background="@color/white"

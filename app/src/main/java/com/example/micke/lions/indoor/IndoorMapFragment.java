@@ -52,7 +52,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     public FloorAdapter floorAdapter;
     private FireBaseIndoor fireBaseIndoor;
     private String buildingId;
-    private int currentFloor;
+    private String currentFloor = "3"; //TODO
 
     private int displayWidth;
     private int displayHeight;
@@ -237,7 +237,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     }
 
     public void highlightIP(String ipID) {
-        Log.d(TAG, "highlightIP: piID = " + ipID);
 
         IndoorMapMarker start = null, end = null, elevator = null;
 
@@ -247,8 +246,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 end = m;
             else if(m.getCategory().equals(getString(R.string.Entrance)))
                 start = m;
-            else if(m.getCategory().equals(getString(R.string.Elevator)))
-                elevator = m;
+            else if(m.getCategory().equals(getString(R.string.Elevator))){
+                if(elevator == null)
+                    elevator = m;
+                else
+                    m.getMarker().setVisibility(View.GONE);
+            }
             else
                 m.getMarker().setVisibility(View.GONE);
         }
@@ -256,16 +259,25 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         if(end != null) {
             if(start != null) {
                 //if ipID floor != entrance floor
-                /*if (!end.getPoint().getFloor().equals(start.getPoint().getFloor())) {
+                if (!end.getPoint().getFloor().equals(start.getPoint().getFloor())) {
                     //show elevator
                     if (elevator != null) {
                         elevator.getMarker().setVisibility(View.VISIBLE);
                         start.getMarker().setVisibility(View.VISIBLE);
                         end.getMarker().setVisibility(View.GONE);
+                        Log.d(TAG, "highlightIP: show start and elevator");
                     } else {
                         Log.d(TAG, "highlightIP: No elevator found");
                     }
-                }*/
+                }
+                else {
+                    //show goal
+                    if(elevator != null)
+                        elevator.getMarker().setVisibility(View.GONE);
+                    start.getMarker().setVisibility(View.VISIBLE);
+                    end.getMarker().setVisibility(View.VISIBLE);
+                    Log.d(TAG, "highlightIP: show start and end");
+                }
             }
             else
                 Log.d(TAG, "highlightIP: Found no start/entrance");
@@ -340,13 +352,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         Log.d("floor", "" + floor + " pointList size = " + pointList.size());
         fireBaseIndoor.setFloor(floor);
         floorMap = null;
+        currentFloor = floor;
         if(floor.equals("3")) {
-            currentFloor = 3;
             floorMap = getResources().getDrawable(R.drawable.map_t3);
             floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3));
         }
         if(floor.equals("4")) {
-            currentFloor = 4;
             floorMap = getResources().getDrawable(R.drawable.map_t4);
             floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t4));
         }
@@ -371,7 +382,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         }
         listOfMarkers.clear();
         for(PointOfInterest p : pointList) {
-            addPoint(r,p);
+            if(p.getFloor().equals(currentFloor))
+                addPoint(r,p);
         }
         floorAdapter.notifyDataSetChanged();
     }
