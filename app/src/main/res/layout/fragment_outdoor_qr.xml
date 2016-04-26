@@ -38,8 +38,8 @@
         android:layout_width="37dp"
         android:layout_height="37dp"
         android:background="@drawable/list_icon"
-        android:layout_marginStart="17dp"
-        android:layout_marginBottom="77dp"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true" />
 
