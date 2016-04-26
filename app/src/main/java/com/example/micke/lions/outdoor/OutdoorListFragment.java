@@ -1,12 +1,18 @@
 package com.example.micke.lions.outdoor;
 
+import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.example.micke.lions.DataSetChanged;
@@ -18,7 +24,7 @@ import java.util.List;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class OutdoorListFragment extends Fragment implements DataSetChanged {
+public class OutdoorListFragment extends Fragment implements DataSetChanged, SearchView.OnQueryTextListener {
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -63,7 +69,31 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged {
 
         mRecyclerView.setAdapter(buildingAdapter);
 
+        setHasOptionsMenu(true);
+
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_outdoor_list, menu);
+
+        final MenuItem item = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setOnQueryTextListener(this);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.info:
+                DialogFragment newFragment = new InfoDialogFragment();
+                newFragment.show(getActivity().getFragmentManager(), "info_dialog");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -74,5 +104,15 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged {
     @Override
     public void fetchDataDone() {
 
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
     }
 }

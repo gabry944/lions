@@ -1,6 +1,7 @@
 package com.example.micke.lions.outdoor;
 
 import android.Manifest;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -77,6 +78,9 @@ public class OutdoorActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(1);
+
+        DialogFragment newFragment = new InfoDialogFragment();
+        newFragment.show(getFragmentManager(), "info_dialog");
     }
 
     public FireBaseOutdoor getFireBaseHandler() {
