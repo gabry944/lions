@@ -63,6 +63,14 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged {
         goToMaps = (ImageButton) rootView.findViewById(R.id.goToMaps);
         goToQR = (ImageButton) rootView.findViewById(R.id.goToQr);
 
+        //goToMaps.setElevation(100);
+        //goToQR.setElevation(100);
+
+        //Animation pulseAnim = AnimationUtils.loadAnimation(getContext(), R.anim.pulse_button);
+
+        //goToMaps.startAnimation(pulseAnim);
+        //goToQR.startAnimation(pulseAnim);
+
         myDataset = outdoorActivity.getFireBaseHandler().getBuildings(this);
 
         buildingAdapter = new BuildingAdapter(getContext(), myDataset);

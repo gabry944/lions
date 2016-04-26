@@ -5,19 +5,24 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.micke.lions.R;
 import com.example.micke.lions.indoor.IndoorActivity;
 
 import java.util.ArrayList;
+import java.util.concurrent.locks.ReadWriteLock;
 
 import me.dm7.barcodescanner.zbar.BarcodeFormat;
 import me.dm7.barcodescanner.zbar.Result;
@@ -32,6 +37,7 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
     private static final String ARG_SECTION_NUMBER = "section_number";
     private FireBaseOutdoor fireBaseHandler;
     private DialogFragment newFragment;
+    private ImageButton goToList;
 
     public OutdoorQRFragment() {
     }
@@ -67,16 +73,23 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
 
         fireBaseHandler = ((OutdoorActivity) getActivity()).getFireBaseHandler();
         View view = inflater.inflate(R.layout.fragment_outdoor_qr, container, false);
-        LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.qr_linear_layout);
+        RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.qr_linear_layout);
 
+        goToList = (ImageButton) view.findViewById(R.id.goToList2);
         ArrayList<BarcodeFormat> list = new ArrayList<>();
         list.add(BarcodeFormat.QRCODE);
-        mScannerView = new ZBarScannerView(getContext());
+        mScannerView = (ZBarScannerView) view.findViewById(R.id.zBarScanner);
         mScannerView.setFormats(list);
-        View scannerView = mScannerView;
-        linearLayout.addView(scannerView);
 
-        final FloatingActionButton fab = (FloatingActionButton) linearLayout.findViewById(R.id.fab);
+        goToList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                mPager.setCurrentItem(1, true);
+            }
+        });
+
+        final FloatingActionButton fab = (FloatingActionButton) relativeLayout.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,7 +113,7 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
             }
         });
 
-        return linearLayout;
+        return relativeLayout;
     }
 
     @Override
