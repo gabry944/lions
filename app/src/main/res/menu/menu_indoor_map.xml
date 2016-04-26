@@ -7,6 +7,12 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/addInterestPoint"
+        android:icon="@android:drawable/ic_input_add"
+        android:title="addMarker"
+        app:showAsAction="always"/>
+
+    <item
         android:id="@+id/floors"
         android:icon="@android:drawable/ic_menu_sort_by_size"
         android:title="floors"
