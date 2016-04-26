@@ -2,6 +2,7 @@ package com.example.micke.lions.indoor;
 
 import android.app.DialogFragment;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -55,6 +56,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private FireBaseIndoor fireBaseIndoor;
     private String buildingId;
     private int currentFloor;
+    private Context context;
 
     private int displayWidth;
     private int displayHeight;
@@ -98,6 +100,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         indoorActivity = (IndoorActivity) getActivity();
         fireBaseIndoor = indoorActivity.getFireBaseHandler();
+        context = getContext();
 
         buildingId = indoorActivity.getBuildingId();
         rootView = inflater.inflate(R.layout.activity_indoor_map, container, false);
@@ -129,9 +132,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         getDimensions(r);
 
         floorMap = getResources().getDrawable(R.drawable.map_t3);
-//        final ImageView i = (ImageView) rootView.findViewById(R.id.map);
-//        i.setImageDrawable(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
-//        i.setImageDrawable(floorMap);
 
         //Scaletest
         scaleTest = (ScaleTest) rootView.findViewById(R.id.scale_test);
@@ -195,19 +195,24 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     private void addPoint(RelativeLayout parent, PointOfInterest ip) {
         //TODO fixa vettiga värden
-        final float posX = ip.getLatitude();
-        final float posY = ip.getLongitude();
+        final float[] point = scaleTest.convertCoordinates(ip.getLatitude(), ip.getLongitude());
+//        final float posX = ip.getLatitude();
+//        final float posY = ip.getLongitude();
+        final float posX = point[0];
+        final float posY = point[1];
+//        Log.d("touch", "layoutsize: " + parent.getWidth() + " " + parent.getHeight());
+//        Log.d("touch", "new marker @ x: " + posX + " y: " + posY);
 
-        IndoorMapMarker point = new IndoorMapMarker(ip, posX, posY, getContext());
+        IndoorMapMarker marker = new IndoorMapMarker(ip, posX, posY, parent.getContext());
 
-        parent.addView(point.getMarker());
+        parent.addView(marker.getMarker());
 
-        listOfMarkers.add(point);
+        listOfMarkers.add(marker);
 
         if(ip.getCategory().toLowerCase().equals("hiss"))
-                    addDescText(parent, ip.getCategory(), point.getX(), point.getY());
+                    addDescText(parent, ip.getCategory(), marker.getX(), marker.getY());
 
-        point.getMarker().setOnClickListener(new View.OnClickListener() {
+        marker.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("TAG", "Klickar på pungtjävel " + "posX = " + posX + " posY = " + posY);
@@ -216,7 +221,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     }
 
     private void addDescText(RelativeLayout parent, String category, float posX, float posY){
-        TextView textView = new TextView(getContext());
+        TextView textView = new TextView(parent.getContext());
         textView.setText(category);
         textView.setTextSize(6);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
@@ -276,7 +281,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     @Override
     public void getUpdatedDataSet(List<PointOfInterest> pointList) {
-        RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+//        RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+        RelativeLayout r = scaleTest.getRelativeLayout();
 
         for(IndoorMapMarker p : listOfMarkers) {
             r.removeView(p.getMarker());
