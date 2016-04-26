@@ -37,7 +37,7 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
     }
 
     //Used by list fragment
-    public List<PointOfInterest> getPoints(String buildingId, final DataSetChanged indoorActivity, final boolean search) {
+    public List<PointOfInterest> getPoints(String buildingId, final DataSetChanged dataSetChangedInterface, final boolean search) {
         final List<PointOfInterest> list = new ArrayList<>();
         Log.d("indoor", "getting points for " +  buildingId);
 
@@ -56,9 +56,9 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
                     }
                 }
                 if (search)
-                    indoorActivity.fetchDataDone();
+                    dataSetChangedInterface.fetchDataDone();
                 else
-                    indoorActivity.dataSetChanged();
+                    dataSetChangedInterface.dataSetChanged();
 
             }
 

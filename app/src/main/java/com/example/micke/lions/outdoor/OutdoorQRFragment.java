@@ -81,7 +81,7 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
             @Override
             public void onClick(View view) {
                 Car car = new Car("Bil", fireBaseHandler.generateId(), 0, 0);
-                fireBaseHandler.newCar(car);
+                fireBaseHandler.updateCar(car);
 
                 String url = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=" +
                         "car/" + car.getId()
