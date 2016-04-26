@@ -16,7 +16,7 @@
         android:layout_height="match_parent"/>
 
     <ImageButton
-        android:id="@+id/button1"
+        android:id="@+id/goToMaps"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:background="@drawable/maps_icon"
@@ -24,11 +24,11 @@
         android:layout_alignParentStart="true" />
 
     <ImageButton
-        android:id="@+id/button2"
+        android:id="@+id/goToQr"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:background="@drawable/qr_scan"
-        android:layout_alignParentBottom="true"
+        android:layout_alignBottom="@+id/building_recycler_view"
         android:layout_alignEnd="@+id/building_recycler_view" />
 
 </RelativeLayout>

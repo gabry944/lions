@@ -8,9 +8,4 @@
         android:title="addMarker"
         app:showAsAction="always"/>
 
-    <item
-        android:id="@+id/floors"
-        android:icon="@android:drawable/ic_menu_sort_by_size"
-        android:title="floors"
-        app:showAsAction="always"/>
 </menu>

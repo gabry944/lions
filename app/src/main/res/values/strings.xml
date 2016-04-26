@@ -4,6 +4,7 @@
     <string name="add_point_title">Titel</string>
     <string name="add_point_description">Beskrivning</string>
     <string name="add_point_category">Kategori</string>
+    <string name="add_point_official_point">Officiell intressepunkt</string>
     <string name="title_activity_indoor">Indoor</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
@@ -13,10 +14,14 @@
     <string name="skanQrMarker"> Skanna en QR-kod </string>
     <string name="skanQrMarkerCar"> Skanna QRkoden på din bilnyckel för att hitta bilen.</string>
     <string name="skanQrMarkerPlace"> Skanna QRkoden på anslagstavlan för den byggnad du beffinner dig i för att hitta din position.</string>
+    <string name="addMarkerExplanation"> Tryck och håll fingret på den position du vill lägga till en punkt på</string>
+
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
         AIzaSyCutrsxJ6Vh_OdgQvpPQU4C40-UlVca9dI
     </string>
-
+    <string name="info_welcome">Hej och välkommen!</string>
+    <string name="info_details">Detta är en app som hjälper dig att hitta i nya byggnader. Det kan
+    verka skrämmande, men lugn! Vi hjälper dig!</string>
     <string name="non_chosen">Ingen kategori vald</string>
     <string name="Entrance"> Entré </string>
     <string name="Elevator"> Hiss </string>

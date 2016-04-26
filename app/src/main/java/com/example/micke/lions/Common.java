@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.micke.lions.outdoor.OutdoorMapFragment;
+
 /** A file for common variables and functions for different activities **/
 
 public class Common {

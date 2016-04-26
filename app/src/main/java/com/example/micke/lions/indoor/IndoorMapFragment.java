@@ -2,6 +2,7 @@ package com.example.micke.lions.indoor;
 
 import android.app.DialogFragment;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,19 +24,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.micke.lions.Common;
 import com.example.micke.lions.R;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -339,6 +338,15 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.VISIBLE);
             else
                 getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.GONE);
+        }
+        else if (id == R.id.addInterestPoint) {
+            Context context = getContext();
+            int duration = Toast.LENGTH_LONG;
+
+            Toast toast = Toast.makeText(context, R.string.addMarkerExplanation, duration);
+            toast.show();
+            toast.setGravity(Gravity.TOP| Gravity.CENTER, 0, 150);
+
         }
         return false;
     }
