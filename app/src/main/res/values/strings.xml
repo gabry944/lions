@@ -4,6 +4,7 @@
     <string name="add_point_title">Titel</string>
     <string name="add_point_description">Beskrivning</string>
     <string name="add_point_category">Kategori</string>
+    <string name="add_point_official_point">Officiell intressepunkt</string>
     <string name="title_activity_indoor">Indoor</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
