@@ -2,6 +2,7 @@ package com.example.micke.lions.outdoor;
 
 import android.Manifest;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -9,10 +10,15 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.InflateException;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.micke.lions.Common;
 import com.example.micke.lions.indoor.IndoorActivity;
@@ -87,7 +93,30 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
         longitude = 15.5654057;
 
         setUpMapIfNeeded();
+
+        setHasOptionsMenu(true);
+
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if(Common.IsAdmin())
+            inflater.inflate(R.menu.menu_outdoor_map, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.addInterestPoint) {
+            Context context = getContext();
+            int duration = Toast.LENGTH_LONG;
+
+            Toast toast = Toast.makeText(context, R.string.addMarkerExplanation, duration);
+            toast.setGravity(Gravity.TOP| Gravity.CENTER, 0, 150);
+            toast.show();
+        }
+        return false;
     }
 
     @Override

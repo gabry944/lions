@@ -2,6 +2,8 @@ package com.example.micke.lions;
 
 import android.util.Log;
 
+import com.example.micke.lions.outdoor.OutdoorMapFragment;
+
 /** A file for common variables and functions for different activities **/
 
 public class Common {
