@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.micke.lions.Common;
+import com.example.micke.lions.InloggChange;
 import com.example.micke.lions.R;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ import java.util.List;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange {
+public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange, InloggChange {
     String TAG = "IndoorMapFragment";
     /**
      * The fragment argument representing the section number for this
@@ -471,6 +472,16 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         }
 
         return inSampleSize;
+    }
+
+    @Override
+    public void adminInlogg() {
+        Log.d(TAG, "adminInlogg: ");
+    }
+
+    @Override
+    public void commonInlogg() {
+        Log.d(TAG, "commonInlogg: ");
     }
 }
 

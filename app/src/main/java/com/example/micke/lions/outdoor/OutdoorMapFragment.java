@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.micke.lions.Common;
+import com.example.micke.lions.InloggChange;
 import com.example.micke.lions.indoor.IndoorActivity;
 import com.example.micke.lions.R;
 import com.google.android.gms.maps.CameraUpdate;
@@ -45,7 +46,7 @@ import java.util.List;
  */
 public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
         GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, NewBuildingCallback,
-        Serializable, GoogleMap.OnMarkerClickListener, BuildingDataSetChanged {
+        Serializable, GoogleMap.OnMarkerClickListener, BuildingDataSetChanged, InloggChange {
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -113,14 +114,19 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_outdoor_map, menu);
+        MenuItem add = menu.findItem(R.id.addBuildingBtn);
         if(Common.IsAdmin())
-            inflater.inflate(R.menu.menu_outdoor_map, menu);
+            add.setVisible(true);
+        else
+            add.setVisible(false);
+
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.addInterestPoint) {
+        if (id == R.id.addBuildingBtn) {
             Context context = getContext();
             int duration = Toast.LENGTH_LONG;
 
@@ -241,5 +247,26 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void panToMarker(LatLng point) {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 18));
+    }
+
+    @Override
+    public void adminInlogg() {
+        Log.d(TAG, "adminInlogg: ");
+        getActivity().invalidateOptionsMenu();
+    }
+
+    @Override
+    public void commonInlogg() {
+        Log.d(TAG, "commonInlogg: ");
+        getActivity().invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onPrepareOptionsMenu (Menu menu){
+        MenuItem add = menu.findItem(R.id.addBuildingBtn);
+        if(Common.IsAdmin())
+            add.setVisible(true);
+        else
+            add.setVisible(false);
     }
 }
