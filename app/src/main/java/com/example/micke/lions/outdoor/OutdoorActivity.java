@@ -15,9 +15,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.micke.lions.Common;
 import com.example.micke.lions.DataSetChanged;
 import com.example.micke.lions.indoor.IndoorActivity;
 import com.example.micke.lions.R;
@@ -95,5 +97,24 @@ public class OutdoorActivity extends AppCompatActivity {
             mViewPager.setCurrentItem(1);
         else
             super.onBackPressed();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_outdoor_activity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.admin) {
+            if(Common.IsAdmin())
+                Common.LogOut();
+            else
+                Common.MakeAdmin();
+        }
+        return false;
     }
 }

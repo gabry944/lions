@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.example.micke.lions.Common;
 import com.example.micke.lions.DataSetChanged;
 import com.example.micke.lions.R;
 
@@ -92,21 +93,6 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
         final MenuItem item = menu.findItem(R.id.search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(this);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        // return super.onOptionsItemSelected(item);
-
-        int id = item.getItemId();
-        if (id == R.id.admin) {
-            ((IndoorActivity)getActivity()).AdminLogin();
-        }
-        return false;
     }
 
     @Override
