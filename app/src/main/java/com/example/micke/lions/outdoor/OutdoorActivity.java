@@ -87,6 +87,13 @@ public class OutdoorActivity extends AppCompatActivity {
         newFragment.show(getFragmentManager(), "info_dialog");
     }
 
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        invalidateOptionsMenu();
+    }
+
     public FireBaseOutdoor getFireBaseHandler() {
         return fireBaseHandler;
     }
@@ -105,7 +112,7 @@ public class OutdoorActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_outdoor_activity, menu);
 
