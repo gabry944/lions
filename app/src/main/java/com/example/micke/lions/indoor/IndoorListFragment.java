@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,7 +29,7 @@ import java.util.List;
 
 public class IndoorListFragment extends Fragment implements DataSetChanged, SearchView.OnQueryTextListener {
 
-    String ILF = "IndoorListFragment";
+    String TAG = "IndoorListFragment";
 
     /**
      * The fragment argument representing the section number for this
@@ -91,6 +92,21 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
         final MenuItem item = menu.findItem(R.id.search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(this);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+        // return super.onOptionsItemSelected(item);
+
+        int id = item.getItemId();
+        if (id == R.id.admin) {
+            ((IndoorActivity)getActivity()).AdminLogin();
+        }
+        return false;
     }
 
     @Override
