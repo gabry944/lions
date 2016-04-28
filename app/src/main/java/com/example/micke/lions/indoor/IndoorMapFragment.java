@@ -227,6 +227,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             currentFloor = 4;
             mapImage.setImage(new BitmapDrawable(getResources(), bitmapLoading.getFloorImage(R.drawable.map_t3)));
         }
+        mapImage.resetView();
     }
 
     @Override
