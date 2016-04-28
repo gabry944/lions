@@ -334,26 +334,11 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         point.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "Klickar på pungtjävel " + "posX = " + posX + " posY = " + posY);
-
                 ChangePointDialogFragment ask = new ChangePointDialogFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString("id",point.getId());
                 ask.setArguments(bundle);
                 ask.show(indoorActivity.getFragmentManager(),"remove_point_fragment");
-
-                /*
-                //remove from map
-                listOfMarkers.remove(point);
-                pointList.remove(point.getPoint());
-                RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
-                r.removeView(point.getMarker());
-
-                //remove from fierbase
-                Log.d(TAG, "onClick: id = " + point.getId());
-                fireBaseIndoor.removeIp(point.getPoint());
-                Log.d(TAG, "Punkt ska vara borta ");
-                */
             }
         });
 
@@ -377,7 +362,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             r.removeView(point.getMarker());
 
             //remove from fierbase
-            Log.d(TAG, "onClick: id = " + point.getId());
             fireBaseIndoor.removeIp(point.getPoint());
             Log.d(TAG, "Punkt ska vara borta ");
         }
