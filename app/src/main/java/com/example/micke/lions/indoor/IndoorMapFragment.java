@@ -322,7 +322,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         final float posX = ip.getLatitude();
         final float posY = ip.getLongitude();
 
-        IndoorMapMarker point = new IndoorMapMarker(ip, posX, posY, getContext());
+        final IndoorMapMarker point = new IndoorMapMarker(ip, posX, posY, getContext());
 
         parent.addView(point.getMarker());
 
@@ -334,9 +334,44 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         point.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("TAG", "Klickar på pungtjävel " + "posX = " + posX + " posY = " + posY);
+                if (point.getOfficial() && !Common.IsAdmin())
+                {
+                    Toast toast = Toast.makeText(getContext(),R.string.adminRequierdForChangingPoint, Toast.LENGTH_LONG);
+                    toast.show();
+                }
+                else
+                {
+                    ChangePointDialogFragment ask = new ChangePointDialogFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id",point.getId());
+                    ask.setArguments(bundle);
+                    ask.show(indoorActivity.getFragmentManager(),"remove_point_fragment");
+                }
             }
         });
+    }
+
+    public void RemovePoint(String pointId)
+    {
+        IndoorMapMarker point = null;
+        for (IndoorMapMarker p : listOfMarkers){
+            if(p.getId().equals(pointId)){
+                point = p;
+                break;
+            }
+        }
+        if (point!=null)
+        {
+            //remove from map
+            listOfMarkers.remove(point);
+            pointList.remove(point.getPoint());
+            RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+            r.removeView(point.getMarker());
+
+            //remove from fierbase
+            fireBaseIndoor.removeIp(point.getPoint());
+            Log.d(TAG, "Punkt ska vara borta ");
+        }
     }
 
     private void addDescText(RelativeLayout parent, String category, float posX, float posY){

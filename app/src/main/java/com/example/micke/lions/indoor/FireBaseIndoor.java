@@ -36,6 +36,12 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
         ipRef.setValue(point);
     }
 
+    public void removeIp(PointOfInterest point) {
+        Firebase ipRef =
+                myFirebaseRef.child("building/" + buildingId + "/floor/" + point.getFloor() + "/ip/" + point.getId());
+        ipRef.removeValue();
+    }
+
     //Used by list fragment
     public List<PointOfInterest> getPoints(String buildingId, final DataSetChanged dataSetChangedInterface, final boolean search) {
         final List<PointOfInterest> list = new ArrayList<>();
