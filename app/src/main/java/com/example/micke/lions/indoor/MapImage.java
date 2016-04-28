@@ -169,10 +169,10 @@ public class MapImage extends RelativeLayout {
         point[0] = latitude * relativeLayout.getScaleX() * imageWidth - imageWidth / 2;
         point[1] = longitude * relativeLayout.getScaleY() * imageHeight - imageHeight / 2 - imageYOffset;
 
-        point[0] = latitude * relativeLayout.getScaleX() * imageWidth;
-        point[1] = longitude * relativeLayout.getScaleY() * imageHeight + imageYOffset;
-
-        point[1] = longitude * relativeLayout.getScaleY() * imageHeight;
+//        point[0] = latitude * relativeLayout.getScaleX() * imageWidth;
+//        point[1] = longitude * relativeLayout.getScaleY() * imageHeight + imageYOffset;
+//
+//        point[1] = longitude * relativeLayout.getScaleY() * imageHeight;
 
         Log.d("touch", "x: " + point[0] + " latitude: " + latitude + " xscale: " + relativeLayout.getScaleX()
                 + " imagewidth: " + imageWidth + " viewcoords[0]: " + viewCoords[0]);

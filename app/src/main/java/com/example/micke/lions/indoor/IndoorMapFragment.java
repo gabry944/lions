@@ -217,9 +217,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         listOfMarkers.add(marker);
 
-        if(ip.getCategory().toLowerCase().equals("hiss"))
+//        if(ip.getCategory().toLowerCase().equals("hiss"))
             addDescText(parent, ip.getCategory(), marker.getX(), marker.getY());
-//            addDescText(parent, ip.getCategory(), point.getX(), point.getY());
 
         marker.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
