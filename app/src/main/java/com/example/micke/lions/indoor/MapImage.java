@@ -3,11 +3,9 @@ package com.example.micke.lions.indoor;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -17,18 +15,17 @@ import com.example.micke.lions.R;
 /**
  * Created by iSirux on 2016-04-21.
  */
-public class ScaleTest extends RelativeLayout {
+public class MapImage extends RelativeLayout {
 
     private float mScaleFactor = 1.f;
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector mGestureDetector;
     private RelativeLayout relativeLayout;
     private ImageView imageView;
-    private float mX, mY;
     private float imageWidth, imageHeight, imageYOffset;
     private IndoorMapFragment mIndoorMapFragment;
 
-    public ScaleTest(Context context, AttributeSet attrs) {
+    public MapImage(Context context, AttributeSet attrs) {
         super(context, attrs);
         mScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
         mGestureDetector = new GestureDetector(getContext(), new PanListener());
@@ -38,7 +35,6 @@ public class ScaleTest extends RelativeLayout {
     private void init() {
         inflate(getContext(), R.layout.scale_test, this);
         this.imageView = (ImageView) findViewById(R.id.imageView);
-        mX = mY = 0;
 
         //Get measurements of image
         ViewTreeObserver vto = imageView.getViewTreeObserver();
@@ -50,18 +46,12 @@ public class ScaleTest extends RelativeLayout {
                 int[] viewCoords = new int[2];
                 imageView.getLocationOnScreen(viewCoords);
                 imageYOffset = viewCoords[1];
-                Log.d("touch", "onPreDraw, imageYOffset: " + imageYOffset);
                 return true;
             }
         });
     }
 
     public boolean onTouchEvent(MotionEvent event) {
-//        Log.d("touch", "onTouchEvent!");
-        //Get coordinates for finger
-        mX = event.getX();
-        mY = event.getY();
-
         boolean retVal = mScaleDetector.onTouchEvent(event);
         retVal = mGestureDetector.onTouchEvent(event) || retVal;
         return retVal || super.onTouchEvent(event);
@@ -88,14 +78,17 @@ public class ScaleTest extends RelativeLayout {
             extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
+            //Adjust scale factor
             mScaleFactor *= detector.getScaleFactor();
 
             // Don't let the object get too small or too large.
             mScaleFactor = Math.max(0.8f, Math.min(mScaleFactor, 5.0f));
 
+            //Scale layout with scale factor
             relativeLayout.setScaleX(mScaleFactor);
             relativeLayout.setScaleY(mScaleFactor);
-//            Log.d("scale", "onScale - scalefactor: " + mScaleFactor);
+
+            //Invalidate the layout while scaling
             invalidate();
             return true;
         }
@@ -120,8 +113,6 @@ public class ScaleTest extends RelativeLayout {
             touchX = e.getX();
             touchY = e.getY();
 
-            Log.d("touch", "longpress @ " + touchX + " " + touchY);
-
             //Touched point on imageview in pixels
             imageX = (touchX - viewCoords[0]) / relativeLayout.getScaleX();
             imageY = (touchY - viewCoords[1] + imageYOffset) / relativeLayout.getScaleY();
@@ -137,12 +128,15 @@ public class ScaleTest extends RelativeLayout {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2,
                                 float distanceX, float distanceY) {
+            //Get the relative layout's x and y translation
             top = relativeLayout.getTranslationY();
             left = relativeLayout.getTranslationX();
 
+            //Calculate the new translation
             translationX = left - distanceX;
             translationY = top - distanceY;
 
+            //Apply the new translation
             relativeLayout.setTranslationX(translationX);
             relativeLayout.setTranslationY(translationY);
             return true;
@@ -151,27 +145,24 @@ public class ScaleTest extends RelativeLayout {
 
     public float[] convertCoordinates(float latitude, float longitude) {
         float[] point = new float[2];
-
         int[] viewCoords = new int[2];
+
+        //Get the image view's location on the screen
         imageView.getLocationOnScreen(viewCoords);
-        Log.d("touch", "viewcoords[0]: " + viewCoords[0] + " viewcoords[1]: " + viewCoords[1]);
+//        Log.d("touch", "viewcoords[0]: " + viewCoords[0] + " viewcoords[1]: " + viewCoords[1]);
 
-        //Touched point on imageview in pixels
-        float imageX = (latitude - viewCoords[0]) / relativeLayout.getScaleX();
-        float imageY = (longitude - viewCoords[1] + imageYOffset) / relativeLayout.getScaleY();
+//        point[0] = latitude * relativeLayout.getScaleX() * imageWidth - viewCoords[0];
+//        point[1] = longitude * relativeLayout.getScaleY() * imageHeight - viewCoords[1] + imageYOffset;
 
-        //Normalize value - min 0, max 1
-        point[0] = latitude * relativeLayout.getScaleX() * imageWidth - viewCoords[0];
-        point[1] = longitude * relativeLayout.getScaleY() * imageHeight - viewCoords[1] + imageYOffset;
-
+        //Calculate the image coordinates in view
         point[0] = latitude * relativeLayout.getScaleX() * imageWidth - imageWidth / 2;
         point[1] = longitude * relativeLayout.getScaleY() * imageHeight - imageHeight / 2 - imageYOffset;
 
-        Log.d("touch", "x: " + point[0] + " latitude: " + latitude + " xscale: " + relativeLayout.getScaleX()
-                + " imagewidth: " + imageWidth + " viewcoords[0]: " + viewCoords[0]);
-
-        Log.d("touch", "y: " + point[1] + " longitude: " + longitude + " yscale: " + relativeLayout.getScaleY()
-                + " imageheight: " + imageHeight + " viewcoords[1]: " + viewCoords[1]);
+//        Log.d("touch", "x: " + point[0] + " latitude: " + latitude + " xscale: " + relativeLayout.getScaleX()
+//                + " imagewidth: " + imageWidth + " viewcoords[0]: " + viewCoords[0]);
+//
+//        Log.d("touch", "y: " + point[1] + " longitude: " + longitude + " yscale: " + relativeLayout.getScaleY()
+//                + " imageheight: " + imageHeight + " viewcoords[1]: " + viewCoords[1]);
 
         return point;
     }

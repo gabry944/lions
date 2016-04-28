@@ -7,7 +7,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -20,14 +19,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -36,7 +30,6 @@ import com.example.micke.lions.R;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -67,7 +60,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private boolean longClick = true;  //turns to false if user moves fingers
 
     //Scaletest
-    private ScaleTest scaleTest;
+    private MapImage mapImage;
 
     private List<PointOfInterest> pointList;
 
@@ -134,10 +127,10 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         floorMap = getResources().getDrawable(R.drawable.map_t3);
 
         //Scaletest
-        scaleTest = (ScaleTest) rootView.findViewById(R.id.scale_test);
-        scaleTest.setImage(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
-        scaleTest.setParent(r);
-        scaleTest.setCallback(this);
+        mapImage = (MapImage) rootView.findViewById(R.id.scale_test);
+        mapImage.setImage(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
+        mapImage.setParent(r);
+        mapImage.setCallback(this);
 
         setHasOptionsMenu(true);
 
@@ -195,15 +188,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     private void addPoint(RelativeLayout parent, PointOfInterest ip) {
         //TODO fixa vettiga värden
-        final float[] point = scaleTest.convertCoordinates(ip.getLatitude(), ip.getLongitude());
-//        final float posX = ip.getLatitude();
-//        final float posY = ip.getLongitude();
-        final float posX = point[0];
-        final float posY = point[1];
-//        Log.d("touch", "layoutsize: " + parent.getWidth() + " " + parent.getHeight());
-//        Log.d("touch", "new marker @ x: " + posX + " y: " + posY);
+        final float[] point = mapImage.convertCoordinates(ip.getLatitude(), ip.getLongitude());
 
-        IndoorMapMarker marker = new IndoorMapMarker(ip, posX, posY, parent.getContext());
+        IndoorMapMarker marker = new IndoorMapMarker(ip, point[0], point[1], parent.getContext());
 
         parent.addView(marker.getMarker());
 
@@ -215,7 +202,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         marker.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("TAG", "Klickar på pungtjävel " + "posX = " + posX + " posY = " + posY);
+                Log.d("TAG", "Klickar på pungtjävel " + "posX = " + point[0] + " posY = " + point[1]);
             }
         });
     }
@@ -268,13 +255,13 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             currentFloor = 3;
             floorMap = getResources().getDrawable(R.drawable.map_t3);
             floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3));
-            scaleTest.setImage(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
+            mapImage.setImage(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
         }
         if(floor.equals("4")) {
             currentFloor = 4;
             floorMap = getResources().getDrawable(R.drawable.map_t4);
             floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t4));
-            scaleTest.setImage(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
+            mapImage.setImage(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
         }
 //        i.setImageDrawable(floorMap);
     }
@@ -282,7 +269,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     @Override
     public void getUpdatedDataSet(List<PointOfInterest> pointList) {
 //        RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
-        RelativeLayout r = scaleTest.getRelativeLayout();
+        RelativeLayout r = mapImage.getRelativeLayout();
 
         for(IndoorMapMarker p : listOfMarkers) {
             r.removeView(p.getMarker());
