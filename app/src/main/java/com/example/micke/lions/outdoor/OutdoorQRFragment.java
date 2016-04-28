@@ -55,6 +55,18 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
         super.onPause();
         mScannerView.stopCamera();           // Stop camera on pause
     }
+    
+    @Override
+    public void onStop() {
+        super.onStop();
+        mScannerView.stopCamera();           // Stop camera on pause
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mScannerView.stopCamera();           // Stop camera on pause
+    }
 
     /**
      * Returns a new instance of this fragment for the given section
