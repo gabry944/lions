@@ -13,6 +13,7 @@ public class BitmapLoading {
 
     private Context mContext;
     private int displayWidth, displayHeight;
+    private static final int BITMAP_SIZE = 256;
 
     public BitmapLoading(Context context, int displayWidth, int displayHeight) {
         mContext = context;
@@ -34,8 +35,8 @@ public class BitmapLoading {
 
         // Calculate inSampleSize
         //temp width & height
-        reqHeight = 256;
-        reqWidth = 256;
+        reqHeight = BITMAP_SIZE;
+        reqWidth = BITMAP_SIZE;
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
         // Decode bitmap with inSampleSize set
