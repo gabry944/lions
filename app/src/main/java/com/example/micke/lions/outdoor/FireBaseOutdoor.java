@@ -54,7 +54,7 @@ public class FireBaseOutdoor extends FireBaseHandler implements Serializable {
         });
     }
 
-    public List<Building> getBuildings(final DataSetChanged outdoorActivity) {
+    public List<Building> getBuildings(final DataSetChanged dataSetChangedInterface, final boolean search) {
         final List<Building> list = new ArrayList<>();
 
         myFirebaseRef.child("building").addValueEventListener(new ValueEventListener() {
@@ -67,18 +67,23 @@ public class FireBaseOutdoor extends FireBaseHandler implements Serializable {
                     Building b = new Building(building.getValue(Building.class));
                     list.add(b);
                 }
-                outdoorActivity.dataSetChanged();
+                if (search)
+                    dataSetChangedInterface.fetchDataDone();
+                else
+                    dataSetChangedInterface.dataSetChanged();
             }
 
             @Override
             public void onCancelled(FirebaseError error) {
+
             }
         });
 
         return list;
     }
 
-    public void newCar(Car car) {
+    //New car or update car in to database
+    public void updateCar(Car car) {
         Firebase carRef =
                 myFirebaseRef.child("car/" + car.getId());
         carRef.setValue(car);

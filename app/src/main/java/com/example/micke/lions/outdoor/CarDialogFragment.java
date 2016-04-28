@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -16,17 +15,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
-import com.example.micke.lions.FireBaseHandler;
 import com.example.micke.lions.R;
-import com.example.micke.lions.indoor.IndoorActivity;
-import com.example.micke.lions.outdoor.Building;
-import com.example.micke.lions.outdoor.Car;
-import com.example.micke.lions.outdoor.NewBuildingCallback;
-import com.example.micke.lions.outdoor.OutdoorActivity;
-import com.example.micke.lions.outdoor.OutdoorMapFragment;
-import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Created by iSirux on 2016-04-11.
@@ -100,7 +90,7 @@ public class CarDialogFragment extends DialogFragment {
                 car.setLatitude(lastKnownLocation.getLatitude());
                 car.setLongitude(lastKnownLocation.getLongitude());
                 Log.d("car", "current pos: " + lastKnownLocation.getLatitude() + " " + lastKnownLocation.getLongitude());
-                fireBaseHandler.newCar(car);
+                fireBaseHandler.updateCar(car);
 
                 ((OutdoorActivity) getActivity()).getViewPager().setCurrentItem(0);
                 ((OutdoorActivity) getActivity()).map.newMarker(car, lastKnownLocation);

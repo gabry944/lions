@@ -1,20 +1,28 @@
 package com.example.micke.lions.outdoor;
 
 import android.Manifest;
+import android.app.DialogFragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.micke.lions.Common;
 import com.example.micke.lions.DataSetChanged;
 import com.example.micke.lions.indoor.IndoorActivity;
 import com.example.micke.lions.R;
@@ -64,6 +72,7 @@ public class OutdoorActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(null);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -73,6 +82,16 @@ public class OutdoorActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(1);
+
+        DialogFragment newFragment = new InfoDialogFragment();
+        newFragment.show(getFragmentManager(), "info_dialog");
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        invalidateOptionsMenu();
     }
 
     public FireBaseOutdoor getFireBaseHandler() {
@@ -90,5 +109,28 @@ public class OutdoorActivity extends AppCompatActivity {
             mViewPager.setCurrentItem(1);
         else
             super.onBackPressed();
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_outdoor_activity, menu);
+
+        MenuItem adminButton = menu.findItem(R.id.admin);
+        Common.setAdminButton(adminButton, this);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.admin) {
+            if(Common.IsAdmin())
+                Common.LogOut(map, list, qr);
+            else
+                Common.MakeAdmin(map, list, qr);
+            Common.setAdminButton(item, this);
+        }
+        return false;
     }
 }
