@@ -5,19 +5,26 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.micke.lions.Common;
+import com.example.micke.lions.InloggChange;
 import com.example.micke.lions.R;
 import com.example.micke.lions.indoor.IndoorActivity;
 
 import java.util.ArrayList;
+import java.util.concurrent.locks.ReadWriteLock;
 
 import me.dm7.barcodescanner.zbar.BarcodeFormat;
 import me.dm7.barcodescanner.zbar.Result;
@@ -26,12 +33,15 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView;
 /**
  * Created by iSirux on 2016-04-12.
  */
-public class OutdoorQRFragment extends Fragment implements ZBarScannerView.ResultHandler, FragmentResolver {
+public class OutdoorQRFragment extends Fragment implements ZBarScannerView.ResultHandler, FragmentResolver, InloggChange {
+
+    private String TAG = "OutdoorQRFragment";
 
     private static ZBarScannerView mScannerView;
     private static final String ARG_SECTION_NUMBER = "section_number";
     private FireBaseOutdoor fireBaseHandler;
     private DialogFragment newFragment;
+    private ImageButton goToList;
 
     public OutdoorQRFragment() {
     }
@@ -67,40 +77,56 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
 
         fireBaseHandler = ((OutdoorActivity) getActivity()).getFireBaseHandler();
         View view = inflater.inflate(R.layout.fragment_outdoor_qr, container, false);
-        LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.qr_linear_layout);
+        RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.qr_linear_layout);
+
+        goToList = (ImageButton) view.findViewById(R.id.goToOutdoorList2);
 
         ArrayList<BarcodeFormat> list = new ArrayList<>();
         list.add(BarcodeFormat.QRCODE);
-        mScannerView = new ZBarScannerView(getContext());
+        mScannerView = (ZBarScannerView) view.findViewById(R.id.zBarScanner);
         mScannerView.setFormats(list);
-        View scannerView = mScannerView;
-        linearLayout.addView(scannerView);
 
-        final FloatingActionButton fab = (FloatingActionButton) linearLayout.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        goToList.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Car car = new Car("Bil", fireBaseHandler.generateId(), 0, 0);
-                fireBaseHandler.newCar(car);
-
-                String url = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=" +
-                        "car/" + car.getId()
-                        + "&qzone=1&margin=0&size=400x400&ecc=L";
-
-                ClipboardManager clipboard = (ClipboardManager) getActivity()
-                        .getSystemService(getActivity().CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("", url);
-                clipboard.setPrimaryClip(clip);
-
-                Toast toast = Toast.makeText(getContext(),
-                        "QR code URL copied to clipboard", Toast.LENGTH_LONG);
-                toast.show();
-
-                Log.d("fab", "clicked");
+            public void onClick(View v) {
+                ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                mPager.setCurrentItem(1, true);
             }
         });
 
-        return linearLayout;
+        final FloatingActionButton fab = (FloatingActionButton) relativeLayout.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(Common.IsAdmin()) {
+                    Car car = new Car("Bil", fireBaseHandler.generateId(), 0, 0);
+                    fireBaseHandler.updateCar(car);
+
+                    String url = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=" +
+                            "car/" + car.getId()
+                            + "&qzone=1&margin=0&size=400x400&ecc=L";
+
+                    ClipboardManager clipboard = (ClipboardManager) getActivity()
+                            .getSystemService(getActivity().CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText("", url);
+                    clipboard.setPrimaryClip(clip);
+
+                    Toast toast = Toast.makeText(getContext(),
+                            "QR code URL copied to clipboard", Toast.LENGTH_LONG);
+                    toast.show();
+
+                    Log.d("fab", "clicked");
+                }
+                else
+                    Log.d(TAG, "onClick: You must be admin to add a car");
+            }
+        });
+        if(Common.IsAdmin())
+            fab.setVisibility(View.VISIBLE);
+        else
+            fab.setVisibility(View.GONE);
+
+        return relativeLayout;
     }
 
     @Override
@@ -159,6 +185,26 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
             bundle.putSerializable("car", car);
             newFragment.setArguments(bundle);
             newFragment.show(getActivity().getFragmentManager(), "car_dialog_fragment");
+        }
+    }
+
+    @Override
+    public void adminInlogg() {
+        Log.d(TAG, "adminInlogg: ");
+        RelativeLayout relativeLayout = (RelativeLayout) getActivity().findViewById(R.id.qr_linear_layout);
+        if(relativeLayout != null) {
+            FloatingActionButton fab = (FloatingActionButton) relativeLayout.findViewById(R.id.fab);
+            fab.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void commonInlogg() {
+        Log.d(TAG, "commonInlogg: ");
+        RelativeLayout relativeLayout = (RelativeLayout) getActivity().findViewById(R.id.qr_linear_layout);
+        if(relativeLayout!=null) {
+            FloatingActionButton fab = (FloatingActionButton) relativeLayout.findViewById(R.id.fab);
+            fab.setVisibility(View.GONE);
         }
     }
 }

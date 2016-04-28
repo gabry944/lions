@@ -30,12 +30,15 @@
 
         <ImageButton
             android:id="@+id/goToMapImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src ="@drawable/maps_icon"
-            android:maxWidth="@dimen/maps_icon_size"
-            android:maxHeight="@dimen/maps_icon_size"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:src ="@drawable/map_marker"
+            android:scaleType="centerCrop"
             android:background="@color/white"
+            android:paddingRight="12sp"
+            android:paddingTop="10sp"
+            android:maxWidth="@dimen/icon_size"
+            android:maxHeight="@dimen/icon_size"
             android:layout_gravity="end"/>
 
     </android.support.v7.widget.CardView>

@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
+import com.example.micke.lions.Common;
 import com.example.micke.lions.R;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -32,26 +34,41 @@ public class AddBuildingDialogFragment extends DialogFragment {
         final LatLng latlng = bundle.getParcelable("latlng");
         final NewBuildingCallback buildingCallback = (OutdoorMapFragment) bundle.getSerializable("mapfragment");
 
-        dialogBuilder
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // Send the positive button event back to the host activity
-//                            mListener.onDialogPositiveClick(NoticeDialogFragment.this);
-                        //Save to database
-                        EditText title = (EditText) dialogView.findViewById(R.id.add_building_title);
-                        String buildingId = ((OutdoorActivity) getActivity()).getFireBaseHandler().generateId();
+        final EditText title = (EditText) dialogView.findViewById(R.id.add_building_title);
+        final TextView titleText = (TextView) dialogView.findViewById(R.id.add_building_title_text);
 
-                        Building building = new Building(title.getText().toString(), buildingId, latlng.latitude, latlng.longitude);
-                        ((OutdoorActivity) getActivity()).getFireBaseHandler().updateBuilding(building);
-                        buildingCallback.newMarker(building);
-                    }
-                })
-                .setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // Send the negative button event back to the host activity
+        if(Common.IsAdmin()) {
+            title.setVisibility(View.VISIBLE);
+            titleText.setText(R.string.add_building_title);
+            dialogBuilder
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // Send the positive button event back to the host activity
+//                            mListener.onDialogPositiveClick(NoticeDialogFragment.this);
+                            //Save to database
+                            String buildingId = ((OutdoorActivity) getActivity()).getFireBaseHandler().generateId();
+
+                            Building building = new Building(title.getText().toString(), buildingId, latlng.latitude, latlng.longitude);
+                            ((OutdoorActivity) getActivity()).getFireBaseHandler().updateBuilding(building);
+                            buildingCallback.newMarker(building);
+                        }
+                    })
+                    .setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // Send the negative button event back to the host activity
 //                            mListener.onDialogNegativeClick(NoticeDialogFragment.this);
-                    }
-                });
+                        }
+                    });
+        }
+        else {
+            title.setVisibility(View.GONE);
+            titleText.setText("För att lägga till en byggnad måste du vara admin");
+            dialogBuilder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // Cancel without anything happening
+                }
+            });
+        }
         // Create the AlertDialog object and return it
         return dialogBuilder.create();
     }

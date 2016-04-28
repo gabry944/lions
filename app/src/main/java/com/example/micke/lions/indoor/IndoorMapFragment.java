@@ -11,10 +11,12 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,10 +24,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.micke.lions.Common;
+import com.example.micke.lions.InloggChange;
 import com.example.micke.lions.R;
 
 import java.util.ArrayList;
@@ -34,7 +40,7 @@ import java.util.List;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange {
+public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange, InloggChange {
     String TAG = "IndoorMapFragment";
     /**
      * The fragment argument representing the section number for this
@@ -48,18 +54,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     public FloorAdapter floorAdapter;
     private FireBaseIndoor fireBaseIndoor;
     private String buildingId;
-    private int currentFloor;
     private Context context;
+    private String currentFloor = "3"; //TODO
 
     private int displayWidth;
     private int displayHeight;
 
-    private float mx, mx2;  //2 is for the second finger. Used for zooming
-    private float my, my2;
-    private float scaleFactor = 5.0f;
-    private boolean longClick = true;  //turns to false if user moves fingers
-
-    //Scaletest
     private MapImage mapImage;
 
     private List<PointOfInterest> pointList;
@@ -67,10 +67,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private IndoorActivity indoorActivity;
     private List<IndoorMapMarker> listOfMarkers = new ArrayList<IndoorMapMarker>();
 
-    private static final String ARG_SECTION_NUMBER = "section_number";
+    private ImageButton goToList;
 
-    //TODO Change to list
-    private Drawable floorMap;
+    private static final String ARG_SECTION_NUMBER = "section_number";
 
     public IndoorMapFragment() {
     }
@@ -117,16 +116,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         //For the map
         final RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
-        r.setScaleX(1.0f);
-        r.setScaleY(1.0f);
 
         //Get dimensions of r
         Log.d("point", "getting dimensions...");
         getDimensions(r);
 
-        floorMap = getResources().getDrawable(R.drawable.map_t3);
-
-        //Scaletest
+        //MapImage
         mapImage = (MapImage) rootView.findViewById(R.id.scale_test);
         mapImage.setImage(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
         mapImage.setParent(r);
@@ -136,45 +131,64 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         pointList = fireBaseIndoor.getPoints(buildingId, this);
 
+        goToList = (ImageButton) rootView.findViewById(R.id.goToIndoorList1);
+        goToList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                mPager.setCurrentItem(1, true);
+            }
+        });
+
+        setCurrentFloor("3");
+
         return rootView;
     }
 
-    public void highlightIP(String ipID) {
-        Log.d(TAG, "highlightIP: piID = " + ipID);
+    public void highlightIP(String goalFloor, String ipID) {
+        setCurrentFloor(goalFloor);
+        //hide all except chosen ip and entrance (or stairs/elevator)
+        IndoorMapMarker start = null, end = null;
 
-        IndoorMapMarker start = null, end = null, elevator = null;
-
+        //Find the goal point
         for(IndoorMapMarker m : listOfMarkers) {
-            //hide all except chosen ip and entrance
             if(m.getId().equals(ipID))
                 end = m;
-            else if(m.getCategory().equals(getString(R.string.Entrance)))
-                start = m;
-            else if(m.getCategory().equals(getString(R.string.Elevator)))
-                elevator = m;
-            else
-                m.getMarker().setVisibility(View.GONE);
         }
 
-        if(end != null) {
-            if(start != null) {
-                //if ipID floor != entrance floor
-                /*if (!end.getPoint().getFloor().equals(start.getPoint().getFloor())) {
-                    //show elevator
-                    if (elevator != null) {
-                        elevator.getMarker().setVisibility(View.VISIBLE);
-                        start.getMarker().setVisibility(View.VISIBLE);
-                        end.getMarker().setVisibility(View.GONE);
-                    } else {
-                        Log.d(TAG, "highlightIP: No elevator found");
-                    }
-                }*/
+        Log.d("hejhej", "size = " + listOfMarkers.size());
+        //Find the closest entrance (if it exist on this floor)
+        float distance = Float.MAX_VALUE;
+        for(IndoorMapMarker m : listOfMarkers) {
+            if (m.getCategory().equals(getString(R.string.Entrance)))
+            Log.d("hejhej", "entre: " + m.getPoint().getTitle() + ". Distance = "  + distance + " > " + calcDistance(m.getX(), m.getY(), end.getX(), end.getY()));
+            if (m.getCategory().equals(getString(R.string.Entrance)) && distance > calcDistance(m.getX(), m.getY(), end.getX(), end.getY())) {
+                start = m;
+                distance = calcDistance(m.getX(), end.getX(), m.getY(), end.getY());
             }
-            else
-                Log.d(TAG, "highlightIP: Found no start/entrance");
         }
-        else
-            Log.d(TAG, "highlightIP: Found no IP with the gived ID");
+
+        //If we didn't find an entrance we look for the closest elevator or stairs instead
+        if(start == null) {
+            for (IndoorMapMarker m : listOfMarkers) {
+                if ( (m.getCategory().equals(getString(R.string.Elevator)) || m.getCategory().equals(getString(R.string.Stairs)))
+                            && distance > calcDistance(m.getX(), m.getY(), end.getX(), end.getY()) ) {
+                    start = m;
+                    distance = calcDistance(m.getX(), m.getY(), end.getX(), end.getY());
+                }
+            }
+        }
+
+        for (IndoorMapMarker m : listOfMarkers) {
+            m.getMarker().setVisibility(View.GONE);
+        }
+        start.getMarker().setVisibility(View.VISIBLE);
+        end.getMarker().setVisibility(View.VISIBLE);
+    }
+
+    //Calculates the distance between two points
+    private float calcDistance(float point1X, float point1Y, float point2X, float point2Y) {
+        return (float) Math.sqrt( Math.pow((point1X-point2X), 2) + Math.pow((point1Y-point2Y), 2) );
     }
 
     public void showAddPointDialog(float[] point) {
@@ -188,6 +202,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     private void addPoint(RelativeLayout parent, PointOfInterest ip) {
         //TODO fixa vettiga värden
+        Log.d("touch", "parentlocation: " + parent.getX() + " " + parent.getY());
         final float[] point = mapImage.convertCoordinates(ip.getLatitude(), ip.getLongitude());
 
         IndoorMapMarker marker = new IndoorMapMarker(ip, point[0], point[1], parent.getContext());
@@ -197,7 +212,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         listOfMarkers.add(marker);
 
         if(ip.getCategory().toLowerCase().equals("hiss"))
-                    addDescText(parent, ip.getCategory(), marker.getX(), marker.getY());
+            addDescText(parent, ip.getCategory(), marker.getX(), marker.getY());
 
         marker.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -221,62 +236,44 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         parent.addView(textView);
     }
 
-    @Override
-    public void onCreateOptionsMenu(
-            Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_indoor_map, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        // return super.onOptionsItemSelected(item);
-
-        int id = item.getItemId();
-        if (id == R.id.floors) {
-            if(getActivity().findViewById(R.id.floor_recycler_view).getVisibility() == View.GONE)
-                getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.VISIBLE);
-            else
-                getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.GONE);
-        }
-        return false;
-    }
-
     public void setCurrentFloor(String floor) {
-        ImageView i = (ImageView) rootView.findViewById(R.id.map);
-        int id = 0;
-        Log.d("floor", "" + floor);
+        Log.d("floor", "" + floor + " pointList size = " + pointList.size());
         fireBaseIndoor.setFloor(floor);
-        floorMap = null;
+        currentFloor = floor;
+        mapImage.resetView();
+
         if(floor.equals("3")) {
-            currentFloor = 3;
-            floorMap = getResources().getDrawable(R.drawable.map_t3);
-            floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3));
             mapImage.setImage(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
         }
         if(floor.equals("4")) {
-            currentFloor = 4;
-            floorMap = getResources().getDrawable(R.drawable.map_t4);
-            floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t4));
-            mapImage.setImage(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
+            mapImage.setImage(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t4)));
         }
-//        i.setImageDrawable(floorMap);
+
+        RelativeLayout r = mapImage.getRelativeLayout();
+//        RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+        for(IndoorMapMarker p : listOfMarkers)
+            r.removeView(p.getMarker());
+
+        listOfMarkers.clear();
+
+        for(PointOfInterest p : pointList) {
+            if(p.getFloor().equals(floor))
+                addPoint(r,p);
+        }
     }
 
     @Override
     public void getUpdatedDataSet(List<PointOfInterest> pointList) {
-//        RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
         RelativeLayout r = mapImage.getRelativeLayout();
+//        RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
 
         for(IndoorMapMarker p : listOfMarkers) {
             r.removeView(p.getMarker());
         }
         listOfMarkers.clear();
         for(PointOfInterest p : pointList) {
-            addPoint(r,p);
+            if(p.getFloor().equals(currentFloor))
+                addPoint(r,p);
         }
         floorAdapter.notifyDataSetChanged();
     }
@@ -346,6 +343,42 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         }
 
         return inSampleSize;
+    }
+
+    @Override
+    public void adminInlogg() {
+        Log.d(TAG, "adminInlogg: ");
+    }
+
+    @Override
+    public void commonInlogg() {
+        Log.d(TAG, "commonInlogg: ");
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_indoor_map, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.floors) {
+            if(getActivity().findViewById(R.id.floor_recycler_view).getVisibility() == View.GONE)
+                getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.VISIBLE);
+            else
+                getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.GONE);
+        }
+        else if (id == R.id.addInterestPoint) {
+            Context context = getContext();
+            int duration = Toast.LENGTH_LONG;
+
+            Toast toast = Toast.makeText(context, R.string.addMarkerExplanation, duration);
+            toast.show();
+            toast.setGravity(Gravity.TOP| Gravity.CENTER, 0, 150);
+
+        }
+        return false;
     }
 }
 

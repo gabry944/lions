@@ -2,18 +2,28 @@ package com.example.micke.lions.outdoor;
 
 import android.Manifest;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.InflateException;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
+import com.example.micke.lions.Common;
+import com.example.micke.lions.InloggChange;
 import com.example.micke.lions.indoor.IndoorActivity;
 import com.example.micke.lions.R;
 import com.google.android.gms.maps.CameraUpdate;
@@ -36,11 +46,14 @@ import java.util.List;
  */
 public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
         GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, NewBuildingCallback,
-        Serializable, GoogleMap.OnMarkerClickListener, BuildingDataSetChanged {
+        Serializable, GoogleMap.OnMarkerClickListener, BuildingDataSetChanged, InloggChange {
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
+
+    private String TAG = "OutdoorMapFragment";
+
     private static final String ARG_SECTION_NUMBER = "section_number";
     private GoogleMap mMap;
     private double longitude, latitude;
@@ -48,6 +61,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     private List<Building> buildings;
     private List<Marker> carMarkerList;
     private OutdoorActivity outdoorActivity;
+    private ImageButton goToList;
 
     public OutdoorMapFragment() {
 
@@ -77,13 +91,50 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
             return rootView;
         }
 
+        goToList = (ImageButton) rootView.findViewById(R.id.goToOutdoorList1);
+        goToList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                mPager.setCurrentItem(1, true);
+            }
+        });
+
         carMarkerList = new ArrayList<>();
 
         latitude = 58.3918064;
         longitude = 15.5654057;
 
         setUpMapIfNeeded();
+
+        setHasOptionsMenu(true);
+
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_outdoor_map, menu);
+        MenuItem add = menu.findItem(R.id.addBuildingBtn);
+        if(Common.IsAdmin())
+            add.setVisible(true);
+        else
+            add.setVisible(false);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.addBuildingBtn) {
+            Context context = getContext();
+            int duration = Toast.LENGTH_LONG;
+
+            Toast toast = Toast.makeText(context, R.string.addMarkerExplanation, duration);
+            toast.setGravity(Gravity.TOP| Gravity.CENTER, 0, 150);
+            toast.show();
+        }
+        return false;
     }
 
     @Override
@@ -176,7 +227,6 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-
         Log.d("marker", "marker clicked");
         Intent intent = new Intent(getContext(), IndoorActivity.class);
         Bundle bundle = new Bundle();
@@ -196,5 +246,26 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void panToMarker(LatLng point) {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 18));
+    }
+
+    @Override
+    public void adminInlogg() {
+        Log.d(TAG, "adminInlogg: ");
+        getActivity().invalidateOptionsMenu();
+    }
+
+    @Override
+    public void commonInlogg() {
+        Log.d(TAG, "commonInlogg: ");
+        getActivity().invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onPrepareOptionsMenu (Menu menu){
+        MenuItem add = menu.findItem(R.id.addBuildingBtn);
+        if(Common.IsAdmin())
+            add.setVisible(true);
+        else
+            add.setVisible(false);
     }
 }
