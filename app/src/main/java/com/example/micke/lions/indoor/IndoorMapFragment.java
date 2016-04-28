@@ -303,7 +303,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         final float posX = ip.getLatitude();
         final float posY = ip.getLongitude();
 
-        IndoorMapMarker point = new IndoorMapMarker(ip, posX, posY, getContext());
+        final IndoorMapMarker point = new IndoorMapMarker(ip, posX, posY, getContext());
 
         parent.addView(point.getMarker());
 
@@ -315,9 +315,31 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         point.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("TAG", "Klickar på pungtjävel " + "posX = " + posX + " posY = " + posY);
+                Log.d(TAG, "Klickar på pungtjävel " + "posX = " + posX + " posY = " + posY);
+
+                //remove from map
+                listOfMarkers.remove(point);
+                pointList.remove(point.getPoint());
+                RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+                r.removeView(point.getMarker());
+
+                //remove from fierbase
+                Log.d(TAG, "onClick: id = " + point.getId());
+                fireBaseIndoor.removeIp(point.getPoint());
+                Log.d(TAG, "Punkt ska vara borta ");
             }
         });
+
+        /*point.getMarker().setOnLongClickListener(new View.OnLongClickListener(){
+            @Override
+            public void onLongClick(View v) {
+                listOfMarkers.remove(point);
+                pointList.remove(point.getPoint());
+                Log.d(TAG, "onLongClick: id = " + point.getId());
+                fireBaseIndoor.removeIp(point.getPoint());
+                Log.d(TAG, "Punkt ska vara borta ");
+            }
+        });*/
     }
 
     private void addDescText(RelativeLayout parent, String category, float posX, float posY){
