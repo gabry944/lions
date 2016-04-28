@@ -37,6 +37,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.WeakHashMap;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -177,11 +178,15 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
 
     public void newMarker(Building building) {
         LatLng point = new LatLng(building.getLatitude(), building.getLongitude());
-//        Log.d("loadall", "creating new marker at: " + building.getLatitude() + " " + building.getLongitude());
-        mMap.addMarker(new MarkerOptions()
+
+        Marker marker = mMap.addMarker(new MarkerOptions()
                 .position(point)
                 .title(building.getName())
+                .snippet(building.getId())
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+
+        marker.showInfoWindow();
+        Log.d("loadall", "creating new marker at: " + marker.getPosition());
     }
 
     public void newMarker(Car car, Location location) {
@@ -221,7 +226,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
         Log.d("marker", "marker clicked");
         Intent intent = new Intent(getContext(), IndoorActivity.class);
         Bundle bundle = new Bundle();
-        String buildingId = marker.getId();
+        String buildingId = marker.getSnippet();
         bundle.putString("buildingId", buildingId);
         intent.putExtras(bundle);
         startActivity(intent);

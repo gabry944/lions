@@ -34,7 +34,6 @@ public class AddPointDialogFragment extends DialogFragment {
         final View dialogView = inflater.inflate(R.layout.add_point_layout, null);
         dialogBuilder.setContentView(dialogView);
 
-
         final EditText title = (EditText) dialogView.findViewById(R.id.add_point_title);
         final EditText description = (EditText) dialogView.findViewById(R.id.add_point_description);
         final Spinner category = (Spinner) dialogView.findViewById(R.id.category_spinner);

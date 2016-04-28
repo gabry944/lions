@@ -103,7 +103,6 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHo
                 Bundle bundle = new Bundle();
                 String currentBuilding = holder.mTitleView.getText().toString();
                 String buildingId = holder.mIDView.getText().toString();
-                Log.d("outdoor", "buldingId: " + buildingId);
                 bundle.putString("buildingId", buildingId);
                 bundle.putString("buildingTitle", currentBuilding);
                 intent.putExtras(bundle);
