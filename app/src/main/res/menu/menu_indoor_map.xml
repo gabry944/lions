@@ -10,7 +10,7 @@
 
     <item
         android:id="@+id/addInterestPoint"
-        android:icon="@drawable/add_button"
+        android:icon="@drawable/add"
         android:title="addMarker"
         app:showAsAction="always"/>
 
