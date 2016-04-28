@@ -3,12 +3,8 @@ package com.example.micke.lions.indoor;
 import android.app.DialogFragment;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -16,7 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,7 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -103,7 +97,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         context = getContext();
 
         buildingId = indoorActivity.getBuildingId();
-        rootView = inflater.inflate(R.layout.activity_indoor_map, container, false);
+        rootView = inflater.inflate(R.layout.fragment_indoor_map, container, false);
         mFloors = fireBaseIndoor.getFloors(buildingId, this);
         floorAdapter = new FloorAdapter(this, mFloors);
 
