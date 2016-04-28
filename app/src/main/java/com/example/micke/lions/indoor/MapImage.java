@@ -74,6 +74,16 @@ public class MapImage extends RelativeLayout {
         return relativeLayout;
     }
 
+    //Resets the view
+    public void resetView() {
+        mScaleFactor = 1;
+        relativeLayout.setScaleX(mScaleFactor);
+        relativeLayout.setScaleY(mScaleFactor);
+
+        relativeLayout.setTranslationX(0);
+        relativeLayout.setTranslationY(0);
+    }
+
     private class ScaleListener
             extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
