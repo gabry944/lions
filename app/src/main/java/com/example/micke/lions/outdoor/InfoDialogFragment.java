@@ -28,10 +28,12 @@ public class InfoDialogFragment extends DialogFragment {
         final View dialogView = inflater.inflate(R.layout.info_dialog, null);
         dialogBuilder.setView(dialogView);
 
-       // ImageView imageView =(ImageView) dialogView.findViewById(R.id.info);
+        ImageView rightArrow =(ImageView) dialogView.findViewById(R.id.right_arrow);
+        ImageView leftArrow = (ImageView) dialogView.findViewById(R.id.left_arrow);
 
-      //  Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.pulse_button);
-        // imageView.setAnimation(animation);
+        Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.pulse_button);
+        rightArrow.startAnimation(animation);
+        leftArrow.startAnimation(animation);
 
         dialogBuilder
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
