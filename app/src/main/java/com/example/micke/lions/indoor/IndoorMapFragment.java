@@ -165,7 +165,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         Log.d("hejhej", "size = " + listOfMarkers.size());
         //Find the closest entrance (if it exist on this floor)
-        float distance = 1000000;
+        float distance = Float.MAX_VALUE;
         for(IndoorMapMarker m : listOfMarkers) {
             if (m.getCategory().equals(getString(R.string.Entrance)))
             Log.d("hejhej", "entre: " + m.getPoint().getTitle() + ". Distance = "  + distance + " > " + calcDistance(m.getX(), m.getY(), end.getX(), end.getY()));

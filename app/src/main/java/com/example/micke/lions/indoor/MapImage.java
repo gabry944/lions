@@ -3,6 +3,7 @@ package com.example.micke.lions.indoor;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -168,11 +169,14 @@ public class MapImage extends RelativeLayout {
         point[0] = latitude * relativeLayout.getScaleX() * imageWidth - imageWidth / 2;
         point[1] = longitude * relativeLayout.getScaleY() * imageHeight - imageHeight / 2 - imageYOffset;
 
-//        Log.d("touch", "x: " + point[0] + " latitude: " + latitude + " xscale: " + relativeLayout.getScaleX()
-//                + " imagewidth: " + imageWidth + " viewcoords[0]: " + viewCoords[0]);
-//
-//        Log.d("touch", "y: " + point[1] + " longitude: " + longitude + " yscale: " + relativeLayout.getScaleY()
-//                + " imageheight: " + imageHeight + " viewcoords[1]: " + viewCoords[1]);
+        point[0] = latitude * relativeLayout.getScaleX() * imageWidth;
+        point[1] = longitude * relativeLayout.getScaleY() * imageHeight + imageYOffset;
+
+        Log.d("touch", "x: " + point[0] + " latitude: " + latitude + " xscale: " + relativeLayout.getScaleX()
+                + " imagewidth: " + imageWidth + " viewcoords[0]: " + viewCoords[0]);
+
+        Log.d("touch", "y: " + point[1] + " longitude: " + longitude + " yscale: " + relativeLayout.getScaleY()
+                + " imageheight: " + imageHeight + " viewcoords[1]: " + viewCoords[1]);
 
         return point;
     }
