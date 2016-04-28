@@ -165,6 +165,7 @@ public class MapImage extends RelativeLayout {
 //        point[0] = latitude * relativeLayout.getScaleX() * imageWidth - viewCoords[0];
 //        point[1] = longitude * relativeLayout.getScaleY() * imageHeight - viewCoords[1] + imageYOffset;
 
+        //TODO Adjust algorithm for zoom and pan
         //Calculate the image coordinates in view
         point[0] = latitude * relativeLayout.getScaleX() * imageWidth - imageWidth / 2;
         point[1] = longitude * relativeLayout.getScaleY() * imageHeight - imageHeight / 2 - imageYOffset;
