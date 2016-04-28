@@ -25,7 +25,7 @@
         android:id="@+id/goToIndoorList2"
         android:layout_width="37dp"
         android:layout_height="37dp"
-        android:background="@drawable/list_icon"
+        android:background="@drawable/list_white"
         android:rotation="180"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginBottom="@dimen/activity_vertical_margin"

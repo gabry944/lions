@@ -1,21 +1,26 @@
 package com.example.micke.lions;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
-import android.support.v7.view.menu.MenuView;
+import android.content.pm.PackageManager;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 
-import com.example.micke.lions.outdoor.OutdoorMapFragment;
 
 /** A file for common variables and functions for different activities **/
 
 public class Common {
 
+
     static String TAG = "Common";
+
+    public static final int ASK_FOR_PERISSION = 0;
+    public static final int PERMISSION_GRANTED = 1;
+    public static final int PERMISSION_DENIED = 2;
+
     private static boolean admin = false;
+    private static int location_permission = ASK_FOR_PERISSION;
 
     public static boolean IsAdmin(){
         return admin;
@@ -24,7 +29,7 @@ public class Common {
     /** returns true if user is now admin, otherwise false **/
     public static boolean MakeAdmin(InloggChange map, InloggChange list, InloggChange qr){
         admin = true;
-        Log.d(TAG, "MakeAdmin: Admin = " + admin);
+
         if(map != null)
             map.adminInlogg();
         else
@@ -43,7 +48,7 @@ public class Common {
 
     public static void LogOut(InloggChange map, InloggChange list, InloggChange qr){
         admin = false;
-        Log.d(TAG, "LogOut: Admin = " + admin);
+
         if(map != null)
             map.commonInlogg();
         else
@@ -71,5 +76,20 @@ public class Common {
             else
                 adminButton.setIcon(context.getResources().getDrawable(R.drawable.admin_button_off));
         }
+    }
+
+    public static int IsLocationPermitted(Context context) {
+        if (ContextCompat.checkSelfPermission(context,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED)
+        {
+            location_permission = PERMISSION_GRANTED;
+        }
+
+        return location_permission;
+    }
+
+    public static void LocationPermissionDenied(){
+        location_permission = PERMISSION_DENIED;
     }
 }

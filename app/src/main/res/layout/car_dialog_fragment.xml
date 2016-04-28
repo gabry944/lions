@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:id="@+id/car_dialog_layout">
 
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,4 +18,11 @@
         android:text="Parkera bilen"
         android:id="@+id/park_car"
         android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:id="@+id/permission"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Om du vill parkera bilen tillåt appen att använda din plats"
+        />
 </LinearLayout>

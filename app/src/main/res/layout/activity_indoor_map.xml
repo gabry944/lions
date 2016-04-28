@@ -9,6 +9,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <ImageButton
+        android:id="@+id/goToIndoorList1"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/list"
+        android:rotation="180"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
     <!-- A RecyclerView with some commonly used attributes -->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/floor_recycler_view"
@@ -16,7 +25,6 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:visibility="gone"
-        android:background="#7986CB"
-        />
+        android:background="#7986CB" />
 
 </RelativeLayout>
