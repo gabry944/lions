@@ -34,7 +34,7 @@
             android:layout_height="@dimen/icon_size"
             android:src ="@drawable/navigation"
             android:scaleType="centerCrop"
-            android:background="@color/white"
+            android:background="@android:color/transparent"
             android:paddingRight="12sp"
             android:paddingTop="10sp"
             android:maxWidth="@dimen/icon_size"
