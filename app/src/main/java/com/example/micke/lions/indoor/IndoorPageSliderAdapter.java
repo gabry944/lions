@@ -1,9 +1,11 @@
 package com.example.micke.lions.indoor;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 
 import com.example.micke.lions.outdoor.OutdoorQRFragment;
 
@@ -25,6 +27,7 @@ public class IndoorPageSliderAdapter extends FragmentPagerAdapter {
             ((IndoorActivity)mContext).map = IndoorMapFragment.newInstance(position + 1);
             return ((IndoorActivity)mContext).map;
         } else if(position == 1) {
+
             ((IndoorActivity)mContext).list = IndoorListFragment.newInstance(position + 1);
             return ((IndoorActivity)mContext).list;
         } else {
