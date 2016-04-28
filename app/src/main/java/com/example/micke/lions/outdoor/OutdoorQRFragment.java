@@ -4,6 +4,7 @@ import android.app.DialogFragment;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.micke.lions.Common;
@@ -84,6 +86,11 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
         ArrayList<BarcodeFormat> list = new ArrayList<>();
         list.add(BarcodeFormat.QRCODE);
         mScannerView = (ZBarScannerView) view.findViewById(R.id.zBarScanner);
+
+        TextView textView = (TextView) view.findViewById(R.id.textView);
+        Typeface myCustomFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/OpenSans-Regular.ttf");
+        textView.setTypeface(myCustomFont);
+
         mScannerView.setFormats(list);
 
         goToList.setOnClickListener(new View.OnClickListener() {

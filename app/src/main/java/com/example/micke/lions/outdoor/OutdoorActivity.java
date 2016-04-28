@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -21,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.micke.lions.Common;
 import com.example.micke.lions.DataSetChanged;
@@ -46,6 +48,8 @@ public class OutdoorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_outdoor);
 
         fireBaseHandler = new FireBaseOutdoor(getApplicationContext());
+
+
 
         //check for permission to use the camera
         //needed for the QRFragment
@@ -85,6 +89,7 @@ public class OutdoorActivity extends AppCompatActivity {
 
         DialogFragment newFragment = new InfoDialogFragment();
         newFragment.show(getFragmentManager(), "info_dialog");
+
     }
 
     @Override
