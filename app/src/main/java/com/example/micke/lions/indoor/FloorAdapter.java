@@ -78,8 +78,11 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                Log.d(TAG, "onClick: Change floor");
-                mIndoorMapFragment.setCurrentFloor(ipDataset.get(position));
+                //If directions is active, highlight the directions instead of showing eveything
+                if(mIndoorMapFragment.getFilterMarkers() && mIndoorMapFragment.getStairsOrElevator() != null)
+                    mIndoorMapFragment.highlightIP(ipDataset.get(position), mIndoorMapFragment.getStairsOrElevator().getId());
+                else
+                    mIndoorMapFragment.setCurrentFloor(ipDataset.get(position));
             }
         });
     }

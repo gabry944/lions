@@ -57,6 +57,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private String buildingId;
     private String currentFloor = "3"; //TODO
 
+    private boolean filterMarkers;
     private IndoorMapMarker start = null, end = null;
 
     private int displayWidth;
@@ -99,7 +100,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        filterMarkers = false;
         indoorActivity = (IndoorActivity) getActivity();
         fireBaseIndoor = indoorActivity.getFireBaseHandler();
 
@@ -256,10 +257,10 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         return rootView;
     }
 
+    //hide all except chosen ip and entrance (or stairs/elevator)
     public void highlightIP(String goalFloor, String ipID) {
-        indoorActivity.setFilteredMarkers(true);
         setCurrentFloor(goalFloor);
-        //hide all except chosen ip and entrance (or stairs/elevator)
+        filterMarkers = true;
         start = null;
         end = null;
 
@@ -399,19 +400,11 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             r.removeView(p.getMarker());
         listOfMarkers.clear();
         for (PointOfInterest p : pointList) {
-            if (p.getFloor().equals(floor))
+            if (p.getFloor().equals(floor) || p.getCategory().equals(getString(R.string.Stairs))
+                    || p.getCategory().equals(getString(R.string.Elevator))) {
                 addPoint(r, p);
-        }
-
-        //Check if we use a filter (vägbeskrivning)
-        /*if(indoorActivity.getFilteredMarkers()) {
-            for (IndoorMapMarker m : listOfMarkers) {
-                m.getMarker().setVisibility(View.GONE);
             }
-            if(start != null) start.getMarker().setVisibility(View.VISIBLE);
-            if(end != null) end.getMarker().setVisibility(View.VISIBLE);
-
-        }*/
+        }
     }
 
     @Override
@@ -423,7 +416,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         }
         listOfMarkers.clear();
         for(PointOfInterest p : pointList) {
-            if(p.getFloor().equals(currentFloor))
+            if(p.getFloor().equals(currentFloor) || p.getCategory().equals(getString(R.string.Stairs))
+                    || p.getCategory().equals(getString(R.string.Elevator)))
                 addPoint(r,p);
         }
         floorAdapter.notifyDataSetChanged();
@@ -505,5 +499,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     public void commonInlogg() {
         Log.d(TAG, "commonInlogg: ");
     }
+
+    public boolean getFilterMarkers() { return filterMarkers; }
+    public IndoorMapMarker getStairsOrElevator() { return start; }
 }
 
