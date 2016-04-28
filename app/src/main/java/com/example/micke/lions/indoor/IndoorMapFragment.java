@@ -334,14 +334,21 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         point.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ChangePointDialogFragment ask = new ChangePointDialogFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("id",point.getId());
-                ask.setArguments(bundle);
-                ask.show(indoorActivity.getFragmentManager(),"remove_point_fragment");
+                if (point.getOfficial() && !Common.IsAdmin())
+                {
+                    Toast toast = Toast.makeText(getContext(),R.string.adminRequierdForChangingPoint, Toast.LENGTH_LONG);
+                    toast.show();
+                }
+                else
+                {
+                    ChangePointDialogFragment ask = new ChangePointDialogFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id",point.getId());
+                    ask.setArguments(bundle);
+                    ask.show(indoorActivity.getFragmentManager(),"remove_point_fragment");
+                }
             }
         });
-
     }
 
     public void RemovePoint(String pointId)
