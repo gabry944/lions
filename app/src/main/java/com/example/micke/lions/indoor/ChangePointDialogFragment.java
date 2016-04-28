@@ -37,7 +37,13 @@ public class ChangePointDialogFragment extends DialogFragment {
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.removePointQuetion)
+        // Get the layout inflater
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        builder.setView(inflater.inflate(R.layout.fragment_indoor_change_point, null))
+                // Add action buttons
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Log.d(TAG, "onClick: ta bort");
@@ -52,6 +58,7 @@ public class ChangePointDialogFragment extends DialogFragment {
                         Log.d(TAG, "onClick: behåll");
                     }
                 });
+
         // Create the AlertDialog object and return it
         return builder.create();
     }
