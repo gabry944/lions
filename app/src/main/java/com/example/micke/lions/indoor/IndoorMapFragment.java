@@ -377,6 +377,10 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             toast.setGravity(Gravity.TOP| Gravity.CENTER, 0, 150);
 
         }
+        else if(id == R.id.restorePoints) {
+            setCurrentFloor(fireBaseIndoor.getFloor());
+            filterMarkers = false;
+        }
         return false;
     }
 
