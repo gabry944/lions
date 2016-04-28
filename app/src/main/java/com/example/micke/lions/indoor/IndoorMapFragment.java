@@ -57,6 +57,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private String buildingId;
     private String currentFloor = "3"; //TODO
 
+    private IndoorMapMarker start = null, end = null;
+
     private int displayWidth;
     private int displayHeight;
 
@@ -65,16 +67,18 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private float scaleFactor = 5.0f;
     private boolean longClick = true;  //turns to false if user moves fingers
 
+    //Stores all ips for the whole building
     private List<PointOfInterest> pointList;
 
     private IndoorActivity indoorActivity;
+
+    //Stores ips for the current floor as markers
     private List<IndoorMapMarker> listOfMarkers = new ArrayList<IndoorMapMarker>();
 
     private ImageButton goToList;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
-    //TODO Change to list
     private Drawable floorMap;
 
     public IndoorMapFragment() {
@@ -253,9 +257,11 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     }
 
     public void highlightIP(String goalFloor, String ipID) {
+        indoorActivity.setFilteredMarkers(true);
         setCurrentFloor(goalFloor);
         //hide all except chosen ip and entrance (or stairs/elevator)
-        IndoorMapMarker start = null, end = null;
+        start = null;
+        end = null;
 
         //Find the goal point
         for(IndoorMapMarker m : listOfMarkers) {
@@ -263,34 +269,46 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 end = m;
         }
 
-        Log.d("hejhej", "size = " + listOfMarkers.size());
-        //Find the closest entrance (if it exist on this floor)
-        float distance = 1000000;
-        for(IndoorMapMarker m : listOfMarkers) {
-            if (m.getCategory().equals(getString(R.string.Entrance)))
-            Log.d("hejhej", "entre: " + m.getPoint().getTitle() + ". Distance = "  + distance + " > " + calcDistance(m.getX(), m.getY(), end.getX(), end.getY()));
-            if (m.getCategory().equals(getString(R.string.Entrance)) && distance > calcDistance(m.getX(), m.getY(), end.getX(), end.getY())) {
-                start = m;
-                distance = calcDistance(m.getX(), end.getX(), m.getY(), end.getY());
-            }
-        }
+        //Should never happen
+        if(end == null) return;
 
-        //If we didn't find an entrance we look for the closest elevator or stairs instead
-        if(start == null) {
+        if(!end.getCategory().equals(getString(R.string.Elevator)) && !end.getCategory().equals(getString(R.string.Stairs))
+                && !end.getCategory().equals(getString(R.string.Entrance))) {
+            //Find the closest entrance (if it exist on this floor)
+            float distance = Float.MAX_VALUE;
             for (IndoorMapMarker m : listOfMarkers) {
-                if ( (m.getCategory().equals(getString(R.string.Elevator)) || m.getCategory().equals(getString(R.string.Stairs)))
-                            && distance > calcDistance(m.getX(), m.getY(), end.getX(), end.getY()) ) {
+                if (m.getCategory().equals(getString(R.string.Entrance)) && distance > calcDistance(m.getX(), m.getY(), end.getX(), end.getY())) {
                     start = m;
                     distance = calcDistance(m.getX(), m.getY(), end.getX(), end.getY());
                 }
             }
-        }
+
+            //If we didn't find an entrance we look for the closest elevator or stairs instead
+            if (start == null) {
+                for (IndoorMapMarker m : listOfMarkers) {
+                    if ((m.getCategory().equals(getString(R.string.Elevator)) || m.getCategory().equals(getString(R.string.Stairs)))
+                            && distance > calcDistance(m.getX(), m.getY(), end.getX(), end.getY())) {
+                        start = m;
+                        distance = calcDistance(m.getX(), m.getY(), end.getX(), end.getY());
+                    }
+                }
+            }
+        } else start = end;
 
         for (IndoorMapMarker m : listOfMarkers) {
             m.getMarker().setVisibility(View.GONE);
         }
-        start.getMarker().setVisibility(View.VISIBLE);
+
         end.getMarker().setVisibility(View.VISIBLE);
+
+        //Return if we didn't find an elevator/stairs or entrance
+        if(start == null) {
+            Toast toast = Toast.makeText(getContext(), "Couldn't find an entrance, elevator or stairs!", Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
+
+        start.getMarker().setVisibility(View.VISIBLE);
     }
 
     //Calculates the distance between two points
@@ -385,29 +403,37 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     public void setCurrentFloor(String floor) {
         ImageView i = (ImageView) rootView.findViewById(R.id.map);
-
-        Log.d("floor", "" + floor + " pointList size = " + pointList.size());
         fireBaseIndoor.setFloor(floor);
         floorMap = null;
         currentFloor = floor;
-        if(floor.equals("3")) {
-            floorMap = getResources().getDrawable(R.drawable.map_t3);
+        if (floor.equals("3")) {
+            //floorMap = getResources().getDrawable(R.drawable.map_t3);
             floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3));
         }
-        if(floor.equals("4")) {
-            floorMap = getResources().getDrawable(R.drawable.map_t4);
+        if (floor.equals("4")) {
+            //floorMap = getResources().getDrawable(R.drawable.map_t4);
             floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t4));
         }
         i.setImageDrawable(floorMap);
 
         RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
-        for(IndoorMapMarker p : listOfMarkers)
+        for (IndoorMapMarker p : listOfMarkers)
             r.removeView(p.getMarker());
         listOfMarkers.clear();
-        for(PointOfInterest p : pointList) {
-            if(p.getFloor().equals(floor))
-                addPoint(r,p);
+        for (PointOfInterest p : pointList) {
+            if (p.getFloor().equals(floor))
+                addPoint(r, p);
         }
+
+        //Check if we use a filter (vägbeskrivning)
+        /*if(indoorActivity.getFilteredMarkers()) {
+            for (IndoorMapMarker m : listOfMarkers) {
+                m.getMarker().setVisibility(View.GONE);
+            }
+            if(start != null) start.getMarker().setVisibility(View.VISIBLE);
+            if(end != null) end.getMarker().setVisibility(View.VISIBLE);
+
+        }*/
     }
 
     @Override

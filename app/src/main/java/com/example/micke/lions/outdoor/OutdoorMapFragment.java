@@ -1,13 +1,10 @@
 package com.example.micke.lions.outdoor;
 
-import android.Manifest;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -106,9 +103,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
         longitude = 15.5654057;
 
         setUpMapIfNeeded();
-
         setHasOptionsMenu(true);
-
         return rootView;
     }
 
@@ -140,12 +135,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        if (ActivityCompat.checkSelfPermission(getContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) { return; }
-        mMap.setMyLocationEnabled(true);
+        //mMap.setMyLocationEnabled(true); //Needs a permission check
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,
                 longitude), 20.0f));
@@ -166,7 +156,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
             if(mapFragment != null) {
                 mapFragment.getMapAsync(this);
             } else
-                Log.e("map", "mapFragment = null");
+                Log.e(TAG, "mapFragment = null");
         }
     }
 
@@ -262,9 +252,9 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     @Override
-    public void onPrepareOptionsMenu (Menu menu){
+    public void onPrepareOptionsMenu (Menu menu) {
         MenuItem add = menu.findItem(R.id.addBuildingBtn);
-        if(Common.IsAdmin())
+        if (Common.IsAdmin())
             add.setVisible(true);
         else
             add.setVisible(false);
