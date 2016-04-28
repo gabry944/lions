@@ -46,6 +46,7 @@ public class IndoorActivity extends AppCompatActivity {
     private IndoorPageSliderAdapter mSectionsPagerAdapter;
     public static ViewPager mViewPager;
 
+    private boolean filteredMarkers;
     private String ipId;
     private String currentBuilding;
     private String buildingId;
@@ -124,5 +125,12 @@ public class IndoorActivity extends AppCompatActivity {
             Common.setAdminButton(item, this);
         }
         return false;
+    }
+
+    public void setFilteredMarkers(boolean filteredMarkers) {
+        this.filteredMarkers = filteredMarkers;
+    }
+    public boolean getFilteredMarkers() {
+        return filteredMarkers;
     }
 }
