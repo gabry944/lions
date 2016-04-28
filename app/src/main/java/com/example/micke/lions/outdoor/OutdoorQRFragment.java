@@ -6,7 +6,6 @@ import android.content.ClipboardManager;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -15,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,15 +24,12 @@ import com.example.micke.lions.R;
 import com.example.micke.lions.indoor.IndoorActivity;
 
 import java.util.ArrayList;
-import java.util.concurrent.locks.ReadWriteLock;
 
 import me.dm7.barcodescanner.zbar.BarcodeFormat;
 import me.dm7.barcodescanner.zbar.Result;
 import me.dm7.barcodescanner.zbar.ZBarScannerView;
 
-/**
- * Created by iSirux on 2016-04-12.
- */
+
 public class OutdoorQRFragment extends Fragment implements ZBarScannerView.ResultHandler, FragmentResolver, InloggChange {
 
     private String TAG = "OutdoorQRFragment";
@@ -109,14 +104,13 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
                     Car car = new Car("Bil", fireBaseHandler.generateId(), 0, 0);
                     fireBaseHandler.updateCar(car);
 
-                    String url = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=" +
-                            "car/" + car.getId()
-                            + "&qzone=1&margin=0&size=400x400&ecc=L";
+                    String url = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=";
 
                     ClipboardManager clipboard = (ClipboardManager) getActivity()
                             .getSystemService(getActivity().CLIPBOARD_SERVICE);
                     ClipData clip = ClipData.newPlainText("", url);
                     clipboard.setPrimaryClip(clip);
+
 
                     Toast toast = Toast.makeText(getContext(),
                             "QR code URL copied to clipboard", Toast.LENGTH_LONG);
@@ -141,7 +135,7 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
         if(((OutdoorActivity) getActivity()).getViewPager().getCurrentItem() == 2) {
             // Do something with the result here
             Log.v("qr", rawResult.getContents()); // Prints scan results
-
+            Log.d(TAG, "handleResult: before toast but inside if");
             //Toast to show result
             Toast toast = Toast.makeText(getContext(),
                     rawResult.getContents(), Toast.LENGTH_SHORT);
@@ -152,7 +146,7 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
             int partsLength = parts.length;
 
             for (String part : parts) {
-                Log.d("buildparts", part);
+                Log.d(TAG, "buildparts : " + part);
             }
 
             if (partsLength > 1) {
