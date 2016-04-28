@@ -54,11 +54,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private int displayWidth;
     private int displayHeight;
 
-    private float mx, mx2;  //2 is for the second finger. Used for zooming
-    private float my, my2;
-    private float scaleFactor = 5.0f;
-    private boolean longClick = true;  //turns to false if user moves fingers
-
     //Scaletest
     private MapImage mapImage;
 
@@ -68,9 +63,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private List<IndoorMapMarker> listOfMarkers = new ArrayList<IndoorMapMarker>();
 
     private static final String ARG_SECTION_NUMBER = "section_number";
-
-    //TODO Change to list
-    private Drawable floorMap;
 
     public IndoorMapFragment() {
     }
@@ -124,9 +116,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         Log.d("point", "getting dimensions...");
         getDimensions(r);
 
-        floorMap = getResources().getDrawable(R.drawable.map_t3);
-
-        //Scaletest
+        //mapImage
         mapImage = (MapImage) rootView.findViewById(R.id.scale_test);
         mapImage.setImage(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
         mapImage.setParent(r);
@@ -221,54 +211,23 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         parent.addView(textView);
     }
 
-    @Override
-    public void onCreateOptionsMenu(
-            Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_indoor_map, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        // return super.onOptionsItemSelected(item);
-
-        int id = item.getItemId();
-        if (id == R.id.floors) {
-            if(getActivity().findViewById(R.id.floor_recycler_view).getVisibility() == View.GONE)
-                getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.VISIBLE);
-            else
-                getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.GONE);
-        }
-        return false;
-    }
-
     public void setCurrentFloor(String floor) {
         ImageView i = (ImageView) rootView.findViewById(R.id.map);
         int id = 0;
         Log.d("floor", "" + floor);
         fireBaseIndoor.setFloor(floor);
-        floorMap = null;
         if(floor.equals("3")) {
             currentFloor = 3;
-            floorMap = getResources().getDrawable(R.drawable.map_t3);
-            floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3));
             mapImage.setImage(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
         }
         if(floor.equals("4")) {
             currentFloor = 4;
-            floorMap = getResources().getDrawable(R.drawable.map_t4);
-            floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t4));
             mapImage.setImage(new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3)));
         }
-//        i.setImageDrawable(floorMap);
     }
 
     @Override
     public void getUpdatedDataSet(List<PointOfInterest> pointList) {
-//        RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
         RelativeLayout r = mapImage.getRelativeLayout();
 
         for(IndoorMapMarker p : listOfMarkers) {
@@ -346,6 +305,30 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         }
 
         return inSampleSize;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(
+            Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_indoor_map, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+        // return super.onOptionsItemSelected(item);
+
+        int id = item.getItemId();
+        if (id == R.id.floors) {
+            if(getActivity().findViewById(R.id.floor_recycler_view).getVisibility() == View.GONE)
+                getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.VISIBLE);
+            else
+                getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.GONE);
+        }
+        return false;
     }
 }
 
