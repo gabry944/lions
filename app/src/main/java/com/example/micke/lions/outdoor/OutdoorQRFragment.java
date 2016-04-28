@@ -104,7 +104,9 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
                     Car car = new Car("Bil", fireBaseHandler.generateId(), 0, 0);
                     fireBaseHandler.updateCar(car);
 
-                    String url = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=";
+                    String url = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=" +
+                            "car/" + car.getId()
+                            + "&qzone=1&margin=0&size=400x400&ecc=L";
 
                     ClipboardManager clipboard = (ClipboardManager) getActivity()
                             .getSystemService(getActivity().CLIPBOARD_SERVICE);
