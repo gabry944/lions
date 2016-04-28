@@ -58,7 +58,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private String currentFloor = "3"; //TODO
 
     private boolean filterMarkers;
-    private IndoorMapMarker start = null, end = null;
+    private IndoorMapMarker end = null, entrance = null;
+    private List<IndoorMapMarker> floorChange;
+
 
     private int displayWidth;
     private int displayHeight;
@@ -261,8 +263,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     public void highlightIP(String goalFloor, String ipID) {
         setCurrentFloor(goalFloor);
         filterMarkers = true;
-        start = null;
+        entrance = null;
         end = null;
+        floorChange = new ArrayList();
 
         //Find the goal point
         for(IndoorMapMarker m : listOfMarkers) {
@@ -279,22 +282,22 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             float distance = Float.MAX_VALUE;
             for (IndoorMapMarker m : listOfMarkers) {
                 if (m.getCategory().equals(getString(R.string.Entrance)) && distance > calcDistance(m.getX(), m.getY(), end.getX(), end.getY())) {
-                    start = m;
+                    entrance = m;
                     distance = calcDistance(m.getX(), m.getY(), end.getX(), end.getY());
                 }
             }
 
             //If we didn't find an entrance we look for the closest elevator or stairs instead
-            if (start == null) {
+            if (entrance == null) {
                 for (IndoorMapMarker m : listOfMarkers) {
                     if ((m.getCategory().equals(getString(R.string.Elevator)) || m.getCategory().equals(getString(R.string.Stairs)))
                             && distance > calcDistance(m.getX(), m.getY(), end.getX(), end.getY())) {
-                        start = m;
+                        entrance = m;
                         distance = calcDistance(m.getX(), m.getY(), end.getX(), end.getY());
                     }
                 }
             }
-        } else start = end;
+        } else entrance = end;
 
         for (IndoorMapMarker m : listOfMarkers) {
             m.getMarker().setVisibility(View.GONE);
@@ -303,13 +306,13 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         end.getMarker().setVisibility(View.VISIBLE);
 
         //Return if we didn't find an elevator/stairs or entrance
-        if(start == null) {
+        if(entrance == null) {
             Toast toast = Toast.makeText(getContext(), "Couldn't find an entrance, elevator or stairs!", Toast.LENGTH_SHORT);
             toast.show();
             return;
         }
 
-        start.getMarker().setVisibility(View.VISIBLE);
+        entrance.getMarker().setVisibility(View.VISIBLE);
     }
 
     //Calculates the distance between two points
@@ -334,14 +337,21 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         point.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ChangePointDialogFragment ask = new ChangePointDialogFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("id",point.getId());
-                ask.setArguments(bundle);
-                ask.show(indoorActivity.getFragmentManager(),"remove_point_fragment");
+                if (point.getOfficial() && !Common.IsAdmin())
+                {
+                    Toast toast = Toast.makeText(getContext(),R.string.adminRequierdForChangingPoint, Toast.LENGTH_LONG);
+                    toast.show();
+                }
+                else
+                {
+                    ChangePointDialogFragment ask = new ChangePointDialogFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id",point.getId());
+                    ask.setArguments(bundle);
+                    ask.show(indoorActivity.getFragmentManager(),"remove_point_fragment");
+                }
             }
         });
-
     }
 
     public void RemovePoint(String pointId)
@@ -404,6 +414,10 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             toast.show();
             toast.setGravity(Gravity.TOP| Gravity.CENTER, 0, 150);
 
+        }
+        else if(id == R.id.restorePoints) {
+            setCurrentFloor(fireBaseIndoor.getFloor());
+            filterMarkers = false;
         }
         return false;
     }
@@ -528,7 +542,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         Log.d(TAG, "commonInlogg: ");
     }
 
-    public boolean getFilterMarkers() { return filterMarkers; }
-    public IndoorMapMarker getStairsOrElevator() { return start; }
+    public IndoorMapMarker getEnd() {
+        return end;
+    }
+
+    public boolean getFilterMarkers() {
+        return filterMarkers;
+    }
 }
 

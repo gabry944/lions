@@ -19,6 +19,13 @@
         android:id="@+id/park_car"
         android:layout_gravity="center_horizontal" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Avbryt"
+        android:id="@+id/cancel"
+        android:layout_gravity="center_horizontal" />
+
     <TextView
         android:id="@+id/permission"
         android:layout_width="wrap_content"

@@ -79,8 +79,8 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
             @Override
             public void onClick(final View v) {
                 //If directions is active, highlight the directions instead of showing eveything
-                if(mIndoorMapFragment.getFilterMarkers() && mIndoorMapFragment.getStairsOrElevator() != null)
-                    mIndoorMapFragment.highlightIP(ipDataset.get(position), mIndoorMapFragment.getStairsOrElevator().getId());
+                if(mIndoorMapFragment.getFilterMarkers())
+                        mIndoorMapFragment.highlightIP(ipDataset.get(position), mIndoorMapFragment.getEnd().getId());
                 else
                     mIndoorMapFragment.setCurrentFloor(ipDataset.get(position));
             }

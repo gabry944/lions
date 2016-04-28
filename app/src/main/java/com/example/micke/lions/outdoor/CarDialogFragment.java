@@ -66,6 +66,7 @@ public class CarDialogFragment extends DialogFragment {
 
         Button findCar = (Button) dialogView.findViewById(R.id.find_car);
         Button parkCar = (Button) dialogView.findViewById(R.id.park_car);
+        Button cancel = (Button) dialogView.findViewById(R.id.cancel);
         TextView permissionMessage = (TextView) dialogView.findViewById(R.id.permission);
 
         if(car.getLongitude() == 0 && car.getLatitude() == 0)
@@ -126,6 +127,12 @@ public class CarDialogFragment extends DialogFragment {
             });
         }
 
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
 
         // Create the AlertDialog object and return it
         return dialogBuilder.create();
