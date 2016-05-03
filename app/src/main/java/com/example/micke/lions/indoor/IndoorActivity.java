@@ -70,7 +70,15 @@ public class IndoorActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(currentBuilding);
+
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+
+
+        if(actionBar != null){
+            actionBar.setTitle(currentBuilding);
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -115,14 +123,24 @@ public class IndoorActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.admin) {
-            if(Common.IsAdmin())
-                Common.LogOut(map, list, qr);
-            else
-                Common.MakeAdmin(map, list, qr);
-            MenuView.ItemView adminButton = (MenuView.ItemView) findViewById(R.id.admin);
-            Common.setAdminButton(item, this);
-        }
+
+            if(id ==  R.id.admin){
+                if (Common.IsAdmin())
+                    Common.LogOut(map, list, qr);
+                else
+                    Common.MakeAdmin(map, list, qr);
+                MenuView.ItemView adminButton = (MenuView.ItemView) findViewById(R.id.admin);
+                Common.setAdminButton(item, this);
+            }
+
+            //Finishes activity and starting outdoorActivity.
+            if(id == android.R.id.home) {
+                onBackPressed();
+                this.finish();
+                return true;
+            }
+
+
         return false;
     }
 }
