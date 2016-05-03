@@ -37,6 +37,7 @@ import com.example.micke.lions.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -79,10 +80,14 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private List<IndoorMapMarker> listOfMarkers = new ArrayList<IndoorMapMarker>();
 
     private ImageButton goToList;
+    private TextView textView1;
+    private TextView textView2;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     private Drawable floorMap;
+
+    private RelativeLayout r = null;
 
     public IndoorMapFragment() {
     }
@@ -126,10 +131,14 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         mFloorRecyclerView.setAdapter(floorAdapter);
 
+
         //For the map
-        final RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+        r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
         r.setScaleX(1.0f);
         r.setScaleY(1.0f);
+
+        //Sets popup properties.
+        setUpPopup();
 
         //Get dimensions of r
         Log.d("point", "getting dimensions...");
@@ -259,6 +268,40 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         return rootView;
     }
 
+    private void setUpPopup() {
+
+        textView1 = new TextView(getContext());
+        textView2 = new TextView(getContext());
+
+        textView1.setText("Du är här");
+        textView1.setTextSize(10);
+        textView1.setBackgroundResource(R.drawable.popup);
+        RelativeLayout.LayoutParams layoutParams1 = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams1.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+        textView1.setLayoutParams(layoutParams1);
+        textView1.setX(0);
+        textView1.setY(0);
+        getRelativeLayout().addView(textView1);
+        textView1.setVisibility(View.GONE);
+
+
+        textView2.setText("Du ska hit");
+        textView2.setTextSize(10);
+        textView2.setBackgroundResource(R.drawable.popup);
+        RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams2.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+        textView2.setLayoutParams(layoutParams2);
+        textView2.setX(0);
+        textView2.setY(0);
+        getRelativeLayout().addView(textView2);
+        textView2.setVisibility(View.GONE);
+
+    }
+
     //hide all except chosen ip and entrance (or stairs/elevator)
     public void highlightIP(String goalFloor, String ipID) {
         setCurrentFloor(goalFloor);
@@ -304,6 +347,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         }
 
         end.getMarker().setVisibility(View.VISIBLE);
+        textView2.setVisibility(View.VISIBLE);
+        addPopup(textView2, end.getX(), end.getY());
 
         //Return if we didn't find an elevator/stairs or entrance
         if(entrance == null) {
@@ -313,6 +358,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         }
 
         entrance.getMarker().setVisibility(View.VISIBLE);
+        if(entrance != end)
+            textView1.setVisibility(View.VISIBLE);
+            addPopup(textView1, entrance.getX(), entrance.getY());
     }
 
     //Calculates the distance between two points
@@ -331,8 +379,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         listOfMarkers.add(point);
 
-        if(ip.getCategory().toLowerCase().equals("hiss"))
-            addDescText(parent, ip.getCategory(), point.getX(), point.getY());
+       /* if(ip.getCategory().toLowerCase().equals("hiss"))
+            addPopup(ip.getCategory(), point.getX(), point.getY());*/
 
         point.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -377,18 +425,11 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         }
     }
 
-    private void addDescText(RelativeLayout parent, String category, float posX, float posY){
-        TextView textView = new TextView(getContext());
-        textView.setText(category);
-        textView.setTextSize(6);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+    private void addPopup(TextView textView, float posX, float posY){
 
-        textView.setLayoutParams(layoutParams);
         textView.setX(posX);
-        textView.setY(posY - 130);
-        parent.addView(textView);
+        textView.setY(posY);
+
     }
 
     @Override
@@ -549,5 +590,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     public boolean getFilterMarkers() {
         return filterMarkers;
     }
+
+    private RelativeLayout getRelativeLayout(){ return r;}
 }
 
