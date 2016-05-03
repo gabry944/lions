@@ -90,14 +90,14 @@ public class IndoorMapMarker {
         point.setScaleX(0.2f);
         point.setScaleY(0.2f);
         if(getCategory().equals(context.getString(R.string.Entrance)))
-            point.setImageResource( getOfficial() ? R.drawable.entrance_green : R.drawable.entrance );
+            point.setImageResource( getOfficial() ? R.drawable.entrance_green : R.drawable.entrance_new );
         else if(getCategory().equals(context.getString(R.string.Elevator)))
-            point.setImageResource( getOfficial() ? R.drawable.elevator_marker_green : R.drawable.elevator_marker );
+            point.setImageResource( getOfficial() ? R.drawable.elevator_marker_green : R.drawable.elevator_new );
         else if (getCategory().equals(context.getString(R.string.Stairs)))
-            point.setImageResource( getOfficial() ? R.drawable.stairs_green : R.drawable.stairs );
+            point.setImageResource( getOfficial() ? R.drawable.stairs_green : R.drawable.stairs_menu );
         else if (getCategory().equals(context.getString(R.string.Toilet)))
-            point.setImageResource( getOfficial() ? R.drawable.wc_green : R.drawable.wc);
+            point.setImageResource( getOfficial() ? R.drawable.wc_green : R.drawable.wc_new);
         else
-            point.setImageResource( getOfficial() ? R.drawable.map_marker_green : R.drawable.map_marker);
+            point.setImageResource( getOfficial() ? R.drawable.map_marker_green : R.drawable.navigation);
     }
 }
