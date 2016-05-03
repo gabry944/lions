@@ -17,6 +17,7 @@ import android.view.MenuItem;
 
 import com.example.micke.lions.Common;
 import com.example.micke.lions.R;
+import com.example.micke.lions.indoor.IndoorActivity;
 
 public class OutdoorActivity extends AppCompatActivity {
 
@@ -149,14 +150,41 @@ public class OutdoorActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult: ");
         if(requestCode == 1) {
             if (resultCode == RESULT_OK) {
-                Log.d(TAG, "onActivityResult: ok");
-                mViewPager.setCurrentItem(2);
-                String[] parts = data.getStringArrayExtra("car");
-                qr.getCar(parts);
+                String[] parts = data.getStringArrayExtra("data");
+                //parts[1] = building id
+                //parts[2] = floors
+                //parts[3] = floor id (1,2,3 etc.)
+                //parts[4] = ips
+                //parts[5] = ip id
+
+                if(parts[0].equals("building")) {
+                    //Start a new IndoorActivity for this o to map fragment
+                    goToIP(parts);
+                } else if(parts[0].equals("car")) {
+                    //send to OutdoorQRFragment
+                    mViewPager.setCurrentItem(2);
+                    getCar(parts);
+                }
             }
         }
+    }
+
+    public void getCar(String[] parts) {
+        fireBaseHandler.getCar(qr, parts[1]);
+    }
+
+    public void goToIP(String[] parts) {
+        //Go to map fragment
+        Intent intent = new Intent(this, IndoorActivity.class);
+        Bundle bundle = new Bundle();
+        String ipId = "-1";
+        if (parts[5] != null)
+            ipId = parts[5];
+        bundle.putString("ipId", ipId);
+        intent.putExtras(bundle);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); //not allowed togeter with startActivityForResult
+        startActivityForResult(intent, 1);
     }
 }

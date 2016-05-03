@@ -113,30 +113,11 @@ public class IndoorQRFragment extends Fragment implements ZBarScannerView.Result
         }
 
         if(partsLength > 1) {
-            if(parts[0].equals("building")) {
-                //Insert code for going to map-fragment here
-                //parts[1] = building id
-                //parts[2] = floors
-                //parts[3] = floor id (1,2,3 etc.)
-                //parts[4] = ips
-                //parts[5] = ip id
-
-                //Go to map fragment
-                Intent intent = new Intent(getContext(), IndoorActivity.class);
-                Bundle bundle = new Bundle();
-                String ipId = "-1";
-                if(parts[5] != null)
-                    ipId = parts[5];
-                bundle.putString("ipId", ipId);
-                intent.putExtras(bundle);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            } else if(parts[0].equals("car")) {
-                Intent intent = new Intent();
-                intent.putExtra("car", parts);
-                getActivity().setResult(Activity.RESULT_OK, intent);
-                getActivity().finish();
-            }
+            //send data to OutdoorActivity
+            Intent intent = new Intent();
+            intent.putExtra("data", parts);
+            getActivity().setResult(Activity.RESULT_OK, intent);
+            getActivity().finish();
         }
 
         // If you would like to resume scanning, call this method below:
