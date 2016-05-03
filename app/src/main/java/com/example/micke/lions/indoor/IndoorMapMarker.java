@@ -53,6 +53,14 @@ public class IndoorMapMarker {
 
     public String getCategory(){ return pointOfInterest.getCategory(); }
 
+    public String getTitle(){
+        return pointOfInterest.getTitle();
+    }
+
+    public String getDescription(){
+        return pointOfInterest.getDescription();
+    }
+
     public boolean getOfficial() { return pointOfInterest.getOfficial(); }
 
     public void setX(float x){
