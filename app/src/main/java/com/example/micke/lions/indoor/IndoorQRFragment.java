@@ -1,10 +1,8 @@
 package com.example.micke.lions.indoor;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -12,15 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.example.micke.lions.FireBaseHandler;
 import com.example.micke.lions.InloggChange;
-import com.example.micke.lions.outdoor.FireBaseOutdoor;
 import com.example.micke.lions.R;
-import com.example.micke.lions.outdoor.Car;
 
 import java.util.ArrayList;
 
@@ -28,9 +22,6 @@ import me.dm7.barcodescanner.zbar.BarcodeFormat;
 import me.dm7.barcodescanner.zbar.Result;
 import me.dm7.barcodescanner.zbar.ZBarScannerView;
 
-/**
- * Created by iSirux on 2016-04-12.
- */
 public class IndoorQRFragment extends Fragment implements ZBarScannerView.ResultHandler,InloggChange {
 
     String TAG = "IndoorQRFragment";
@@ -122,27 +113,11 @@ public class IndoorQRFragment extends Fragment implements ZBarScannerView.Result
         }
 
         if(partsLength > 1) {
-            if(parts[0].equals("building")) {
-                //Insert code for going to map-fragment here
-                //parts[1] = building id
-                //parts[2] = floors
-                //parts[3] = floor id (1,2,3 etc.)
-                //parts[4] = ips
-                //parts[5] = ip id
-
-                //Go to map fragment
-                Intent intent = new Intent(getContext(), IndoorActivity.class);
-                Bundle bundle = new Bundle();
-                String ipId = "-1";
-                if(parts[5] != null)
-                    ipId = parts[5];
-                bundle.putString("ipId", ipId);
-                intent.putExtras(bundle);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            } else if(parts[0].equals("car")) {
-                //no
-            }
+            //send data to OutdoorActivity
+            Intent intent = new Intent();
+            intent.putExtra("data", parts);
+            getActivity().setResult(Activity.RESULT_OK, intent);
+            getActivity().finish();
         }
 
         // If you would like to resume scanning, call this method below:

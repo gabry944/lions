@@ -2,34 +2,22 @@ package com.example.micke.lions.outdoor;
 
 import android.Manifest;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import com.example.micke.lions.Common;
-import com.example.micke.lions.DataSetChanged;
-import com.example.micke.lions.indoor.IndoorActivity;
 import com.example.micke.lions.R;
-
-import java.util.List;
+import com.example.micke.lions.indoor.IndoorActivity;
 
 public class OutdoorActivity extends AppCompatActivity {
 
@@ -157,5 +145,46 @@ public class OutdoorActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                String[] parts = data.getStringArrayExtra("data");
+                //parts[1] = building id
+                //parts[2] = floors
+                //parts[3] = floor id (1,2,3 etc.)
+                //parts[4] = ips
+                //parts[5] = ip id
+
+                if(parts[0].equals("building")) {
+                    //Start a new IndoorActivity for this o to map fragment
+                    goToIP(parts);
+                } else if(parts[0].equals("car")) {
+                    //send to OutdoorQRFragment
+                    mViewPager.setCurrentItem(2);
+                    getCar(parts);
+                }
+            }
+        }
+    }
+
+    public void getCar(String[] parts) {
+        fireBaseHandler.getCar(qr, parts[1]);
+    }
+
+    public void goToIP(String[] parts) {
+        //Go to map fragment
+        Intent intent = new Intent(this, IndoorActivity.class);
+        Bundle bundle = new Bundle();
+        String ipId = "-1";
+        if (parts[5] != null)
+            ipId = parts[5];
+        bundle.putString("ipId", ipId);
+        intent.putExtras(bundle);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); //not allowed togeter with startActivityForResult
+        startActivityForResult(intent, 1);
     }
 }

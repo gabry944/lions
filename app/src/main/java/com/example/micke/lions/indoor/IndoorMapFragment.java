@@ -408,5 +408,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     public boolean getFilterMarkers() {
         return filterMarkers;
     }
+
+
 }
 
