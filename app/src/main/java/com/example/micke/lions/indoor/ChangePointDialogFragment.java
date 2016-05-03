@@ -122,6 +122,12 @@ public class ChangePointDialogFragment extends DialogFragment {
         submit.setVisibility(View.GONE);
         cancel.setVisibility(View.GONE);
 
+        builder.setNeutralButton("Flytta punkt", new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int id) {
+            Log.d(TAG, "onClick: ändra");
+            //TODO
+        }
+    });
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 PointOfInterest point = new PointOfInterest(titleField.getText().toString(),
