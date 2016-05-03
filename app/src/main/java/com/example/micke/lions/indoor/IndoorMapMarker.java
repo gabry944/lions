@@ -96,7 +96,7 @@ public class IndoorMapMarker {
         else if (getCategory().equals(context.getString(R.string.Stairs)))
             point.setImageResource( getOfficial() ? R.drawable.stairs_green : R.drawable.stairs_menu );
         else if (getCategory().equals(context.getString(R.string.Toilet)))
-            point.setImageResource( getOfficial() ? R.drawable.wc_green : R.drawable.wc_new);
+            point.setImageResource( getOfficial() ? R.drawable.wc_green : R.drawable.wc);
         else
             point.setImageResource( getOfficial() ? R.drawable.map_marker_green : R.drawable.navigation);
     }

@@ -92,7 +92,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         else if (category.equals("Trappa"))
             holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.stairs_green : R.drawable.stairs_menu );
         else if (category.equals("Toalett"))
-            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.wc_green : R.drawable.wc_new);
+            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.wc_green : R.drawable.wc);
         else
             holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.map_marker_green : R.drawable.navigation);
 
