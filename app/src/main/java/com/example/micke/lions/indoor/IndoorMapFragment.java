@@ -332,10 +332,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
 
     private void addPopup(TextView textView, float posX, float posY){
-
-        textView.setX(posX);
-        textView.setY(posY);
-
+        textView.setX(posX - 35);
+        textView.setY(posY - 110);
     }
 
     @Override
