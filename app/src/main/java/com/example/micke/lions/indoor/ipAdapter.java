@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.micke.lions.R;
+import com.example.micke.lions.Common;
 
 import java.util.List;
 
@@ -154,6 +155,8 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         v.startAnimation(a);
 
         v.findViewById(R.id.content).setVisibility(View.GONE);
+        v.findViewById(R.id.qr_code).setVisibility(View.GONE);
+        v.findViewById(R.id.createQR).setVisibility(View.GONE);
     }
 
     public void expandView(final View v) {
@@ -166,19 +169,37 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
         //must set to visible AFTER the extraction of the height
         TextView contentView = (TextView)v.findViewById(R.id.content);
+        TextView qrContentView = (TextView) v.findViewById(R.id.qr_code);
+        ImageButton qrButton = (ImageButton) v.findViewById(R.id.createQR);
         contentView.setVisibility(View.VISIBLE);
 
+
+
         //get length of text by bounds.width after these two lines
-        Rect bounds = new Rect();
-        contentView.getPaint().getTextBounds((String) contentView.getText(), 0, contentView.getText().length(), bounds);
+        Rect bounds_description = new Rect();
+        contentView.getPaint().getTextBounds((String) contentView.getText(), 0, contentView.getText().length(), bounds_description);
+
+        Rect bounds_qr = new Rect();
+
+        if(Common.IsAdmin()) {
+            qrContentView.getPaint().getTextBounds((String) qrContentView.getText(), 0, qrContentView.getText().length(), bounds_qr);
+        }
+
 
         int cardwidth = v.getWidth() - 12 *4;
         int textHeight = v.getHeight() - 12 *2;
 
-        Log.d(TAG, "expandView: bounds.width()/cardwidth = " + bounds.width()/cardwidth);
-        Log.d(TAG, "expandView: (bounds.width()/cardwidth +1)*textHeight = " + (bounds.width()/cardwidth +1)*textHeight);
+        Log.d(TAG, "expandView: bounds.width()/cardwidth = " + bounds_description.width()/cardwidth);
+        Log.d(TAG, "expandView: (bounds.width()/cardwidth +1)*textHeight = " + (bounds_description.width()/cardwidth +1)*textHeight);
         //get desired size of card by calculating number of rows
-        final int targetHeight = initHeight + (bounds.width()/cardwidth +1)*textHeight;
+        final int targetHeight;
+        if(Common.IsAdmin()){
+            qrContentView.setVisibility(View.VISIBLE);
+            qrButton.setVisibility(View.VISIBLE);
+            targetHeight = initHeight + (bounds_description.width()/cardwidth +1)*textHeight + (bounds_qr.width()/cardwidth + 1)*textHeight + 100;
+            Log.d(TAG, "expandView: bounds.width()/cardwidth = " + targetHeight);
+        }
+        else targetHeight = initHeight + (bounds_description.width()/cardwidth +1)*textHeight;
 
         // Older versions of android (pre API 21) cancel animations for views with a height of 0.
         v.getLayoutParams().height = 1;

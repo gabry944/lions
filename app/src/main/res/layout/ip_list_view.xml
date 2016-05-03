@@ -40,15 +40,43 @@
             android:maxHeight="@dimen/icon_size"
             android:layout_gravity="end"/>
 
-        <TextView
-            android:id="@+id/content"
-            android:textSize="20sp"
-            android:layout_margin="@dimen/list_margin"
-            android:paddingTop="@dimen/icon_size"
-            android:layout_width="match_parent"
+        <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:visibility="gone"/>
+            android:paddingTop="@dimen/icon_size">
+
+            <TextView
+                android:id="@+id/content"
+                android:textSize="20sp"
+                android:layout_margin="@dimen/list_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/qr_code"
+                android:textSize="20sp"
+                android:layout_margin="@dimen/list_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:visibility="gone"
+                android:text="Här ska admin kunna hämta qr-kod för ip"
+                android:layout_below="@+id/content"/>
+
+            <ImageButton
+                android:id="@+id/createQR"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/navigation"
+                android:layout_below="@+id/qr_code"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
 
     </android.support.v7.widget.CardView>
 
