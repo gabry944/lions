@@ -23,21 +23,18 @@ import com.example.micke.lions.Common;
 import com.example.micke.lions.InloggChange;
 import com.example.micke.lions.indoor.IndoorActivity;
 import com.example.micke.lions.R;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.WeakHashMap;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -229,7 +226,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
         String buildingId = marker.getSnippet();
         bundle.putString("buildingId", buildingId);
         intent.putExtras(bundle);
-        startActivity(intent);
+        getActivity().startActivityForResult(intent, 1);
         return false;
     }
 

@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ import com.example.micke.lions.R;
 
 public class CarDialogFragment extends DialogFragment {
 
+    String TAG = "CarDialogFragment";
     FireBaseOutdoor fireBaseHandler;
     Car car;
     public boolean dismissed;
@@ -93,22 +95,23 @@ public class CarDialogFragment extends DialogFragment {
             parkCar.setEnabled(false);
             permissionMessage.setVisibility(View.VISIBLE);
         }
-        if(!gpsIsOn){
-            parkCar.setEnabled(false);
-            alertNoGps();
-        }
         else {
-            parkCar.setEnabled(true);
-            permissionMessage.setVisibility(View.GONE);
-            parkCar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (ActivityCompat.checkSelfPermission(getActivity(),
-                            Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                            && ActivityCompat.checkSelfPermission(getActivity(),
-                            Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }
+            if (!gpsIsOn) {
+                parkCar.setEnabled(false);
+                alertNoGps();
+            }
+            else {
+                parkCar.setEnabled(true);
+                permissionMessage.setVisibility(View.GONE);
+                parkCar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (ActivityCompat.checkSelfPermission(getActivity(),
+                                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                                && ActivityCompat.checkSelfPermission(getActivity(),
+                                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            return;
+                        }
 
                         Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
 
@@ -124,7 +127,8 @@ public class CarDialogFragment extends DialogFragment {
                         dismiss();
                     }
 
-            });
+                });
+            }
         }
 
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -147,7 +151,9 @@ public class CarDialogFragment extends DialogFragment {
                 .setCancelable(false)
                 .setPositiveButton("Ja", new DialogInterface.OnClickListener(){
                     public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        Log.d(TAG, "onClick: Ja");
+                        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        Log.d(TAG, "onClick: Ja, ACTION_LOCATION_SOURCE_SETTINGS intent started");
                     }
                 })
                 .setNegativeButton("Nej", new DialogInterface.OnClickListener() {

@@ -2,34 +2,21 @@ package com.example.micke.lions.outdoor;
 
 import android.Manifest;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import com.example.micke.lions.Common;
-import com.example.micke.lions.DataSetChanged;
-import com.example.micke.lions.indoor.IndoorActivity;
 import com.example.micke.lions.R;
-
-import java.util.List;
 
 public class OutdoorActivity extends AppCompatActivity {
 
@@ -155,6 +142,20 @@ public class OutdoorActivity extends AppCompatActivity {
                 } else {
                     Common.LocationPermissionDenied();
                 }
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: ");
+        if(requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                Log.d(TAG, "onActivityResult: ok");
+                mViewPager.setCurrentItem(2);
+                String[] parts = data.getStringArrayExtra("car");
+                qr.getCar(parts);
             }
         }
     }

@@ -181,14 +181,18 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
                     bundle.putString("ipId", ipId);
                     intent.putExtras(bundle);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    getActivity().startActivityForResult(intent, 1);
                 } else if (parts[0].equals("car")) {
-                    fireBaseHandler.getCar(this, parts[1]);
+                    getCar(parts);
                 }
             }
         }
         // If you would like to resume scanning, call this method below:
         mScannerView.resumeCameraPreview(this);
+    }
+
+    public void getCar(String[] parts) {
+        fireBaseHandler.getCar(this, parts[1]);
     }
 
     @Override
