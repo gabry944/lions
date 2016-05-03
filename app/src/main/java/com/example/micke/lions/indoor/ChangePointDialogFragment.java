@@ -37,6 +37,7 @@ public class ChangePointDialogFragment extends DialogFragment {
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.removePointQuetion);
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
