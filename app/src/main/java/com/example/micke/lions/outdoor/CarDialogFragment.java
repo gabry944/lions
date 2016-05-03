@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -26,15 +27,19 @@ public class CarDialogFragment extends DialogFragment {
     Car car;
     public boolean dismissed;
     private boolean canUseLocation;
+    private boolean gpsIsOn;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         dismissed = false;
         canUseLocation = false;
+        gpsIsOn = false;
 
         if (Common.IsLocationPermitted(getActivity()) == Common.PERMISSION_GRANTED) {
             canUseLocation = true;
         }
+
+        Log.d("TAG", "Can use location" + String.valueOf(canUseLocation));
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
@@ -50,6 +55,10 @@ public class CarDialogFragment extends DialogFragment {
         final String locationProvider = LocationManager.NETWORK_PROVIDER;
         // Or use LocationManager.GPS_PROVIDER
 
+        if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            gpsIsOn = true;
+        }
+
         //Inflate the layout from xml
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.car_dialog_fragment, null);
@@ -57,6 +66,7 @@ public class CarDialogFragment extends DialogFragment {
 
         Button findCar = (Button) dialogView.findViewById(R.id.find_car);
         Button parkCar = (Button) dialogView.findViewById(R.id.park_car);
+        Button cancel = (Button) dialogView.findViewById(R.id.cancel);
         TextView permissionMessage = (TextView) dialogView.findViewById(R.id.permission);
 
         if(car.getLongitude() == 0 && car.getLatitude() == 0)
@@ -83,6 +93,10 @@ public class CarDialogFragment extends DialogFragment {
             parkCar.setEnabled(false);
             permissionMessage.setVisibility(View.VISIBLE);
         }
+        if(!gpsIsOn){
+            parkCar.setEnabled(false);
+            alertNoGps();
+        }
         else {
             parkCar.setEnabled(true);
             permissionMessage.setVisibility(View.GONE);
@@ -96,22 +110,53 @@ public class CarDialogFragment extends DialogFragment {
                         return;
                     }
 
-                    Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
-                    car.setLatitude(lastKnownLocation.getLatitude());
-                    car.setLongitude(lastKnownLocation.getLongitude());
-                    Log.d("car", "current pos: " + lastKnownLocation.getLatitude() + " " + lastKnownLocation.getLongitude());
-                    fireBaseHandler.updateCar(car);
+                        Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
 
-                    ((OutdoorActivity) getActivity()).getViewPager().setCurrentItem(0);
-                    ((OutdoorActivity) getActivity()).map.newMarker(car, lastKnownLocation);
+                        Log.d("TAG", String.valueOf(lastKnownLocation));
+                        car.setLatitude(lastKnownLocation.getLatitude());
+                        car.setLongitude(lastKnownLocation.getLongitude());
+                        Log.d("car", "current pos: " + lastKnownLocation.getLatitude() + " " + lastKnownLocation.getLongitude());
+                        fireBaseHandler.updateCar(car);
 
-                    dismiss();
-                }
+                        ((OutdoorActivity) getActivity()).getViewPager().setCurrentItem(0);
+                        ((OutdoorActivity) getActivity()).map.newMarker(car, lastKnownLocation);
+
+                        dismiss();
+                    }
+
             });
         }
 
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
+
         // Create the AlertDialog object and return it
         return dialogBuilder.create();
+    }
+
+    private void alertNoGps(){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        Log.d("TAG", String.valueOf(getActivity()));
+
+        builder.setMessage("Din GPS verkar vara avstängd, vill du sätta på den?")
+                .setCancelable(false)
+                .setPositiveButton("Ja", new DialogInterface.OnClickListener(){
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("Nej", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 
     @Override
