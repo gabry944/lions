@@ -117,6 +117,7 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
         final MenuItem item = menu.findItem(R.id.search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(this);
+
     }
 
     @Override
