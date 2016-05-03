@@ -3,13 +3,8 @@ package com.example.micke.lions.indoor;
 import android.app.DialogFragment;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -22,12 +17,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,6 +49,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     public FloorAdapter floorAdapter;
     private FireBaseIndoor fireBaseIndoor;
     private String buildingId;
+    private Context context;
     private String currentFloor = "3"; //TODO
 
     private boolean filterMarkers;
@@ -66,10 +60,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private int displayWidth;
     private int displayHeight;
 
-    private float mx, mx2;  //2 is for the second finger. Used for zooming
-    private float my, my2;
-    private float scaleFactor = 5.0f;
-    private boolean longClick = true;  //turns to false if user moves fingers
+    //Scaletest
+    private MapImage mapImage;
+    private BitmapLoading bitmapLoading;
 
     //Stores all ips for the whole building
     private List<PointOfInterest> pointList;
@@ -82,8 +75,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private ImageButton goToList;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
-
-    private Drawable floorMap;
 
     public IndoorMapFragment() {
     }
@@ -106,9 +97,10 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         filterMarkers = false;
         indoorActivity = (IndoorActivity) getActivity();
         fireBaseIndoor = indoorActivity.getFireBaseHandler();
+        context = getContext();
 
         buildingId = indoorActivity.getBuildingId();
-        rootView = inflater.inflate(R.layout.activity_indoor_map, container, false);
+        rootView = inflater.inflate(R.layout.fragment_indoor_map, container, false);
         mFloors = fireBaseIndoor.getFloors(buildingId, this);
         floorAdapter = new FloorAdapter(this, mFloors);
 
@@ -118,6 +110,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         display.getSize(size);
         displayWidth = size.x;
         displayHeight = size.y;
+
+        //Initialize bitmap loading class
+        bitmapLoading = new BitmapLoading(context, displayWidth, displayHeight);
 
         //For list of floors
         mFloorRecyclerView = (RecyclerView) rootView.findViewById(R.id.floor_recycler_view);
@@ -136,6 +131,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         Log.d("point", "getting dimensions...");
         getDimensions(r);
 
+        //mapImage
+        mapImage = (MapImage) rootView.findViewById(R.id.scale_test);
+        mapImage.setImage(new BitmapDrawable(getResources(), bitmapLoading.getFloorImage(R.drawable.map_t3)));
+        mapImage.setParent(r);
+        mapImage.setCallback(this);
+
         setHasOptionsMenu(true);
 
         pointList = fireBaseIndoor.getPoints(buildingId, this);
@@ -150,112 +151,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         });
 
         setCurrentFloor("3");
-
-        r.setLongClickable(true);
-        r.setClickable(true);
-        r.setOnLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(View arg0) {
-
-                if(longClick) {
-//                    addPoint(r, mx - r.getWidth() / 2,
-//                            my - r.getHeight() / 2 + 60);
-
-                    float[] point = new float[2];
-                    Log.d("map_pos", "mx = " + mx + " r_width = " + r.getWidth());
-                    Log.d("map_pos", "my = " + my + " r_height = " + r.getHeight());
-                    point[0] = mx - r.getWidth() / 4;
-                    point[1] = my - r.getHeight() / 4 + 60;
-                    DialogFragment newFragment = new AddPointDialogFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putFloat("lat", point[0]);
-                    bundle.putFloat("lng", point[1]);
-                    newFragment.setArguments(bundle);
-                    newFragment.show(indoorActivity.getFragmentManager(), "add_point_layout");
-                }
-                        Log.d("map_indoor", "onLongClick: " + longClick);
-                return false;
-            }
-        });
-
-        r.setOnTouchListener(new View.OnTouchListener() {
-
-            public boolean onTouch(View arg0, MotionEvent event) {
-
-                float posX, posY;
-                float curX, curY;
-
-                final float SCROLLSPEED = 30.0f;
-                final float ZOOMSPEED = 50.0f;
-
-                switch (event.getActionMasked()) {
-                    case MotionEvent.ACTION_DOWN:
-                        mx = event.getX();
-                        my = event.getY();
-
-                        //Special case for two fingers
-                        if (event.getPointerCount() == 2) {
-                            mx2 = event.getX(1);
-                            my2 = event.getY(1);
-                        }
-
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        //Check if user want to zoom
-                        if (event.getPointerCount() == 2) {
-                            longClick = false;
-                            float zoomVectorX = mx - mx2;
-                            float zoomVectorY = my - my2;
-                            float newZoomVectorX = event.getX(0) - event.getX(1);
-                            float newZoomVectorY = event.getY(0) - event.getY(1);
-
-                            //diff = distance between finger motion based on percentage difference
-                            double diff = (double) scaleFactor * 20 *
-                                    ((Math.sqrt(Math.pow(newZoomVectorX, 2.0) + Math.pow(newZoomVectorY, 2.0)) -
-                                            Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)))
-                                            / Math.sqrt(Math.pow(zoomVectorX, 2.0) + Math.pow(zoomVectorY, 2.0)));
-
-                            diff = (diff < -ZOOMSPEED) ? -ZOOMSPEED : diff;
-                            diff = (diff > ZOOMSPEED) ? ZOOMSPEED : diff;
-                            scaleFactor += 0.02 * diff;
-                            scaleFactor = (scaleFactor > 10.0f) ? 10.0f : scaleFactor;
-                            scaleFactor = (scaleFactor < 1.0f) ? 1.0f : scaleFactor;
-
-                            r.setScaleX(scaleFactor);
-                            r.setScaleY(scaleFactor);
-                            mx = event.getX(0);
-                            my = event.getY(0);
-                            mx2 = event.getX(1);
-                            my2 = event.getY(1);
-                        }
-                        //Check if user want to drag the map
-                        else if (event.getPointerCount() == 1) {
-                            curX = event.getX();
-                            curY = event.getY();
-
-                            posX = r.getTranslationX();
-                            posY = r.getTranslationY();
-
-                            float deltaX = mx - curX;
-                            float deltaY = my - curY;
-
-                            if(deltaX+deltaY > 5)
-                                longClick = false;
-
-                            r.setTranslationX(posX - deltaX);
-                            r.setTranslationY(posY - deltaY);
-
-                            mx = curX;
-                            my = curY;
-                        }
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        longClick = true;
-                        break;
-                }
-
-                return false;
-            }
-        });
 
         return rootView;
     }
@@ -321,38 +216,43 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         return (float) Math.sqrt( Math.pow((point1X-point2X), 2) + Math.pow((point1Y-point2Y), 2) );
     }
 
+    public void showAddPointDialog(float[] point) {
+        DialogFragment newFragment = new AddPointDialogFragment();
+        Bundle bundle = new Bundle();
+        bundle.putFloat("lat", point[0]);
+        bundle.putFloat("lng", point[1]);
+        newFragment.setArguments(bundle);
+        newFragment.show(indoorActivity.getFragmentManager(), "add_point_layout");
+    }
+
     private void addPoint(RelativeLayout parent, PointOfInterest ip) {
         //TODO fixa vettiga värden
-        final float posX = ip.getLatitude();
-        final float posY = ip.getLongitude();
+        final float[] point = mapImage.convertCoordinates(ip.getLatitude(), ip.getLongitude());
 
-        final IndoorMapMarker point = new IndoorMapMarker(ip, posX, posY, getContext());
+        final IndoorMapMarker marker = new IndoorMapMarker(ip, point[0], point[1], parent.getContext());
 
-        parent.addView(point.getMarker());
+        parent.addView(marker.getMarker());
 
-        listOfMarkers.add(point);
+        listOfMarkers.add(marker);
 
-        if(ip.getCategory().toLowerCase().equals("hiss"))
-            addDescText(parent, ip.getCategory(), point.getX(), point.getY());
+//        if(ip.getCategory().toLowerCase().equals("hiss"))
+            addDescText(parent, ip.getCategory(), marker.getX(), marker.getY());
 
-        point.getMarker().setOnClickListener(new View.OnClickListener() {
+        marker.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (point.getOfficial() && !Common.IsAdmin())
-                {
-                    Toast toast = Toast.makeText(getContext(),R.string.adminRequierdForChangingPoint, Toast.LENGTH_LONG);
+                if (marker.getOfficial() && !Common.IsAdmin()) {
+                    Toast toast = Toast.makeText(getContext(), R.string.adminRequierdForChangingPoint, Toast.LENGTH_LONG);
                     toast.show();
-                }
-                else
-                {
+                } else {
                     ChangePointDialogFragment ask = new ChangePointDialogFragment();
                     Bundle bundle = new Bundle();
-                    bundle.putString("id",point.getId());
-                    bundle.putString("category", point.getCategory());
-                    bundle.putString("title", point.getTitle());
-                    bundle.putString("description", point.getDescription());
+                    bundle.putString("id", marker.getId());
+                    bundle.putString("category", marker.getCategory());
+                    bundle.putString("title", marker.getTitle());
+                    bundle.putString("description", marker.getDescription());
                     ask.setArguments(bundle);
-                    ask.show(indoorActivity.getFragmentManager(),"remove_point_fragment");
+                    ask.show(indoorActivity.getFragmentManager(), "remove_point_fragment");
                 }
             }
         });
@@ -382,7 +282,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     }
 
     private void addDescText(RelativeLayout parent, String category, float posX, float posY){
-        TextView textView = new TextView(getContext());
+        TextView textView = new TextView(parent.getContext());
         textView.setText(category);
         textView.setTextSize(6);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
@@ -426,22 +326,24 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         return false;
     }
 
-    public void setCurrentFloor(String floor) {
-        ImageView i = (ImageView) rootView.findViewById(R.id.map);
-        fireBaseIndoor.setFloor(floor);
-        floorMap = null;
-        currentFloor = floor;
-        if (floor.equals("3")) {
-            //floorMap = getResources().getDrawable(R.drawable.map_t3);
-            floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t3));
-        }
-        if (floor.equals("4")) {
-            //floorMap = getResources().getDrawable(R.drawable.map_t4);
-            floorMap = new BitmapDrawable(getResources(), getFloorImage(R.drawable.map_t4));
-        }
-        i.setImageDrawable(floorMap);
 
-        RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+    public void setCurrentFloor(String floor) {
+        Log.d("floor", "" + floor);
+        mapImage.resetView();
+
+        fireBaseIndoor.setFloor(floor);
+        currentFloor = floor;
+
+        if (floor.equals("3")) {
+            mapImage.setImage(new BitmapDrawable(getResources(), bitmapLoading.getFloorImage(R.drawable.map_t3)));
+        } else if (floor.equals("4")) {
+            mapImage.setImage(new BitmapDrawable(getResources(), bitmapLoading.getFloorImage(R.drawable.map_t4)));
+        }
+
+        mapImage.resetView();
+
+//        RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+        RelativeLayout r = mapImage.getRelativeLayout();
         for (IndoorMapMarker p : listOfMarkers)
             r.removeView(p.getMarker());
         listOfMarkers.clear();
@@ -455,7 +357,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     @Override
     public void getUpdatedDataSet(List<PointOfInterest> pointList) {
-        RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
+        RelativeLayout r = mapImage.getRelativeLayout();
 
         for(IndoorMapMarker p : listOfMarkers) {
             r.removeView(p.getMarker());
@@ -487,53 +389,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 Log.d("point", "x " + point.x + " y " + point.y);
             }
         });
-    }
-
-    //Load bitmaps efficiently
-    private Bitmap getFloorImage(int resId) {
-        Log.d("display", "w: " + displayWidth + " h: " + displayHeight);
-        return decodeSampledBitmapFromResource(getResources(), resId, displayWidth, displayHeight);
-    }
-
-    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
-                                                         int reqWidth, int reqHeight) {
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(res, resId, options);
-
-        // Calculate inSampleSize
-        //temp width & height
-        reqHeight = 256;
-        reqWidth = 256;
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeResource(res, resId, options);
-    }
-
-    public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
     }
 
     @Override
