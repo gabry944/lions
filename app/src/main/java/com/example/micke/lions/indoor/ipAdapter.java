@@ -156,6 +156,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
         v.findViewById(R.id.content).setVisibility(View.GONE);
         v.findViewById(R.id.qr_code).setVisibility(View.GONE);
+        v.findViewById(R.id.createQR).setVisibility(View.GONE);
     }
 
     public void expandView(final View v) {
@@ -169,6 +170,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         //must set to visible AFTER the extraction of the height
         TextView contentView = (TextView)v.findViewById(R.id.content);
         TextView qrContentView = (TextView) v.findViewById(R.id.qr_code);
+        ImageButton qrButton = (ImageButton) v.findViewById(R.id.createQR);
         contentView.setVisibility(View.VISIBLE);
 
 
@@ -193,7 +195,8 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         final int targetHeight;
         if(Common.IsAdmin()){
             qrContentView.setVisibility(View.VISIBLE);
-            targetHeight = initHeight + (bounds_description.width()/cardwidth +1)*textHeight + (bounds_qr.width()/cardwidth + 1)*textHeight + 50;
+            qrButton.setVisibility(View.VISIBLE);
+            targetHeight = initHeight + (bounds_description.width()/cardwidth +1)*textHeight + (bounds_qr.width()/cardwidth + 1)*textHeight + 100;
             Log.d(TAG, "expandView: bounds.width()/cardwidth = " + targetHeight);
         }
         else targetHeight = initHeight + (bounds_description.width()/cardwidth +1)*textHeight;
