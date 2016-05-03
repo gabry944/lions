@@ -338,6 +338,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                     bundle.putString("category", marker.getCategory());
                     bundle.putString("title", marker.getTitle());
                     bundle.putString("description", marker.getDescription());
+                    bundle.putFloat("lat", marker.getPoint().getLatitude());
+                    bundle.putFloat("lng", marker.getPoint().getLongitude());
                     ask.setArguments(bundle);
                     ask.show(indoorActivity.getFragmentManager(), "remove_point_fragment");
                 }
