@@ -1,6 +1,5 @@
 package com.example.micke.lions.indoor;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -16,9 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.SearchView;
-import android.widget.TextView;
 
-import com.example.micke.lions.Common;
 import com.example.micke.lions.DataSetChanged;
 import com.example.micke.lions.InloggChange;
 import com.example.micke.lions.R;

@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.example.micke.lions.R;
 import com.example.micke.lions.indoor.IndoorActivity;
-import com.example.micke.lions.indoor.PointOfInterest;
 
 import java.util.List;
 
@@ -106,8 +105,8 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHo
                 bundle.putString("buildingId", buildingId);
                 bundle.putString("buildingTitle", currentBuilding);
                 intent.putExtras(bundle);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mContext.startActivity(intent);
+                //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); //can't be used together with startActivityForResult
+                ((OutdoorActivity)mContext).startActivityForResult(intent, 1);
             }
         });
     }

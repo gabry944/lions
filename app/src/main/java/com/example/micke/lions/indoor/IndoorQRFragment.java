@@ -1,10 +1,8 @@
 package com.example.micke.lions.indoor;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -12,15 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.example.micke.lions.FireBaseHandler;
 import com.example.micke.lions.InloggChange;
-import com.example.micke.lions.outdoor.FireBaseOutdoor;
 import com.example.micke.lions.R;
-import com.example.micke.lions.outdoor.Car;
 
 import java.util.ArrayList;
 
@@ -28,9 +22,6 @@ import me.dm7.barcodescanner.zbar.BarcodeFormat;
 import me.dm7.barcodescanner.zbar.Result;
 import me.dm7.barcodescanner.zbar.ZBarScannerView;
 
-/**
- * Created by iSirux on 2016-04-12.
- */
 public class IndoorQRFragment extends Fragment implements ZBarScannerView.ResultHandler,InloggChange {
 
     String TAG = "IndoorQRFragment";
@@ -141,7 +132,10 @@ public class IndoorQRFragment extends Fragment implements ZBarScannerView.Result
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             } else if(parts[0].equals("car")) {
-                //no
+                Intent intent = new Intent();
+                intent.putExtra("car", parts);
+                getActivity().setResult(Activity.RESULT_OK, intent);
+                getActivity().finish();
             }
         }
 
