@@ -58,7 +58,6 @@ public class MapImage extends RelativeLayout {
         return retVal || super.onTouchEvent(event);
     }
 
-
     public void setImage(BitmapDrawable bitmapDrawable) {
         imageView.setImageDrawable(bitmapDrawable);
     }
@@ -124,6 +123,10 @@ public class MapImage extends RelativeLayout {
             touchX = e.getX();
             touchY = e.getY();
 
+            Log.d("touch", "touchX: " + touchX + " touchY: " + touchY);
+            Log.d("touch", "viewcoords[0]: " + viewCoords[0] + " viewcoords[1]: " + viewCoords[1]);
+            Log.d("touch", "relativeLayout.getScaleX(): " + relativeLayout.getScaleX() + " relativeLayout.getScaleY(): " + relativeLayout.getScaleY());
+
             //Touched point on imageview in pixels
             imageX = (touchX - viewCoords[0]) / relativeLayout.getScaleX();
             imageY = (touchY - viewCoords[1] + imageYOffset) / relativeLayout.getScaleY();
@@ -131,6 +134,8 @@ public class MapImage extends RelativeLayout {
             //Normalize value - min 0, max 1
             point[0] = Math.max(0f, Math.min(1f, imageX / imageWidth));
             point[1] = Math.max(0f, Math.min(1f, imageY / imageHeight));
+
+            Log.d("touch", "point[0]: " + point[0] + " point[1]: " + point[1]);
 
             //Add a point on the image at touched point
             mIndoorMapFragment.showAddPointDialog(point);
@@ -154,31 +159,26 @@ public class MapImage extends RelativeLayout {
         }
     }
 
-    public float[] convertCoordinates(float latitude, float longitude) {
+    public float[] convertCoordinates(float percentageX, float percentageY) {
         float[] point = new float[2];
         int[] viewCoords = new int[2];
 
         //Get the image view's location on the screen
         imageView.getLocationOnScreen(viewCoords);
-//        Log.d("touch", "viewcoords[0]: " + viewCoords[0] + " viewcoords[1]: " + viewCoords[1]);
-
-//        point[0] = latitude * relativeLayout.getScaleX() * imageWidth - viewCoords[0];
-//        point[1] = longitude * relativeLayout.getScaleY() * imageHeight - viewCoords[1] + imageYOffset;
+        //Log.d("touch", "viewcoords[0]: " + viewCoords[0] + " viewcoords[1]: " + viewCoords[1]);
 
         //TODO Adjust algorithm for zoom and pan
         //Calculate the image coordinates in view
-        point[0] = latitude * relativeLayout.getScaleX() * imageWidth - imageWidth / 2;
-        point[1] = longitude * relativeLayout.getScaleY() * imageHeight - imageHeight / 2 - imageYOffset;
+        //point[0] = percentageX * relativeLayout.getScaleX() * imageWidth - imageWidth / 2;
+        //point[1] = percentageY * relativeLayout.getScaleY() * imageHeight - imageHeight / 2 - imageYOffset;
+        point[0] = percentageX * imageWidth - imageWidth / 2;
+        point[1] = percentageY * imageHeight - imageHeight / 2 - imageYOffset;
 
-//        point[0] = latitude * relativeLayout.getScaleX() * imageWidth;
-//        point[1] = longitude * relativeLayout.getScaleY() * imageHeight + imageYOffset;
-//
-//        point[1] = longitude * relativeLayout.getScaleY() * imageHeight;
 
-        Log.d("touch", "x: " + point[0] + " latitude: " + latitude + " xscale: " + relativeLayout.getScaleX()
+        Log.d("touch", "x: " + point[0] + " percentageX: " + percentageX + " xscale: " + relativeLayout.getScaleX()
                 + " imagewidth: " + imageWidth + " viewcoords[0]: " + viewCoords[0]);
 
-        Log.d("touch", "y: " + point[1] + " longitude: " + longitude + " yscale: " + relativeLayout.getScaleY()
+        Log.d("touch", "y: " + point[1] + " percentageY: " + percentageY + " yscale: " + relativeLayout.getScaleY()
                 + " imageheight: " + imageHeight + " viewcoords[1]: " + viewCoords[1]);
 
         return point;

@@ -85,19 +85,30 @@ public class IndoorMapMarker {
 
     private void setUpImageView(){
         point = new ImageView(context);
-        point.setX(localCoord[0]);
+        point.setAdjustViewBounds(true);
+        point.setX(localCoord[0]+342);
+        point.setY(localCoord[1]+494);
+        point.setMaxHeight(35);
+        point.setMaxWidth(35);
+        point.setMinimumHeight(25);
+        point.setMinimumWidth(25);
+        /*point.setX(localCoord[0]);
         point.setY(localCoord[1]);
-        point.setScaleX(0.05f);
-        point.setScaleY(0.05f);
-//        if(getCategory().equals(context.getString(R.string.Entrance)))
-//            point.setImageResource( getOfficial() ? R.drawable.entrance_green : R.drawable.entrance );
-//        else if(getCategory().equals(context.getString(R.string.Elevator)))
-//            point.setImageResource( getOfficial() ? R.drawable.elevator_marker_green : R.drawable.elevator_marker );
-//        else if (getCategory().equals(context.getString(R.string.Stairs)))
-//            point.setImageResource( getOfficial() ? R.drawable.stairs_green : R.drawable.stairs );
-//        else if (getCategory().equals(context.getString(R.string.Toilet)))
-//            point.setImageResource( getOfficial() ? R.drawable.wc_green : R.drawable.wc);
-//        else
+        point.setScaleX(0.048828125f);
+        point.setScaleY(0.048828125f);*/
+        //point.setScaleX(0.2f);
+        //point.setScaleY(0.2f);
+        //point.setBaseline();
+        if(getCategory().equals(context.getString(R.string.Entrance)))
+            point.setImageResource( getOfficial() ? R.drawable.entrance_green : R.drawable.entrance );
+        else if(getCategory().equals(context.getString(R.string.Elevator)))
+            point.setImageResource( getOfficial() ? R.drawable.elevator_marker_green : R.drawable.elevator_marker );
+        else if (getCategory().equals(context.getString(R.string.Stairs)))
+            point.setImageResource( getOfficial() ? R.drawable.stairs_green : R.drawable.stairs );
+        else if (getCategory().equals(context.getString(R.string.Toilet)))
+            point.setImageResource( getOfficial() ? R.drawable.wc_green : R.drawable.wc);
+        else
             point.setImageResource( getOfficial() ? R.drawable.map_marker_green : R.drawable.map_marker);
+            //point.setImageResource( getOfficial() ? R.drawable.elevator_marker_green : R.drawable.elevator_marker );
     }
 }
