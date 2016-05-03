@@ -348,6 +348,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                     ChangePointDialogFragment ask = new ChangePointDialogFragment();
                     Bundle bundle = new Bundle();
                     bundle.putString("id",point.getId());
+                    bundle.putString("category", point.getCategory());
+                    bundle.putString("title", point.getTitle());
+                    bundle.putString("description", point.getDescription());
                     ask.setArguments(bundle);
                     ask.show(indoorActivity.getFragmentManager(),"remove_point_fragment");
                 }

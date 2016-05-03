@@ -44,7 +44,7 @@ public class ChangePointDialogFragment extends DialogFragment {
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(inflater.inflate(R.layout.fragment_indoor_change_point, null))
                 // Add action buttons
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.remove, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Log.d(TAG, "onClick: ta bort");
 
@@ -53,13 +53,88 @@ public class ChangePointDialogFragment extends DialogFragment {
                         indoorActivity.map.RemovePoint(point);
                     }
                 })
-                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                .setNeutralButton(R.string.change, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Log.d(TAG, "onClick: behåll");
+                        Log.d(TAG, "onClick: ändra");
+                        openIpChangeDialog();
+                    }
+                })
+                .setNegativeButton(R.string.abort, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Log.d(TAG, "onClick: avbryt");
                     }
                 });
 
         // Create the AlertDialog object and return it
         return builder.create();
+    }
+
+    private void openIpChangeDialog()
+    {
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.add_point_layout, null);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(dialogView);
+        builder.setCancelable(false);
+        builder.setTitle("Ändra punkt");
+
+        Bundle bundle = this.getArguments();
+        //get values for the current interest point
+        final String ipId = bundle.getString("id");
+        final String category = bundle.getString("category");
+        final String title = bundle.getString("title");
+        final String description = bundle.getString("description");
+
+        final EditText titleField = (EditText) dialogView.findViewById(R.id.add_point_title);
+        titleField.setText(title, TextView.BufferType.EDITABLE);
+        final EditText descriptionField = (EditText) dialogView.findViewById(R.id.add_point_description);
+        descriptionField.setText(description, TextView.BufferType.EDITABLE);
+        final Spinner spinner = (Spinner) dialogView.findViewById(R.id.category_spinner);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.category_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        if (!category.equals(null)) {
+            int spinnerPosition = adapter.getPosition(category);
+            spinner.setSelection(spinnerPosition);
+        }
+
+        final CheckBox official = (CheckBox) dialogView.findViewById(R.id.official);
+        final TextView offText = (TextView) dialogView.findViewById(R.id.official_text);
+
+        if(Common.IsAdmin()) {
+            official.setVisibility(View.VISIBLE);
+            offText.setVisibility(View.VISIBLE);
+        }
+        else {
+            official.setVisibility(View.GONE);
+            offText.setVisibility(View.GONE);
+        }
+
+        //Get arguments - reference to firebase database
+        final FireBaseIndoor fireBaseIndoor = ((IndoorActivity) getActivity()).getFireBaseHandler();
+        final float point1 = bundle.getFloat("lat", 0);
+        final float point2 = bundle.getFloat("lng", 0);
+
+        Button submit = (Button) dialogView.findViewById(R.id.submit);
+        Button cancel = (Button) dialogView.findViewById(R.id.cancel);
+        submit.setVisibility(View.GONE);
+        cancel.setVisibility(View.GONE);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                PointOfInterest point = new PointOfInterest(titleField.getText().toString(),
+                        descriptionField.getText().toString(), spinner.getSelectedItem().toString(),
+                        point1, point2, fireBaseIndoor.getFloor(), official.isChecked(), ipId);
+                fireBaseIndoor.updateIp(point, Integer.parseInt(fireBaseIndoor.getFloor()));
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        builder.create().show();
     }
 }
