@@ -86,19 +86,14 @@ public class IndoorMapMarker {
     private void setUpImageView(){
         point = new ImageView(context);
         point.setAdjustViewBounds(true);
-        point.setX(localCoord[0]+342);
-        point.setY(localCoord[1]+494);
-        point.setMaxHeight(35);
-        point.setMaxWidth(35);
-        point.setMinimumHeight(25);
-        point.setMinimumWidth(25);
-        /*point.setX(localCoord[0]);
-        point.setY(localCoord[1]);
-        point.setScaleX(0.048828125f);
-        point.setScaleY(0.048828125f);*/
-        //point.setScaleX(0.2f);
-        //point.setScaleY(0.2f);
-        //point.setBaseline();
+        //change so that it will be in the middle of the icon instead of top left corner
+        point.setX(localCoord[0]-20);
+        point.setY(localCoord[1]-20);
+        point.setMaxHeight(40);
+        point.setMaxWidth(40);
+        point.setMinimumHeight(40);
+        point.setMinimumWidth(40);
+
         if(getCategory().equals(context.getString(R.string.Entrance)))
             point.setImageResource( getOfficial() ? R.drawable.entrance_green : R.drawable.entrance );
         else if(getCategory().equals(context.getString(R.string.Elevator)))

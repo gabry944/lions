@@ -123,10 +123,10 @@ public class MapImage extends RelativeLayout {
             touchX = e.getX();
             touchY = e.getY();
 
-            Log.d("touch", "touchX: " + touchX + " touchY: " + touchY);
+            /*Log.d("touch", "touchX: " + touchX + " touchY: " + touchY);
             Log.d("touch", "viewcoords[0]: " + viewCoords[0] + " viewcoords[1]: " + viewCoords[1]);
             Log.d("touch", "relativeLayout.getScaleX(): " + relativeLayout.getScaleX() + " relativeLayout.getScaleY(): " + relativeLayout.getScaleY());
-
+*/
             //Touched point on imageview in pixels
             imageX = (touchX - viewCoords[0]) / relativeLayout.getScaleX();
             imageY = (touchY - viewCoords[1] + imageYOffset) / relativeLayout.getScaleY();
@@ -135,7 +135,7 @@ public class MapImage extends RelativeLayout {
             point[0] = Math.max(0f, Math.min(1f, imageX / imageWidth));
             point[1] = Math.max(0f, Math.min(1f, imageY / imageHeight));
 
-            Log.d("touch", "point[0]: " + point[0] + " point[1]: " + point[1]);
+            //Log.d("touch", "point[0]: " + point[0] + " point[1]: " + point[1]);
 
             //Add a point on the image at touched point
             mIndoorMapFragment.showAddPointDialog(point);
@@ -165,14 +165,10 @@ public class MapImage extends RelativeLayout {
 
         //Get the image view's location on the screen
         imageView.getLocationOnScreen(viewCoords);
-        //Log.d("touch", "viewcoords[0]: " + viewCoords[0] + " viewcoords[1]: " + viewCoords[1]);
 
-        //TODO Adjust algorithm for zoom and pan
-        //Calculate the image coordinates in view
-        //point[0] = percentageX * relativeLayout.getScaleX() * imageWidth - imageWidth / 2;
-        //point[1] = percentageY * relativeLayout.getScaleY() * imageHeight - imageHeight / 2 - imageYOffset;
-        point[0] = percentageX * imageWidth - imageWidth / 2;
-        point[1] = percentageY * imageHeight - imageHeight / 2 - imageYOffset;
+        //Top left corner
+        point[0] = (percentageX * imageWidth );
+        point[1] = (percentageY * imageHeight );
 
 
         Log.d("touch", "x: " + point[0] + " percentageX: " + percentageX + " xscale: " + relativeLayout.getScaleX()
