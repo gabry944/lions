@@ -1,6 +1,7 @@
 package com.example.micke.lions.indoor;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.micke.lions.Common;
 import com.example.micke.lions.DataSetChanged;
@@ -44,6 +46,7 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
     //ip stands for interest points.
     private RecyclerView ipRecyclerView;
     private IndoorActivity indoorActivity;
+    private IndoorMapFragment indoorMapFragment;
 
     private RecyclerView.LayoutManager ipLayoutManager;
     private String buildingId;
@@ -52,6 +55,8 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
     public ipAdapter ipadapter;
     private ImageButton goToQR;
     private ImageButton goToMap;
+    private ImageButton addButton;
+
 
     public IndoorListFragment() {
     }
@@ -83,6 +88,7 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
 
         goToMap = (ImageButton) rootView.findViewById(R.id.goToIndoorMap);
         goToQR = (ImageButton) rootView.findViewById(R.id.goToIndoorQr);
+        addButton = (ImageButton) rootView.findViewById(R.id.add_ip);
 
         goToMap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +103,17 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
             public void onClick(View v) {
                 ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
                 mPager.setCurrentItem(2, true);
+            }
+        });
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast toast = Toast.makeText(getContext(), R.string.addMarkerExplanation, Toast.LENGTH_SHORT);
+                toast.show();
+                ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                mPager.setCurrentItem(0, true);
+
             }
         });
 
@@ -163,4 +180,5 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
     public void commonInlogg() {
         Log.d(TAG, "commonInlogg: ");
     }
+
 }
