@@ -1,5 +1,8 @@
 package com.example.micke.lions.indoor;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class PointOfInterest {
     private String category;
     private String title;

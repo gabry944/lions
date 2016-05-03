@@ -85,10 +85,15 @@ public class IndoorMapMarker {
 
     private void setUpImageView(){
         point = new ImageView(context);
-        point.setX(localCoord[0]);
-        point.setY(localCoord[1]);
-        point.setScaleX(0.2f);
-        point.setScaleY(0.2f);
+        point.setAdjustViewBounds(true);
+        //change so that it will be in the middle of the icon instead of top left corner
+        point.setX(localCoord[0]-20);
+        point.setY(localCoord[1]-20);
+        point.setMaxHeight(40);
+        point.setMaxWidth(40);
+        point.setMinimumHeight(40);
+        point.setMinimumWidth(40);
+
         if(getCategory().equals(context.getString(R.string.Entrance)))
             point.setImageResource( getOfficial() ? R.drawable.entrance_green : R.drawable.entrance );
         else if(getCategory().equals(context.getString(R.string.Elevator)))
@@ -99,5 +104,6 @@ public class IndoorMapMarker {
             point.setImageResource( getOfficial() ? R.drawable.wc_green : R.drawable.wc);
         else
             point.setImageResource( getOfficial() ? R.drawable.map_marker_green : R.drawable.map_marker);
+            //point.setImageResource( getOfficial() ? R.drawable.elevator_marker_green : R.drawable.elevator_marker );
     }
 }
