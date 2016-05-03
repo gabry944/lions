@@ -286,6 +286,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         end.getMarker().setVisibility(View.VISIBLE);
         textView2.setVisibility(View.VISIBLE);
+        Log.d("TAG", "X = " + end.getX() + " Y = " + end.getY());
         addPopup(textView2, end.getX(), end.getY());
 
         //Return if we didn't find an elevator/stairs or entrance
