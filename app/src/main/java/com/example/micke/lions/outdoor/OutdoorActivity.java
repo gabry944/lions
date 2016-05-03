@@ -179,10 +179,16 @@ public class OutdoorActivity extends AppCompatActivity {
         //Go to map fragment
         Intent intent = new Intent(this, IndoorActivity.class);
         Bundle bundle = new Bundle();
+        String buildingId = parts[1];
         String ipId = "-1";
-        if (parts[5] != null)
+        String floor = "";
+        if (parts[5] != null) {
             ipId = parts[5];
+            floor = parts[3];
+        }
+        bundle.putString("buildingId", buildingId);
         bundle.putString("ipId", ipId);
+        bundle.putString("floor", floor);
         intent.putExtras(bundle);
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); //not allowed togeter with startActivityForResult
         startActivityForResult(intent, 1);
