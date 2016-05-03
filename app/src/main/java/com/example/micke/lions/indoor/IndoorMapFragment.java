@@ -53,6 +53,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private String buildingId;
     private Context context;
     private String currentFloor = "3"; //TODO
+    private boolean firstLoad = true;
 
     private boolean filterMarkers;
     private IndoorMapMarker end = null, entrance = null;
@@ -163,7 +164,15 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             }
         });
 
-        setCurrentFloor("3");
+
+        if(!((IndoorActivity)getActivity()).startFloor.equals("")){
+            Log.d(TAG, "onCreateView: start floor: " + ((IndoorActivity)getActivity()).startFloor);
+            setCurrentFloor(((IndoorActivity)getActivity()).startFloor);
+        }
+        else {
+            Log.d(TAG, "onCreateView: no start floor");
+            setCurrentFloor("3");
+        }
 
         return rootView;
     }
@@ -202,6 +211,35 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     }
 
+    public void showSingleIP(String floor, String ipID) {
+        setCurrentFloor(floor);
+        filterMarkers = true;
+        entrance = null;
+
+        //Find the point
+        for(IndoorMapMarker m : listOfMarkers) {
+            if(m.getId().equals(ipID)) {
+                Log.d(TAG, "showSingleIP: found marker");
+                entrance = m;
+            }
+        }
+
+        //Should never happen
+        if(entrance == null) {
+            Log.d(TAG, "showSingleIP: no marker found");
+            return;
+        }
+
+        for (IndoorMapMarker m : listOfMarkers) {
+            m.getMarker().setVisibility(View.GONE);
+            Log.d(TAG, "showSingleIP: gone");
+        }
+
+        entrance.getMarker().setVisibility(View.VISIBLE);
+        Log.d(TAG, "showSingleIP: visible");
+    }
+
+    //should maybe be called leadTheWay or something so that highlight can be used for a single IP
     //hide all except chosen ip and entrance (or stairs/elevator)
     public void highlightIP(String goalFloor, String ipID) {
         setCurrentFloor(goalFloor);
@@ -248,6 +286,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         end.getMarker().setVisibility(View.VISIBLE);
         textView2.setVisibility(View.VISIBLE);
+        Log.d("TAG", "X = " + end.getX() + " Y = " + end.getY());
         addPopup(textView2, end.getX(), end.getY());
 
         //Return if we didn't find an elevator/stairs or entrance
@@ -332,10 +371,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
 
     private void addPopup(TextView textView, float posX, float posY){
-
-        textView.setX(posX);
-        textView.setY(posY);
-
+        textView.setX(posX - 35);
+        textView.setY(posY - 110);
     }
 
     @Override
@@ -365,15 +402,16 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         else if(id == R.id.restorePoints) {
             setCurrentFloor(fireBaseIndoor.getFloor());
             filterMarkers = false;
+            end = null;
+            entrance = null;
         }
         return false;
     }
 
-
+    //sets the map of the floor and loads all markers into the listOfMarkers
     public void setCurrentFloor(String floor) {
         Log.d("floor", "" + floor);
         mapImage.resetView();
-
         fireBaseIndoor.setFloor(floor);
         currentFloor = floor;
 
@@ -412,6 +450,13 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 addPoint(r,p);
         }
         floorAdapter.notifyDataSetChanged();
+        if(firstLoad) {
+            //check if there exist a youAreHereID
+            if(!((IndoorActivity)getActivity()).youAreHereID.equals("")){
+                showSingleIP(currentFloor, ((IndoorActivity)getActivity()).youAreHereID);
+            }
+            firstLoad = false;
+        }
     }
 
     @Override
