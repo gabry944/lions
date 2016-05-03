@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#47BBAF</color>
+    <color name="outdoorColor">#47BBAF</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#E17187</color>
+    <color name="indoorColor">#E17187</color>
     <color name="white">#FFF</color>
     <color name="blue">#1a75ff</color>
     <color name="green">#1aff75</color>
