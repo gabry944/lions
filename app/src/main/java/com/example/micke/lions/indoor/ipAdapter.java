@@ -1,13 +1,17 @@
 package com.example.micke.lions.indoor;
 
+import android.animation.ValueAnimator;
 import android.graphics.Rect;
 import android.content.Context;
+import android.media.Image;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageButton;
@@ -25,6 +29,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     private View tempView;
     private String TAG = "ipAdapter";
     private Context mContext;
+    private int originalHeight = 0;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -36,6 +41,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         public final TextView mTitleView;
         public final ImageButton goToMapImage;
         public final TextView mIDView;
+
 
         public ViewHolder(View view) {
             super(view);
@@ -110,30 +116,31 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+                ValueAnimator valueAnimator = ValueAnimator.ofInt(0);
 
                 if(isExpanded){
 
                     if (tempView != null && tempView != v) {
-                        collapseView(tempView);
-                        expandView(v);
+                        collapseView(tempView, valueAnimator);
+                        expandView(v, valueAnimator);
                     }
 
                     else if(tempView == v){
-                        collapseView(v);
+                        collapseView(v, valueAnimator);
                         isExpanded = false;
                     }
                 }
 
                 //if(isExpanded == false)
                 else{
-                    expandView(v);
+                    expandView(v, valueAnimator);
                     isExpanded = true;
                 }
             }
         });
     }
 
-    public void collapseView(final View v) {
+    public void collapseView(final View v, ValueAnimator valueAnimator) {
         final int initialHeight = v.getMeasuredHeight();
 
         Animation a = new Animation() {
@@ -159,8 +166,13 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         v.findViewById(R.id.createQR).setVisibility(View.GONE);
     }
 
-    public void expandView(final View v) {
+    public void expandView(final View v, ValueAnimator valueAnimator) {
+
+        if (originalHeight == 0) {
+            originalHeight = v.getHeight();
+        }
         tempView = v;
+
 
         v.measure(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT);
         final int initHeight = v.getMeasuredHeight();
