@@ -68,7 +68,7 @@ public class OutdoorActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(null);
+        getSupportActionBar().setTitle("LIONS");
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.

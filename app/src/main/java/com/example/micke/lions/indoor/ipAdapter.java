@@ -86,15 +86,15 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
         String category = ipDataset.get(position).getCategory();
         if(category.equals("Entré"))
-            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.entrance_green : R.drawable.entrance );
+            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.entrance_green : R.drawable.entrance_new );
         else if(category.equals("Hiss"))
-            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.elevator_marker_green : R.drawable.elevator_marker );
+            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.elevator_marker_green : R.drawable.elevator_new );
         else if (category.equals("Trappa"))
-            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.stairs_green : R.drawable.stairs );
+            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.stairs_green : R.drawable.stairs_menu );
         else if (category.equals("Toalett"))
             holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.wc_green : R.drawable.wc);
         else
-            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.map_marker_green : R.drawable.map_marker);
+            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.map_marker_green : R.drawable.navigation);
 
         holder.goToMapImage.setOnClickListener(new View.OnClickListener() {
             @Override
