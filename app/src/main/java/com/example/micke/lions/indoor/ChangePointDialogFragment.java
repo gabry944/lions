@@ -126,9 +126,6 @@ public class ChangePointDialogFragment extends DialogFragment {
         builder.setNeutralButton("Flytta punkt", new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int id) {
             Log.d("hejhej", "onClick: ändra");
-            //TODO
-            IndoorMapFragment indoorMapFragment = indoorActivity.getMapFragment();
-
         }
     });
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
