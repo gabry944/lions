@@ -72,12 +72,13 @@ public class IndoorActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(1);
+        //Listener that keeps track on which page(fragment) is showing etc.
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
             }
-
+            
             @Override
             public void onPageSelected(int position) {
                 actionBar.setDisplayHomeAsUpEnabled(position == 1);
