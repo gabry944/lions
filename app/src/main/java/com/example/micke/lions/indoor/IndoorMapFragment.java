@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -21,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -185,10 +187,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         textView1.setText("Du är här");
         textView1.setTextSize(10);
         textView1.setBackgroundResource(R.drawable.popup);
+
         RelativeLayout.LayoutParams layoutParams1 = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams1.addRule(RelativeLayout.CENTER_IN_PARENT);
-
         textView1.setLayoutParams(layoutParams1);
         textView1.setX(0);
         textView1.setY(0);
@@ -199,10 +200,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         textView2.setText("Du ska hit");
         textView2.setTextSize(10);
         textView2.setBackgroundResource(R.drawable.popup);
+
         RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams2.addRule(RelativeLayout.CENTER_IN_PARENT);
-
         textView2.setLayoutParams(layoutParams2);
         textView2.setX(0);
         textView2.setY(0);
@@ -373,8 +373,15 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
 
     private void addPopup(TextView textView, float posX, float posY){
-        textView.setX(posX - 35);
-        textView.setY(posY - 110);
+
+        textView.measure(0,0);
+        int x = textView.getMeasuredWidth();
+        int y = textView.getMeasuredHeight();
+
+        Log.d(TAG, "addPopup: x = " + x + ", y = " + y);
+
+        textView.setX(posX - x/4);
+        textView.setY(posY - y - 20); // TODO 20 is a magic nuber that is taken from half the sise of the marker
     }
 
     @Override
