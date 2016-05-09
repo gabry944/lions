@@ -2,6 +2,7 @@ package com.example.micke.lions.indoor;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.example.micke.lions.Common;
 import com.example.micke.lions.R;
+import com.google.android.gms.maps.model.Marker;
 
 import org.w3c.dom.Text;
 
@@ -26,7 +28,6 @@ public class ChangePointDialogFragment extends DialogFragment {
 
     private String TAG = "ChangePointDialogFragment";
     private IndoorActivity indoorActivity;
-
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -124,8 +125,10 @@ public class ChangePointDialogFragment extends DialogFragment {
 
         builder.setNeutralButton("Flytta punkt", new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int id) {
-            Log.d(TAG, "onClick: ändra");
+            Log.d("hejhej", "onClick: ändra");
             //TODO
+            IndoorMapFragment indoorMapFragment = indoorActivity.getMapFragment();
+
         }
     });
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {

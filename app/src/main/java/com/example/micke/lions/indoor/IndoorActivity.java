@@ -130,4 +130,8 @@ public class IndoorActivity extends AppCompatActivity {
 
         return false;
     }
+
+    public IndoorMapFragment getMapFragment() {
+        return map;
+    }
 }

@@ -3,6 +3,8 @@ package com.example.micke.lions.indoor;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.example.micke.lions.R;
@@ -15,10 +17,15 @@ public class IndoorMapMarker {
     private PointOfInterest pointOfInterest;
     private Context context;
     private float[] localCoord;    //[0] = posX, [1] = posY
+    MapImage mapImage;
+
+    //Used when user want to move a point
+    private boolean moving = false;
 
     public IndoorMapMarker(PointOfInterest pointOfInterest, float posX, float posY, Context context) {
         this.context = context;
         this.pointOfInterest = pointOfInterest;
+        mapImage = (MapImage) ((IndoorActivity)context).findViewById(R.id.scale_test);
 
         localCoord = new float[2];
 
@@ -28,6 +35,36 @@ public class IndoorMapMarker {
         //localCoord = transformCoordToLocal(pointOfInterest.getGlobalCoord());
 
         setUpImageView();
+
+        point.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View arg0, MotionEvent e) {
+                int action = e.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        Log.d("hejhej", "touching");
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        Log.d("hejhej", ""+mapImage.getScaleFactor());
+                        float[] point = mapImage.convertCoordinatesPercent(
+                                (localCoord[0] + e.getX()) * mapImage.getScaleFactor(),
+                                (localCoord[1]  + e.getY()) * mapImage.getScaleFactor()
+                        );
+                        point = mapImage.convertCoordinates(point[0], point[1]);
+                        setX(point[0]);
+                        setY(point[1]);
+                        break;
+                    case MotionEvent.ACTION_UP:
+
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                        break;
+                    default:
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     //! return the imageView that represent the marker
@@ -66,16 +103,16 @@ public class IndoorMapMarker {
     public void setX(float x){
         localCoord[0] = x;
         point.setX(x);
-        pointOfInterest.setLatitude(transformCoordToGlobalLatitude(localCoord));
-        pointOfInterest.setLongitude(transformCoordToGlobalLongitude(localCoord));
+        //pointOfInterest.setLatitude(transformCoordToGlobalLatitude(localCoord));
+        //pointOfInterest.setLongitude(transformCoordToGlobalLongitude(localCoord));
         //TODO Update IP in fierbase
     }
 
     public void setY(float y) {
         localCoord[1] = y;
         point.setY(y);
-        pointOfInterest.setLatitude(transformCoordToGlobalLatitude(localCoord));
-        pointOfInterest.setLongitude(transformCoordToGlobalLongitude(localCoord));
+        //pointOfInterest.setLatitude(transformCoordToGlobalLatitude(localCoord));
+        //pointOfInterest.setLongitude(transformCoordToGlobalLongitude(localCoord));
         //TODO Update IP in fierbase
     }
 

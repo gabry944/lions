@@ -30,6 +30,7 @@ import com.example.micke.lions.Common;
 import com.example.micke.lions.InloggChange;
 import com.example.micke.lions.R;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -346,6 +347,15 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 }
             }
         });
+    }
+
+    public void movePoint(String id) {
+        IndoorMapMarker marker;
+        for(IndoorMapMarker m : listOfMarkers) {
+            if(m.getId().equals(id))
+                marker = m;
+        }
+
     }
 
     public void RemovePoint(String pointId)
