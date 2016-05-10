@@ -57,16 +57,18 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private String currentFloor = "3"; //TODO
     private boolean firstLoad = true;
 
+    //way finding
     private boolean filterMarkers;
     private IndoorMapMarker end = null, elevator = null, user = null;
-    private String endID = "", elevatorID = "", userID = "";
+    private PointOfInterest endPoint = new PointOfInterest();
+            private String userID = "", elevatorID = "";
     private List<IndoorMapMarker> floorChange;
 
 
     private int displayWidth;
     private int displayHeight;
 
-    //Scaletest
+    //Scale test
     private MapImage mapImage;
     private BitmapLoading bitmapLoading;
 
@@ -209,6 +211,18 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         textView2.setY(0);
         getRelativeLayout().addView(textView2);
         textView2.setVisibility(View.GONE);
+        textView2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                //if the goal popup was clicked
+                //end way finding
+                //else switch to goal floor
+                if(currentFloor.equals(endPoint.getFloor()))
+                    resetView();
+                else
+                    changeFloor(endPoint.getFloor());
+            }
+        });
 
     }
 
@@ -237,23 +251,25 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         }
 
         user.getMarker().setVisibility(View.VISIBLE);
+        textView1.setVisibility(View.VISIBLE);
+        addPopup(textView1, user.getX(), user.getY());
         Log.d(TAG, "showSingleIP: visible");
     }
 
-    //should maybe be called leadTheWay or something so that highlight can be used for a single IP
-    //hide all except chosen ip and entrance (or stairs/elevator)
-    public void highlightIP(String goalFloor, String ipID) {
+    //Shows the user where to go and if the user has a position it shows that position
+    //If the goal is on another floor than the user the closeest elevator or staircase is shown
+    public void startWayFinding(String goalFloor, String ipID) {
         setCurrentFloor(goalFloor);
+        resetView();
         filterMarkers = true;
-        elevator = null;
-        user = null;
-        end = null;
         floorChange = new ArrayList();
+        boolean userHasPos = false;
 
         //Does the user have a location?
         userID = ((IndoorActivity)getActivity()).youAreHereID;
         if(!userID.equals(""))
         {
+            userHasPos = true;
             //Find the user's point
             for(IndoorMapMarker m : listOfMarkers) {
                 if(m.getId().equals(userID))
@@ -261,13 +277,21 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             }
         }
 
-        if(user == null) {
+        if(userID.equals(ipID)){
+            //the user is at the chosen IP
+            //only show user
+        }
+        else if(userHasPos && user == null) {
             //user and goal are on different floors
+
             //switch to user floor and show user + elevator or staircase
+            //save the goal as a point to use later
             for(PointOfInterest p: pointList) {
                 if(p.getId().equals(userID)) {
                     setCurrentFloor(p.getFloor());
-                    break;
+                }
+                else if(p.getId().equals(ipID)){
+                    endPoint = p;
                 }
             }
 
@@ -281,13 +305,13 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             float distance = Float.MAX_VALUE;
             for (IndoorMapMarker m : listOfMarkers) {
                 if ((m.getCategory().equals(getString(R.string.Elevator)) || m.getCategory().equals(getString(R.string.Stairs)))
-                        && distance > calcDistance(m.getX(), m.getY(), end.getX(), end.getY())) {
+                        && distance > calcDistance(m.getX(), m.getY(), user.getX(), user.getY())) {
                     elevator = m;
-                    distance = calcDistance(m.getX(), m.getY(), end.getX(), end.getY());
+                    distance = calcDistance(m.getX(), m.getY(), user.getX(), user.getY());
                 }
             }
         }
-        else {
+        else if (userHasPos) {
             //user and goal are on the same floor
             //Find the goal point
             for(IndoorMapMarker m : listOfMarkers) {
@@ -298,6 +322,16 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             //Should never happen
             if(end == null) return;
         }
+        else {
+            //the user has no position
+            //show only the chosen IP
+
+            //Find the goal point
+            for(IndoorMapMarker m : listOfMarkers) {
+                if(m.getId().equals(ipID))
+                    end = m;
+            }
+        }
 
         //Hide all markers
         for(IndoorMapMarker m: listOfMarkers) {
@@ -307,6 +341,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         //Show chosen IP
         if(end != null) {
             end.getMarker().setVisibility(View.VISIBLE);
+            endPoint = end.getPoint();
             textView2.setVisibility(View.VISIBLE);
             Log.d("TAG", "X = " + end.getX() + " Y = " + end.getY());
             addPopup(textView2, end.getX(), end.getY());
@@ -321,7 +356,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         }
         else if(end == null) {
             //user and end on different floors but no elevator or staircase found
-            Toast toast = Toast.makeText(getContext(), "Couldn't find an entrance, elevator or stairs!", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(getContext(), "Couldn't find an elevator or stairs!", Toast.LENGTH_SHORT);
             toast.show();
             return;
         }
@@ -332,6 +367,64 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             textView1.setVisibility(View.VISIBLE);
             addPopup(textView1, user.getX(), user.getY());
         }
+    }
+
+    //sets new floor and shows IP depending on wayfinding
+    public void changeFloor(String floor){
+        //change floor
+        setCurrentFloor(floor);
+
+        //if way finding not active
+        //show all IP on this floor
+        if(!filterMarkers){
+            for(IndoorMapMarker m: listOfMarkers) {
+                m.getMarker().setVisibility(View.VISIBLE);
+            }
+            return;
+        }
+
+        resetView();
+        filterMarkers = true;
+        //way finding active
+        //display what should be shown on this floor
+        for(IndoorMapMarker m: listOfMarkers) {
+            if(m.getId().equals(endPoint.getId())){
+                end = m;
+                end.getMarker().setVisibility(View.VISIBLE);
+                textView2.setVisibility(View.VISIBLE);
+                addPopup(textView2, end.getX(), end.getY());
+            }
+            else if(!userID.equals("") && m.getId().equals(userID)) {
+                user = m;
+                user.getMarker().setVisibility(View.VISIBLE);
+                textView1.setVisibility(View.VISIBLE);
+                addPopup(textView1, user.getX(), user.getY());
+            }
+            else if(m.getId().equals(elevatorID)) {
+                elevator = m;
+                elevator.getMarker().setVisibility(View.VISIBLE);
+            }
+            else {
+                m.getMarker().setVisibility(View.GONE);
+            }
+        }
+
+        //if we have an elevator
+        //figure out which popup it should have
+        if(elevator != null && end != null)
+        {
+            //if the goal is on this floor
+            //the user should go(textView2) to the goal
+            //and the user is at(textView1) the elevator
+            textView1.setVisibility(View.VISIBLE);
+            addPopup(textView1, elevator.getX(), elevator.getY());
+        }
+        else if(elevator != null) {
+            //the user should go(textView2) to the elevator
+            textView2.setVisibility(View.VISIBLE);
+            addPopup(textView2, elevator.getX(), elevator.getY());
+        }
+
     }
 
     //Calculates the distance between two points
@@ -413,7 +506,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         Log.d(TAG, "addPopup: x = " + x + ", y = " + y);
 
         textView.setX(posX - x/4);
-        textView.setY(posY - y - 20); // TODO 20 is a magic nuber that is taken from half the sise of the marker
+        textView.setY(posY - y - 20); // TODO 20 is a magic nuber that is taken from half the size of the marker
     }
 
     @Override
@@ -441,17 +534,23 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         }
         else if(id == R.id.restorePoints) {
-            setCurrentFloor(fireBaseIndoor.getFloor());
-            filterMarkers = false;
-            end = null;
-            elevator = null;
-            user = null;
+            resetView();
         }
         return false;
     }
 
+    public void resetView() {
+        setCurrentFloor(fireBaseIndoor.getFloor());
+        filterMarkers = false;
+        end = null;
+        elevator = null;
+        user = null;
+        textView1.setVisibility(View.GONE);
+        textView2.setVisibility(View.GONE);
+    }
+
     //sets the map of the floor and loads all markers into the listOfMarkers
-    public void setCurrentFloor(String floor) {
+    private void setCurrentFloor(String floor) {
         Log.d("floor", "" + floor);
         mapImage.resetView();
         fireBaseIndoor.setFloor(floor);
@@ -531,8 +630,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         Log.d(TAG, "commonInlogg: ");
     }
 
-    public IndoorMapMarker getEnd() {
-        return end;
+    public PointOfInterest getGoal() {
+        return endPoint;
     }
 
     public boolean getFilterMarkers() {

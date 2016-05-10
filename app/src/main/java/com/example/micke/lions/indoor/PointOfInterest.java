@@ -14,7 +14,7 @@ public class PointOfInterest {
     private boolean official;
 
     public PointOfInterest() {
-
+        id = "0";
     }
 
     public PointOfInterest(String title, String description, String category, float latitude, float longitude, String floor, boolean official, String id){

@@ -101,7 +101,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             public void onClick(View v) {
                 ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
                 mPager.setCurrentItem(0, true);
-                ((IndoorActivity)mContext).map.highlightIP(ipDataset.get(position).getFloor(), ((TextView)((View)v.getParent()).findViewById(R.id.id)).getText().toString());
+                ((IndoorActivity)mContext).map.startWayFinding(ipDataset.get(position).getFloor(), ((TextView)((View)v.getParent()).findViewById(R.id.id)).getText().toString());
             }
         });
 
