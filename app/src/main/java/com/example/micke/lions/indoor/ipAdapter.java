@@ -35,7 +35,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     private int NR_OF_CATEGORIES = 6;
     private List<PointOfInterest> ipDataset;
     ArrayList<Vector<PointOfInterest>> sortedDataset = new ArrayList<Vector<PointOfInterest>>(5);
-    public boolean isExpanded = false;
     private int temphHeight;
     private View tempView;
     private String TAG = "ipAdapter";
@@ -43,6 +42,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     private int originalHeight = 0;
     private int posHeader = 0;
     private int posChild =-1;
+    private boolean isExpanded = false;
 
     private ArrayList<Vector<PointOfInterest>> sortdedListofIP2D;
 
@@ -196,7 +196,15 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
                 holder.btn_expand_toggle.setImageResource(R.drawable.navigation);
-                expandView(v, holder);
+                if(!isExpanded){
+                    expandView(v, holder);
+                    isExpanded = true;
+                }
+                else{
+                    collapseView(v);
+                    isExpanded = false;
+                }
+
                 int count = 0;
                 /*if(list == null){
                     while (count < sortdedListofIP2D.get(posHeader).size()-1) {
@@ -265,7 +273,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         });*/
     }
 
-    public void collapseView(final View v) {
+   /* public void collapseView(final View v) {
         final int initialHeight = v.getMeasuredHeight();
 
         Animation a = new Animation() {
@@ -289,17 +297,26 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         v.findViewById(R.id.content).setVisibility(View.GONE);
         v.findViewById(R.id.qr_code).setVisibility(View.GONE);
         v.findViewById(R.id.createQR).setVisibility(View.GONE);
+    }*/
+
+    public void collapseView(final View v){
+       // v.findViewById(R.id.layout).setVisibility(View.GONE);
     }
 
     public void expandView(final View v, final ViewHolder holder){
 
         LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
-        TextView item = new TextView(mContext);
-        item.setText("hej!");
-        item.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT));
-        linearLayout.addView(item);
+
+
+        for(int i = 0; i < sortdedListofIP2D.get(0).size(); i++){
+            TextView item = new TextView(mContext);
+            item.setText(sortdedListofIP2D.get(0).get(i).getTitle());
+            item.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
+            linearLayout.addView(item);
+
+        }
     }
 
    /* public void expandView(final View v) {
