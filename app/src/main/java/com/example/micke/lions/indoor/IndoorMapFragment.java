@@ -179,6 +179,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         return rootView;
     }
 
+    //Sets up initial position of popups and the visibility is "GONE".
+    //Visibility is changed to "VISIBLE" when the textViews are used.
     private void setUpPopup() {
 
         textView1 = new TextView(getContext());
@@ -188,22 +190,21 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         textView1.setTextSize(10);
         textView1.setBackgroundResource(R.drawable.popup);
 
-        RelativeLayout.LayoutParams layoutParams1 = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        textView1.setLayoutParams(layoutParams1);
+        //RelativeLayout.LayoutParams layoutParams1 = new RelativeLayout.LayoutParams(
+          //      RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        //textView1.setLayoutParams(layoutParams1);
         textView1.setX(0);
         textView1.setY(0);
         getRelativeLayout().addView(textView1);
         textView1.setVisibility(View.GONE);
 
-
         textView2.setText("Du ska hit");
         textView2.setTextSize(10);
         textView2.setBackgroundResource(R.drawable.popup);
 
-        RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        textView2.setLayoutParams(layoutParams2);
+        //RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(
+          //      RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        //textView2.setLayoutParams(layoutParams2);
         textView2.setX(0);
         textView2.setY(0);
         getRelativeLayout().addView(textView2);
