@@ -334,20 +334,26 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         marker.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (marker.getOfficial() && !Common.IsAdmin()) {
-                    Toast toast = Toast.makeText(getContext(), R.string.adminRequierdForChangingPoint, Toast.LENGTH_LONG);
+                if (!filterMarkers) {
+                    if (marker.getOfficial() && !Common.IsAdmin()) {
+                        Toast toast = Toast.makeText(getContext(), R.string.adminRequierdForChangingPoint, Toast.LENGTH_LONG);
+                        toast.show();
+                    } else {
+                        ChangePointDialogFragment ask = new ChangePointDialogFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("id", marker.getId());
+                        bundle.putString("category", marker.getCategory());
+                        bundle.putString("title", marker.getTitle());
+                        bundle.putString("description", marker.getDescription());
+                        bundle.putFloat("lat", marker.getPoint().getLatitude());
+                        bundle.putFloat("lng", marker.getPoint().getLongitude());
+                        ask.setArguments(bundle);
+                        ask.show(indoorActivity.getFragmentManager(), "remove_point_fragment");
+                    }
+                }
+                else {
+                    final Toast toast = Toast.makeText(context, "Gå ur vägbeskrivning för att ändra punkt.", Toast.LENGTH_SHORT);
                     toast.show();
-                } else {
-                    ChangePointDialogFragment ask = new ChangePointDialogFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("id", marker.getId());
-                    bundle.putString("category", marker.getCategory());
-                    bundle.putString("title", marker.getTitle());
-                    bundle.putString("description", marker.getDescription());
-                    bundle.putFloat("lat", marker.getPoint().getLatitude());
-                    bundle.putFloat("lng", marker.getPoint().getLongitude());
-                    ask.setArguments(bundle);
-                    ask.show(indoorActivity.getFragmentManager(), "remove_point_fragment");
                 }
             }
         });
@@ -427,13 +433,14 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             filterMarkers = false;
             end = null;
             entrance = null;
+            uAreHere.setVisibility(View.GONE);
+            goHere.setVisibility(View.GONE);
         }
         return false;
     }
 
     //sets the map of the floor and loads all markers into the listOfMarkers
     public void setCurrentFloor(String floor) {
-        Log.d("floor", "" + floor);
         mapImage.resetView();
         fireBaseIndoor.setFloor(floor);
         currentFloor = floor;
@@ -462,23 +469,27 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     @Override
     public void getUpdatedDataSet(List<PointOfInterest> pointList) {
         RelativeLayout r = mapImage.getRelativeLayout();
+        if(!filterMarkers) {
+            uAreHere.setVisibility(View.GONE);
+            goHere.setVisibility(View.GONE);
 
-        for(IndoorMapMarker p : listOfMarkers) {
-            r.removeView(p.getMarker());
-        }
-        listOfMarkers.clear();
-        for(PointOfInterest p : pointList) {
-            if(p.getFloor().equals(currentFloor) || p.getCategory().equals(getString(R.string.Stairs))
-                    || p.getCategory().equals(getString(R.string.Elevator)))
-                addPoint(r,p);
-        }
-        floorAdapter.notifyDataSetChanged();
-        if(firstLoad) {
-            //check if there exist a youAreHereID
-            if(!((IndoorActivity)getActivity()).youAreHereID.equals("")){
-                showSingleIP(currentFloor, ((IndoorActivity)getActivity()).youAreHereID);
+            for (IndoorMapMarker p : listOfMarkers) {
+                r.removeView(p.getMarker());
             }
-            firstLoad = false;
+            listOfMarkers.clear();
+            for (PointOfInterest p : pointList) {
+                if (p.getFloor().equals(currentFloor) || p.getCategory().equals(getString(R.string.Stairs))
+                        || p.getCategory().equals(getString(R.string.Elevator)))
+                    addPoint(r, p);
+            }
+            floorAdapter.notifyDataSetChanged();
+            if (firstLoad) {
+                //check if there exist a youAreHereID
+                if (!((IndoorActivity) getActivity()).youAreHereID.equals("")) {
+                    showSingleIP(currentFloor, ((IndoorActivity) getActivity()).youAreHereID);
+                }
+                firstLoad = false;
+            }
         }
     }
 
