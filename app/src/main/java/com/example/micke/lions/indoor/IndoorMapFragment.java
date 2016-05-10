@@ -498,6 +498,15 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         });
     }
 
+    public IndoorMapMarker findMarkerById(String id) {
+        IndoorMapMarker res = null;
+        for(IndoorMapMarker m: listOfMarkers) {
+            if(m.getId().equals(id))
+                res = m;
+        }
+        return res;
+    }
+
     @Override
     public void adminInlogg() {
         Log.d(TAG, "adminInlogg: ");

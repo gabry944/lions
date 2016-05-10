@@ -165,14 +165,11 @@ public class MapImage extends RelativeLayout {
 
         int[] viewCoords = new int[2];
         imageView.getLocationOnScreen(viewCoords);
-
-        //Touched point on imageview in pixels
-        float imageX = (x - viewCoords[0]) / relativeLayout.getScaleX();
-        float imageY = (y - viewCoords[1] + imageYOffset) / relativeLayout.getScaleY();
+        imageYOffset = viewCoords[1];
 
         //Normalize value - min 0, max 1
-        point[0] = Math.max(0f, Math.min(1f, imageX / imageWidth));
-        point[1] = Math.max(0f, Math.min(1f, imageY / imageHeight));
+        point[0] = Math.max(0f, Math.min(1f, x / imageWidth));
+        point[1] = Math.max(0f, Math.min(1f, (y) / imageHeight));
 
         return point;
     }

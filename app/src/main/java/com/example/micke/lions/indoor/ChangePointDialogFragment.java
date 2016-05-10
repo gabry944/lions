@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.micke.lions.Common;
 import com.example.micke.lions.R;
@@ -36,6 +37,8 @@ public class ChangePointDialogFragment extends DialogFragment {
         Bundle bundle = this.getArguments();
         final String point = bundle.getString("id");
 
+        indoorActivity = (IndoorActivity) getActivity();
+
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.removePointQuetion);
@@ -51,7 +54,6 @@ public class ChangePointDialogFragment extends DialogFragment {
                         Log.d(TAG, "onClick: ta bort");
 
                         //tell IndoorMapFragment to remove the ip
-                        indoorActivity = (IndoorActivity) getActivity();
                         indoorActivity.map.RemovePoint(point);
                     }
                 })
@@ -125,7 +127,10 @@ public class ChangePointDialogFragment extends DialogFragment {
 
         builder.setNeutralButton("Flytta punkt", new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int id) {
-            Log.d("hejhej", "onClick: ändra");
+            IndoorMapMarker marker = indoorActivity.map.findMarkerById(ipId);
+            if(marker != null) marker.setMoving(true);
+            final Toast toast = Toast.makeText(indoorActivity, "Flytta punkten genom att dra den dit du önskar.", Toast.LENGTH_SHORT);
+            toast.show();
         }
     });
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {

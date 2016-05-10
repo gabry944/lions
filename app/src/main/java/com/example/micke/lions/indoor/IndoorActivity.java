@@ -150,5 +150,4 @@ public class IndoorActivity extends AppCompatActivity {
 
         return false;
     }
-
 }

@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.micke.lions.R;
 
@@ -15,14 +16,14 @@ public class IndoorMapMarker {
 
     private ImageView point;
     private PointOfInterest pointOfInterest;
-    private Context context;
+    private final Context context;
     private float[] localCoord;    //[0] = posX, [1] = posY
     MapImage mapImage;
 
     //Used when user want to move a point
     private boolean moving = false;
 
-    public IndoorMapMarker(PointOfInterest pointOfInterest, float posX, float posY, Context context) {
+    public IndoorMapMarker(final PointOfInterest pointOfInterest, float posX, float posY, final Context context) {
         this.context = context;
         this.pointOfInterest = pointOfInterest;
         mapImage = (MapImage) ((IndoorActivity)context).findViewById(R.id.scale_test);
@@ -45,24 +46,46 @@ public class IndoorMapMarker {
                         Log.d("hejhej", "touching");
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        Log.d("hejhej", ""+mapImage.getScaleFactor());
-                        float[] point = mapImage.convertCoordinatesPercent(
-                                (localCoord[0] + e.getX()) * mapImage.getScaleFactor(),
-                                (localCoord[1]  + e.getY()) * mapImage.getScaleFactor()
-                        );
-                        point = mapImage.convertCoordinates(point[0], point[1]);
-                        setX(point[0]);
-                        setY(point[1]);
+                        //Runs when user changes position of a point
+                        if(moving) {
+                            float[] point = new float[2];
+                            point[0] = localCoord[0] + e.getX();
+                            point[1] = localCoord[1] + e.getY();
+                            setX(point[0]);
+                            setY(point[1]);
+                        }
                         break;
                     case MotionEvent.ACTION_UP:
+                        if(moving) {
+                            moving = false;
 
+                            Log.d("hejhej", getX() + " : " + getY());
+                            float[] pos = mapImage.convertCoordinatesPercent(getX(), getY());
+
+                            PointOfInterest point = new PointOfInterest(
+                                    pointOfInterest.getTitle(),
+                                    pointOfInterest.getDescription(),
+                                    pointOfInterest.getCategory(),
+                                    pos[0],
+                                    pos[1],
+                                    ((IndoorActivity)context).getFireBaseHandler().getFloor(),
+                                    pointOfInterest.getOfficial(),
+                                    pointOfInterest.getId()
+                            );
+                            ((IndoorActivity)context).getFireBaseHandler().updateIp(point,
+                                    Integer.parseInt(((IndoorActivity)context).getFireBaseHandler().getFloor()));
+                            final Toast toast = Toast.makeText(context, "Punkt flyttad!", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
                         break;
                     case MotionEvent.ACTION_CANCEL:
                         break;
                     default:
                         break;
                 }
-                return true;
+
+                //Override other touch listeners if we are moving the point
+                return moving;
             }
         });
     }
@@ -99,6 +122,10 @@ public class IndoorMapMarker {
     }
 
     public boolean getOfficial() { return pointOfInterest.getOfficial(); }
+
+    public void setMoving(boolean val) {
+        moving = val;
+    }
 
     public void setX(float x){
         localCoord[0] = x;
