@@ -27,7 +27,6 @@ public class IndoorMapMarker {
         this.context = context;
         this.pointOfInterest = pointOfInterest;
         mapImage = (MapImage) ((IndoorActivity)context).findViewById(R.id.scale_test);
-
         localCoord = new float[2];
 
         localCoord[0] = posX;

@@ -56,7 +56,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private FireBaseIndoor fireBaseIndoor;
     private String buildingId;
     private Context context;
-    private String currentFloor; //TODO
+    private String currentFloor;
     private boolean firstLoad = true;
 
     //way finding
@@ -531,7 +531,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         Log.d(TAG, "addPopup: x = " + x + ", y = " + y);
 
         imageView.setX(posX - x/4);
-        imageView.setY(posY - y - 20); // TODO 20 is a magic number that is taken from half the size of the marker
+        imageView.setY(posY - y - listOfMarkers.get(0).getMarker().getMaxHeight() / 2.0f);
     }
 
     @Override
