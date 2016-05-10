@@ -56,7 +56,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private FireBaseIndoor fireBaseIndoor;
     private String buildingId;
     private Context context;
-    private String currentFloor = "3"; //TODO
+    private String currentFloor; //TODO
     private boolean firstLoad = true;
 
     //way finding
@@ -175,10 +175,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         if(!((IndoorActivity)getActivity()).startFloor.equals("")){
             Log.d(TAG, "onCreateView: start floor: " + ((IndoorActivity)getActivity()).startFloor);
             setCurrentFloor(((IndoorActivity)getActivity()).startFloor);
-        }
-        else {
-            Log.d(TAG, "onCreateView: no start floor");
-            setCurrentFloor("3");
         }
 
         return rootView;
@@ -457,7 +453,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     }
 
     private void addPoint(RelativeLayout parent, PointOfInterest ip) {
-        //TODO fixa vettiga värden
         final float[] point = mapImage.convertCoordinates(ip.getLatitude(), ip.getLongitude());
 
         final IndoorMapMarker marker = new IndoorMapMarker(ip, point[0], point[1], parent.getContext());
@@ -623,22 +618,24 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                     addPoint(r, p);
             }
             floorAdapter.notifyDataSetChanged();
-            if (firstLoad) {
-                //check if there exist a youAreHereID
-                userID = ((IndoorActivity) getActivity()).youAreHereID;
-                if (!userID.equals("")) {
-                    //the user has a position
-                    //is there a goal?
-                    String goalID = ((IndoorActivity) getActivity()).startGoalID;
-                    String goalFloor = ((IndoorActivity) getActivity()).startGoalFloor;
-                    if (!goalID.equals("") && !goalFloor.equals("")) {
-                        startWayFinding(goalFloor, goalID);
-                    } else
-                        showSingleIP(currentFloor, ((IndoorActivity) getActivity()).youAreHereID);
+        }
+        if (firstLoad) {
+            //check if there exist a youAreHereID
+            userID = ((IndoorActivity) getActivity()).youAreHereID;
+            if (!userID.equals("")) {
+                //the user has a position
+                //is there a goal?
+                String goalID = ((IndoorActivity) getActivity()).startGoalID;
+                String goalFloor = ((IndoorActivity) getActivity()).startGoalFloor;
+                if (!goalID.equals("") && !goalFloor.equals("")) {
+                    startWayFinding(goalFloor, goalID);
+                } else
+                    showSingleIP(currentFloor, ((IndoorActivity) getActivity()).youAreHereID);
 
-                    firstLoad = false;
-                }
             }
+            else
+                setCurrentFloor(pointList.get(0).getFloor());
+            firstLoad = false;
         }
     }
 
