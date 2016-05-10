@@ -3,26 +3,39 @@ package com.example.micke.lions.indoor;
 import android.animation.ValueAnimator;
 import android.graphics.Rect;
 import android.content.Context;
-import android.media.Image;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageButton;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.micke.lions.R;
 import com.example.micke.lions.Common;
 
 import java.util.List;
+import java.util.Vector;
 
 public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
+    public static final int HEADER = 0;
+    public static final int CHILD = 1;
+
+    private int NR_OF_CATEGORIES = 6;
     private List<PointOfInterest> ipDataset;
     public boolean isExpanded = false;
     private int temphHeight;
@@ -30,6 +43,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     private String TAG = "ipAdapter";
     private Context mContext;
     private int originalHeight = 0;
+    private ArrayList<Vector<PointOfInterest>> sortdedListofIP2D;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -55,16 +69,28 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
     //empty constructor
     public ipAdapter(Context con, List<PointOfInterest> myDataset) {
+        Log.d(TAG, "ipAdapter: 1");
         mContext = con;
         ipDataset = myDataset;
+        sortdedListofIP2D = new ArrayList<Vector<PointOfInterest>>(NR_OF_CATEGORIES);
+        //fill list
+        for (int i=0;i<NR_OF_CATEGORIES;i++)
+            sortdedListofIP2D.add(new Vector<PointOfInterest>());
+        updateSortedList();
     }
-
     public void setIpDataset(List<PointOfInterest> ipDataset) {
         this.ipDataset = ipDataset;
+        updateSortedList();
     }
     // Provide a suitable constructor (depends on the kind of dataset)
     public ipAdapter(List<PointOfInterest> myDataset) {
+        Log.d(TAG, "ipAdapter: 2");
         ipDataset = myDataset;
+        sortdedListofIP2D = new ArrayList<Vector<PointOfInterest>>(NR_OF_CATEGORIES);
+        //fill list
+        for (int i=0;i<NR_OF_CATEGORIES;i++)
+            sortdedListofIP2D.add(new Vector<PointOfInterest>());
+        updateSortedList();
     }
 
     // Create new views (invoked by the layout manager)
@@ -82,8 +108,17 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
+        /*final Item item = data.get(position);
+        switch (item.type) {
+            case HEADER:
+                break;
+            case CHILD:
+                break;
+        }*/
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
+        if(position == 0)
+            updateSortedList();
 
         //TODO temporär våningsvisare. Ful men praktisk. Fixa snyggare version
         holder.mTitleView.setText(ipDataset.get(position).getTitle() + " (Våning " + ipDataset.get(position).getFloor() + ")");
@@ -259,6 +294,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         ipDataset.add(position, ip);
         notifyItemInserted(position);
         notifyItemRangeChanged(position, ipDataset.size());
+        updateSortedList();
     }
 
     public void moveItem(int fromPosition, int toPosition) {
@@ -280,6 +316,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
                 removeItem(i);
             }
         }
+        updateSortedList();
     }
 
     private void applyAndAnimateAdditions(List<PointOfInterest> newips) {
@@ -289,6 +326,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
                 addItem(i, ip);
             }
         }
+        updateSortedList();
     }
 
     private void applyAndAnimateMovedItems(List<PointOfInterest> newips) {
@@ -299,6 +337,62 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
                 moveItem(fromPosition, toPosition);
             }
         }
+    }
+
+
+    private void clearSortedList()
+    {
+        Log.d(TAG, "clearSortedList: ");
+        for(int i=0; i < NR_OF_CATEGORIES; i++)
+            sortdedListofIP2D.get(i).clear();
+    }
+    private void updateSortedList()
+    {
+        Log.d(TAG, "updateSortedList: ipDataset size = " + ipDataset.size() );
+        clearSortedList();
+        for (PointOfInterest p: ipDataset) {
+           // Log.d(TAG, "updateSortedList: fetch from ipDataset");
+            String cat = p.getCategory();
+            //turn category name to numer like 0, 1, 2, ...
+            int place1 = toPlace(cat);
+            if (place1 == -1)
+                Log.d(TAG, "ipAdapter: något har gått fel nät vi konverterade categorier till int. cat = " + cat);
+            if (sortdedListofIP2D.get(place1) == null){
+                sortdedListofIP2D.set(place1, new Vector<PointOfInterest>());
+                sortdedListofIP2D.get(place1).add(p);
+            }
+            else
+                sortdedListofIP2D.get(place1).add(p);
+        }
+       // printSortedList();
+    }
+    private void printSortedList(){
+        Log.d(TAG, "printSortedList: size = " + sortdedListofIP2D.size());
+        for(int i=0; i < NR_OF_CATEGORIES; i++){
+            Log.d(TAG, "printSortedList: i = " + i);
+            if(sortdedListofIP2D.get(i)!=null){
+                for (PointOfInterest p: sortdedListofIP2D.get(i)){
+                    Log.d(TAG, "printSortedList: " + p.getTitle() + "   cat: " + p.getCategory());
+                }
+            }
+        }
+    }
+    private int toPlace(String s)
+    {
+        if(s.equals(R.string.ConferenceRoom) || s.equals("Konferansrum")) //TODO borde inte behöva hårdkodda in alternativen
+            return 0;
+        else if(s.equals(mContext.getResources().getString(R.string.Entrance)) || s.equals("Entré"))
+            return 1;
+        else if(s.equals(mContext.getResources().getString(R.string.Toilet)))
+            return 2;
+        else if(s.equals(mContext.getResources().getString(R.string.Printer)))
+            return 3;
+        else if(s.equals(mContext.getResources().getString(R.string.Elevator)))
+            return 4;
+        else if(s.equals(mContext.getResources().getString(R.string.Stairs)))
+            return 5;
+        else
+            return -1;
     }
 
 }
