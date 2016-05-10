@@ -466,26 +466,27 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         marker.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(uAreHere.getVisibility() == View.VISIBLE || goHere.getVisibility() == View.VISIBLE){
-                    Animation animation = new AlphaAnimation(1.0f, 0.0f);
-                    animation.setDuration(200);
+                if(filterMarkers) {
+                    if (uAreHere.getVisibility() == View.VISIBLE || goHere.getVisibility() == View.VISIBLE) {
+                        Animation animation = new AlphaAnimation(1.0f, 0.0f);
+                        animation.setDuration(200);
 
-                    uAreHere.startAnimation(animation);
-                    goHere.startAnimation(animation);
+                        uAreHere.startAnimation(animation);
+                        goHere.startAnimation(animation);
 
-                    uAreHere.setVisibility(View.GONE);
-                    goHere.setVisibility(View.GONE);
+                        uAreHere.setVisibility(View.GONE);
+                        goHere.setVisibility(View.GONE);
 
-                }
-                else if(uAreHere.getVisibility() == View.GONE || goHere.getVisibility() == View.GONE){
-                    Animation animation = new AlphaAnimation(0.0f, 1.0f);
-                    animation.setDuration(200);
+                    } else if (uAreHere.getVisibility() == View.GONE || goHere.getVisibility() == View.GONE) {
+                        Animation animation = new AlphaAnimation(0.0f, 1.0f);
+                        animation.setDuration(200);
 
-                    uAreHere.startAnimation(animation);
-                    goHere.startAnimation(animation);
+                        uAreHere.startAnimation(animation);
+                        goHere.startAnimation(animation);
 
-                    uAreHere.setVisibility(View.VISIBLE);
-                    goHere.setVisibility(View.VISIBLE);
+                        uAreHere.setVisibility(View.VISIBLE);
+                        goHere.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });
