@@ -23,6 +23,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -469,6 +471,33 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         marker.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(uAreHere.getVisibility() == View.VISIBLE || goHere.getVisibility() == View.VISIBLE){
+                    Animation animation = new AlphaAnimation(1.0f, 0.0f);
+                    animation.setDuration(200);
+
+                    uAreHere.startAnimation(animation);
+                    goHere.startAnimation(animation);
+
+                    uAreHere.setVisibility(View.GONE);
+                    goHere.setVisibility(View.GONE);
+
+                }
+                else if(uAreHere.getVisibility() == View.GONE || goHere.getVisibility() == View.GONE){
+                    Animation animation = new AlphaAnimation(0.0f, 1.0f);
+                    animation.setDuration(200);
+
+                    uAreHere.startAnimation(animation);
+                    goHere.startAnimation(animation);
+
+                    uAreHere.setVisibility(View.VISIBLE);
+                    goHere.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        marker.getMarker().setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
                 if (!filterMarkers) {
                     if (marker.getOfficial() && !Common.IsAdmin()) {
                         Toast toast = Toast.makeText(getContext(), R.string.adminRequierdForChangingPoint, Toast.LENGTH_LONG);
@@ -490,6 +519,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                     final Toast toast = Toast.makeText(context, "Gå ur vägbeskrivning för att ändra punkt.", Toast.LENGTH_SHORT);
                     toast.show();
                 }
+                return false;
             }
         });
     }
