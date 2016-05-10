@@ -79,7 +79,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        //TODO temporär våningsvisare. Ful men praktisk. Fixa snyggare version
         holder.mTitleView.setText(ipDataset.get(position).getTitle() + " (Våning " + ipDataset.get(position).getFloor() + ")");
         holder.mContentView.setText(ipDataset.get(position).getDescription());
         holder.mIDView.setText(ipDataset.get(position).getId());
