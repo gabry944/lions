@@ -376,16 +376,16 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     }
 
 
-    private void addPopup(ImageView textView, float posX, float posY){
+    private void addPopup(ImageView imageView, float posX, float posY){
 
-        textView.measure(0,0);
-        int x = textView.getMeasuredWidth();
-        int y = textView.getMeasuredHeight();
+        imageView.measure(0,0);
+        int x = imageView.getMeasuredWidth();
+        int y = imageView.getMeasuredHeight();
 
         Log.d(TAG, "addPopup: x = " + x + ", y = " + y);
 
-        textView.setX(posX - x/4);
-        textView.setY(posY - y - 20); // TODO 20 is a magic number that is taken from half the size of the marker
+        imageView.setX(posX - x/4);
+        imageView.setY(posY - y - 20); // TODO 20 is a magic number that is taken from half the size of the marker
     }
 
     @Override
