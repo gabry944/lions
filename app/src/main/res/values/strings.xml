@@ -21,7 +21,12 @@
     <string name="abort">Avbryt</string>
     <string name="remove">Ta bort</string>
     <string name="change">Ändra</string>
+    <string name="ok">Ok</string>
     <string name="adminRequierdForChangingPoint">"Du måste vara admin för att ändra en officiell punkt"</string>
+
+    <string name="adminText">Användarnamn och lösenord?</string>
+    <string name="username">Användarnamn</string>
+    <string name="password">Lösenord</string>
 
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
         AIzaSyCutrsxJ6Vh_OdgQvpPQU4C40-UlVca9dI

@@ -29,7 +29,6 @@ public class Common {
     /** returns true if user is now admin, otherwise false **/
     public static boolean MakeAdmin(InloggChange map, InloggChange list, InloggChange qr){
         admin = true;
-
         if(map != null)
             map.adminInlogg();
         else
@@ -64,6 +63,7 @@ public class Common {
     }
 
     public static void setAdminButton(MenuItem adminButton, Context context) {
+        Log.d(TAG, "setting adminbutton");
         if(admin) {
             if(Build.VERSION.SDK_INT >= 21)
                 adminButton.setIcon(context.getResources().getDrawable(R.drawable.admin_button_on, null));
