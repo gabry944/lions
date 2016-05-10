@@ -80,7 +80,7 @@ public class IndoorActivity extends AppCompatActivity {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
             }
-            
+
             @Override
             public void onPageSelected(int position) {
                 actionBar.setDisplayHomeAsUpEnabled(position == 1);
@@ -103,8 +103,8 @@ public class IndoorActivity extends AppCompatActivity {
         }
 
         //see if the user already set a goal
-        startGoalID = bundle.getString("goalID");
-        startGoalFloor = bundle.getString("goalFloor");
+        startGoalID = bundle.getString("goalID", "");
+        startGoalFloor = bundle.getString("goalFloor", "");
     }
 
     public FireBaseIndoor getFireBaseHandler() { return fireBaseHandler; }
@@ -155,6 +155,4 @@ public class IndoorActivity extends AppCompatActivity {
 
         return false;
     }
-
-
 }

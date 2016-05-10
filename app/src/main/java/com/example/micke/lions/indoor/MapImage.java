@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -122,8 +123,8 @@ public class MapImage extends RelativeLayout {
             //Touched point on screen
             touchX = e.getX();
             touchY = e.getY();
-
-            /*Log.d("touch", "touchX: " + touchX + " touchY: " + touchY);
+/*
+            Log.d("touch", "touchX: " + touchX + " touchY: " + touchY);
             Log.d("touch", "viewcoords[0]: " + viewCoords[0] + " viewcoords[1]: " + viewCoords[1]);
             Log.d("touch", "relativeLayout.getScaleX(): " + relativeLayout.getScaleX() + " relativeLayout.getScaleY(): " + relativeLayout.getScaleY());
 */
@@ -159,6 +160,20 @@ public class MapImage extends RelativeLayout {
         }
     }
 
+    public float[] convertCoordinatesPercent(float x, float y) {
+        float[] point = new float[2];
+
+        int[] viewCoords = new int[2];
+        imageView.getLocationOnScreen(viewCoords);
+        imageYOffset = viewCoords[1];
+
+        //Normalize value - min 0, max 1
+        point[0] = Math.max(0f, Math.min(1f, x / imageWidth));
+        point[1] = Math.max(0f, Math.min(1f, (y) / imageHeight));
+
+        return point;
+    }
+
     public float[] convertCoordinates(float percentageX, float percentageY) {
         float[] point = new float[2];
         int[] viewCoords = new int[2];
@@ -178,5 +193,9 @@ public class MapImage extends RelativeLayout {
                 + " imageheight: " + imageHeight + " viewcoords[1]: " + viewCoords[1]);
 
         return point;
+    }
+
+    public float getScaleFactor(){
+        return mScaleFactor;
     }
 }

@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,7 @@ import com.example.micke.lions.Common;
 import com.example.micke.lions.InloggChange;
 import com.example.micke.lions.R;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -81,8 +83,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private List<IndoorMapMarker> listOfMarkers = new ArrayList<IndoorMapMarker>();
 
     private ImageButton goToList;
-    private TextView textView1;
-    private TextView textView2;
+    private ImageView goHere;
+    private ImageView uAreHere;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -182,45 +184,21 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         return rootView;
     }
 
+    //Sets up initial position of popups and the visibility is "GONE".
+    //Visibility is changed to "VISIBLE" when the textViews are used.
     private void setUpPopup() {
 
-        textView1 = new TextView(getContext());
-        textView2 = new TextView(getContext());
+        goHere = new ImageView(getContext());
+        uAreHere = new ImageView(getContext());
 
-        textView1.setText("Du är här");
-        textView1.setTextSize(10);
-        textView1.setBackgroundResource(R.drawable.popup);
+        goHere.setAdjustViewBounds(true);
+        uAreHere.setAdjustViewBounds(true);
 
-        RelativeLayout.LayoutParams layoutParams1 = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        textView1.setLayoutParams(layoutParams1);
-        textView1.setX(0);
-        textView1.setY(0);
-        getRelativeLayout().addView(textView1);
-        textView1.setVisibility(View.GONE);
-        textView1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                //if the elevator popup was clicked
-                //switch to user floor
-                if(currentFloor.equals(endPoint.getFloor()))
-                    changeFloor(((IndoorActivity)getActivity()).startFloor);
-            }
-        });
-
-
-        textView2.setText("Du ska hit");
-        textView2.setTextSize(10);
-        textView2.setBackgroundResource(R.drawable.popup);
-
-        RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        textView2.setLayoutParams(layoutParams2);
-        textView2.setX(0);
-        textView2.setY(0);
-        getRelativeLayout().addView(textView2);
-        textView2.setVisibility(View.GONE);
-        textView2.setOnClickListener(new View.OnClickListener() {
+        goHere.setMaxHeight(100);
+        goHere.setMaxWidth(170);
+        goHere.setMinimumHeight(100);
+        goHere.setMinimumWidth(170);
+        goHere.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 //if the goal popup was clicked
@@ -230,6 +208,34 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                     resetView();
                 else
                     changeFloor(endPoint.getFloor());
+            }
+        });
+
+        uAreHere.setMaxHeight(100);
+        uAreHere.setMaxWidth(170);
+        uAreHere.setMinimumHeight(100);
+        uAreHere.setMinimumWidth(170);
+
+        goHere.setX(0);
+        goHere.setY(0);
+        getRelativeLayout().addView(goHere);
+        goHere.setVisibility(View.GONE);
+
+
+        uAreHere.setX(0);
+        uAreHere.setY(0);
+        getRelativeLayout().addView(uAreHere);
+        uAreHere.setVisibility(View.GONE);
+
+        goHere.setImageResource(R.drawable.speech_bubble_go_here);
+        uAreHere.setImageResource(R.drawable.speech_bubble_u_are_here);
+        uAreHere.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                //if the elevator popup was clicked
+                //switch to user floor
+                if(currentFloor.equals(endPoint.getFloor()))
+                    changeFloor(((IndoorActivity)getActivity()).startFloor);
             }
         });
 
@@ -258,8 +264,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         }
 
         user.getMarker().setVisibility(View.VISIBLE);
-        textView1.setVisibility(View.VISIBLE);
-        addPopup(textView1, user.getX(), user.getY());
+        uAreHere.setVisibility(View.VISIBLE);
+        addPopup(uAreHere, user.getX(), user.getY());
     }
 
     //Shows the user where to go and if the user has a position it shows that position
@@ -349,17 +355,17 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         if(end != null) {
             end.getMarker().setVisibility(View.VISIBLE);
             endPoint = end.getPoint();
-            textView2.setVisibility(View.VISIBLE);
+            goHere.setVisibility(View.VISIBLE);
             //Log.d("TAG", "X = " + end.getX() + " Y = " + end.getY());
-            addPopup(textView2, end.getX(), end.getY());
+            addPopup(goHere, end.getX(), end.getY());
         }
 
         //show elevator
         if(elevator != null) {
             elevator.getMarker().setVisibility(View.VISIBLE);
             elevatorID = elevator.getId();
-            textView2.setVisibility(View.VISIBLE);
-            addPopup(textView2, elevator.getX(), elevator.getY());
+            goHere.setVisibility(View.VISIBLE);
+            addPopup(goHere, elevator.getX(), elevator.getY());
         }
         else if(end == null) {
             //user and end on different floors but no elevator or staircase found
@@ -372,8 +378,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         //show user
         if(user != null) {
             user.getMarker().setVisibility(View.VISIBLE);
-            textView1.setVisibility(View.VISIBLE);
-            addPopup(textView1, user.getX(), user.getY());
+            uAreHere.setVisibility(View.VISIBLE);
+            addPopup(uAreHere, user.getX(), user.getY());
 
             //if user and end are the same
             //save the end point
@@ -405,14 +411,14 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             if(m.getId().equals(endPoint.getId())){
                 end = m;
                 end.getMarker().setVisibility(View.VISIBLE);
-                textView2.setVisibility(View.VISIBLE);
-                addPopup(textView2, end.getX(), end.getY());
+                goHere.setVisibility(View.VISIBLE);
+                addPopup(goHere, end.getX(), end.getY());
             }
             if(m.getId().equals(userID)) {
                 user = m;
                 user.getMarker().setVisibility(View.VISIBLE);
-                textView1.setVisibility(View.VISIBLE);
-                addPopup(textView1, user.getX(), user.getY());
+                uAreHere.setVisibility(View.VISIBLE);
+                addPopup(uAreHere, user.getX(), user.getY());
             }
             if(m.getId().equals(elevatorID)) {
                 elevator = m;
@@ -424,17 +430,16 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         if(elevator != null && end != null && user == null)
         {
             //if the goal is on this floor and the user isn't
-            //the user should go(textView2) to the goal
-            //and the user is at(textView1) the elevator
-            textView1.setVisibility(View.VISIBLE);
-            addPopup(textView1, elevator.getX(), elevator.getY());
+            //the user should go to the goal
+            //and the user is at the elevator
+            uAreHere.setVisibility(View.VISIBLE);
+            addPopup(uAreHere, elevator.getX(), elevator.getY());
         }
         else if(elevator != null) {
-            //the user should go(textView2) to the elevator
-            textView2.setVisibility(View.VISIBLE);
-            addPopup(textView2, elevator.getX(), elevator.getY());
+            //the user should go to the elevator
+            goHere.setVisibility(View.VISIBLE);
+            addPopup(goHere, elevator.getX(), elevator.getY());
         }
-
     }
 
     //Calculates the distance between two points
@@ -464,23 +469,38 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         marker.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (marker.getOfficial() && !Common.IsAdmin()) {
-                    Toast toast = Toast.makeText(getContext(), R.string.adminRequierdForChangingPoint, Toast.LENGTH_LONG);
+                if (!filterMarkers) {
+                    if (marker.getOfficial() && !Common.IsAdmin()) {
+                        Toast toast = Toast.makeText(getContext(), R.string.adminRequierdForChangingPoint, Toast.LENGTH_LONG);
+                        toast.show();
+                    } else {
+                        ChangePointDialogFragment ask = new ChangePointDialogFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("id", marker.getId());
+                        bundle.putString("category", marker.getCategory());
+                        bundle.putString("title", marker.getTitle());
+                        bundle.putString("description", marker.getDescription());
+                        bundle.putFloat("lat", marker.getPoint().getLatitude());
+                        bundle.putFloat("lng", marker.getPoint().getLongitude());
+                        ask.setArguments(bundle);
+                        ask.show(indoorActivity.getFragmentManager(), "remove_point_fragment");
+                    }
+                }
+                else {
+                    final Toast toast = Toast.makeText(context, "Gå ur vägbeskrivning för att ändra punkt.", Toast.LENGTH_SHORT);
                     toast.show();
-                } else {
-                    ChangePointDialogFragment ask = new ChangePointDialogFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("id", marker.getId());
-                    bundle.putString("category", marker.getCategory());
-                    bundle.putString("title", marker.getTitle());
-                    bundle.putString("description", marker.getDescription());
-                    bundle.putFloat("lat", marker.getPoint().getLatitude());
-                    bundle.putFloat("lng", marker.getPoint().getLongitude());
-                    ask.setArguments(bundle);
-                    ask.show(indoorActivity.getFragmentManager(), "remove_point_fragment");
                 }
             }
         });
+    }
+
+    public void movePoint(String id) {
+        IndoorMapMarker marker;
+        for(IndoorMapMarker m : listOfMarkers) {
+            if(m.getId().equals(id))
+                marker = m;
+        }
+
     }
 
     public void RemovePoint(String pointId)
@@ -507,16 +527,16 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     }
 
 
-    private void addPopup(TextView textView, float posX, float posY){
+    private void addPopup(ImageView imageView, float posX, float posY){
 
-        textView.measure(0,0);
-        int x = textView.getMeasuredWidth();
-        int y = textView.getMeasuredHeight();
+        imageView.measure(0,0);
+        int x = imageView.getMeasuredWidth();
+        int y = imageView.getMeasuredHeight();
 
         Log.d(TAG, "addPopup: x = " + x + ", y = " + y);
 
-        textView.setX(posX - x/4);
-        textView.setY(posY - y - 20); // TODO 20 is a magic nuber that is taken from half the size of the marker
+        imageView.setX(posX - x/4);
+        imageView.setY(posY - y - 20); // TODO 20 is a magic number that is taken from half the size of the marker
     }
 
     @Override
@@ -555,13 +575,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         end = null;
         elevator = null;
         user = null;
-        textView1.setVisibility(View.GONE);
-        textView2.setVisibility(View.GONE);
+        uAreHere.setVisibility(View.GONE);
+        goHere.setVisibility(View.GONE);
     }
 
     //sets the map of the floor and loads all markers into the listOfMarkers
     private void setCurrentFloor(String floor) {
-        Log.d("floor", "" + floor);
         mapImage.resetView();
         fireBaseIndoor.setFloor(floor);
         currentFloor = floor;
@@ -590,40 +609,46 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     @Override
     public void getUpdatedDataSet(List<PointOfInterest> pointList) {
         RelativeLayout r = mapImage.getRelativeLayout();
+        if(!filterMarkers) {
+            uAreHere.setVisibility(View.GONE);
+            goHere.setVisibility(View.GONE);
 
-        for(IndoorMapMarker p : listOfMarkers) {
-            r.removeView(p.getMarker());
-        }
-        listOfMarkers.clear();
-        for(PointOfInterest p : pointList) {
-            if(p.getFloor().equals(currentFloor) || p.getCategory().equals(getString(R.string.Stairs))
-                    || p.getCategory().equals(getString(R.string.Elevator)))
-                addPoint(r,p);
-        }
-        floorAdapter.notifyDataSetChanged();
-        if(firstLoad) {
-            //check if there exist a youAreHereID
-            userID = ((IndoorActivity)getActivity()).youAreHereID;
-            if(!userID.equals("")){
-                //the user has a position
-                //is there a goal?
-                String goalID = ((IndoorActivity)getActivity()).startGoalID;
-                if(!goalID.equals("")) {
-                    startWayFinding(((IndoorActivity)getActivity()).startGoalFloor, goalID);
-                }
-                else
-                    showSingleIP(currentFloor, ((IndoorActivity)getActivity()).youAreHereID);
+            for (IndoorMapMarker p : listOfMarkers) {
+                r.removeView(p.getMarker());
             }
-            firstLoad = false;
+            listOfMarkers.clear();
+            for (PointOfInterest p : pointList) {
+                if (p.getFloor().equals(currentFloor) || p.getCategory().equals(getString(R.string.Stairs))
+                        || p.getCategory().equals(getString(R.string.Elevator)))
+                    addPoint(r, p);
+            }
+            floorAdapter.notifyDataSetChanged();
+            if (firstLoad) {
+                //check if there exist a youAreHereID
+                userID = ((IndoorActivity) getActivity()).youAreHereID;
+                if (!userID.equals("")) {
+                    //the user has a position
+                    //is there a goal?
+                    String goalID = ((IndoorActivity) getActivity()).startGoalID;
+                    String goalFloor = ((IndoorActivity) getActivity()).startGoalFloor;
+                    if (!goalID.equals("") && !goalFloor.equals("")) {
+                        startWayFinding(goalFloor, goalID);
+                    } else
+                        showSingleIP(currentFloor, ((IndoorActivity) getActivity()).youAreHereID);
+
+                    firstLoad = false;
+                }
+            }
         }
     }
+
 
     @Override
     public void dataSetChanged() {
         floorAdapter.notifyDataSetChanged();
     }
 
-    //Get dimension
+        //Get dimension
     private void getDimensions(final RelativeLayout relativeLayout) {
         ViewTreeObserver vto = relativeLayout.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -636,6 +661,15 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 Log.d("point", "x " + point.x + " y " + point.y);
             }
         });
+    }
+
+    public IndoorMapMarker findMarkerById(String id) {
+        IndoorMapMarker res = null;
+        for(IndoorMapMarker m: listOfMarkers) {
+            if(m.getId().equals(id))
+                res = m;
+        }
+        return res;
     }
 
     @Override

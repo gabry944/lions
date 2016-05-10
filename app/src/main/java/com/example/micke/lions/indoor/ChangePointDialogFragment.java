@@ -2,6 +2,7 @@ package com.example.micke.lions.indoor;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -15,9 +16,11 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.micke.lions.Common;
 import com.example.micke.lions.R;
+import com.google.android.gms.maps.model.Marker;
 
 import org.w3c.dom.Text;
 
@@ -27,13 +30,14 @@ public class ChangePointDialogFragment extends DialogFragment {
     private String TAG = "ChangePointDialogFragment";
     private IndoorActivity indoorActivity;
 
-
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         //get witch point to remove
         Bundle bundle = this.getArguments();
         final String point = bundle.getString("id");
+
+        indoorActivity = (IndoorActivity) getActivity();
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -50,7 +54,6 @@ public class ChangePointDialogFragment extends DialogFragment {
                         Log.d(TAG, "onClick: ta bort");
 
                         //tell IndoorMapFragment to remove the ip
-                        indoorActivity = (IndoorActivity) getActivity();
                         indoorActivity.map.RemovePoint(point);
                     }
                 })
@@ -124,8 +127,10 @@ public class ChangePointDialogFragment extends DialogFragment {
 
         builder.setNeutralButton("Flytta punkt", new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int id) {
-            Log.d(TAG, "onClick: ändra");
-            //TODO
+            IndoorMapMarker marker = indoorActivity.map.findMarkerById(ipId);
+            if(marker != null) marker.setMoving(true);
+            final Toast toast = Toast.makeText(indoorActivity, "Flytta punkten genom att dra den dit du önskar.", Toast.LENGTH_SHORT);
+            toast.show();
         }
     });
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
