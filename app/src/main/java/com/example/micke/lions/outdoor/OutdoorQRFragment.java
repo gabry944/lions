@@ -38,6 +38,7 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
     private static final String ARG_SECTION_NUMBER = "section_number";
     private FireBaseOutdoor fireBaseHandler;
     private DialogFragment newFragment;
+    private DialogFragment createCarFragment;
     private ImageButton goToList;
 
     public OutdoorQRFragment() {
@@ -113,22 +114,8 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
             @Override
             public void onClick(View view) {
                 if(Common.IsAdmin()) {
-                    Car car = new Car("Bil", fireBaseHandler.generateId(), 0, 0);
-                    fireBaseHandler.updateCar(car);
-
-                    String url = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=" +
-                            "car/" + car.getId()
-                            + "&qzone=1&margin=0&size=400x400&ecc=L";
-
-                    ClipboardManager clipboard = (ClipboardManager) getActivity()
-                            .getSystemService(getActivity().CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText("", url);
-                    clipboard.setPrimaryClip(clip);
-
-
-                    Toast toast = Toast.makeText(getContext(),
-                            "QR code URL copied to clipboard", Toast.LENGTH_LONG);
-                    toast.show();
+                    createCarFragment = new CreateCarDialogFragment();
+                    createCarFragment.show(getActivity().getFragmentManager(), "create_car_dialog_fragment");
 
                     Log.d("fab", "clicked");
                 }

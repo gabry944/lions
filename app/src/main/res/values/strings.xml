@@ -37,6 +37,8 @@
     <string name="Toilet"> Toalett </string>
     <string name="Stairs"> Trappa </string>
     <string name="Printer"> Skrivare </string>
+    <string name="create_car_prompt">Vill du skapa en ny bil och kopiera URL-addressen?</string>
+    <string name="create_car_info">Skriv ut bilden som finns på URL-addressen.</string>
 
     <string-array name="category_array">
         <item>@string/non_chosen</item>
