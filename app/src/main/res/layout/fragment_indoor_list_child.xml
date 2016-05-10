@@ -4,11 +4,12 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/content"
         android:textSize="20sp"
+        android:layout_margin="@dimen/list_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/list_margin"
-        android:textAppearance="?attr/textAppearanceListItem" />
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:visibility="gone"/>
 
 </LinearLayout>

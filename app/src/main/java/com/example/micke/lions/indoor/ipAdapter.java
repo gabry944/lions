@@ -15,26 +15,33 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.micke.lions.R;
 import com.example.micke.lions.Common;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     private List<PointOfInterest> ipDataset;
+    ArrayList<Vector<PointOfInterest>> sortedDataset = new ArrayList<Vector<PointOfInterest>>(5);
     public boolean isExpanded = false;
     private int temphHeight;
     private View tempView;
     private String TAG = "ipAdapter";
     private Context mContext;
     private int originalHeight = 0;
+    public static final int HEADER = 0;
+    public static final int CHILD = 1;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+   /* public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public final View mView;
         public final TextView mContentView;
@@ -51,13 +58,30 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             goToMapImage = (ImageButton) view.findViewById(R.id.goToMapImage);
             mIDView = (TextView) view.findViewById(R.id.id);
         }
+    }*/
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public TextView header_title;
+        public ImageView btn_expand_toggle;
+        public PointOfInterest pointOfInterest;
+        public final View mView;
+
+        public ViewHolder(View view) {
+            super(view);
+            mView = view;
+            header_title = (TextView) itemView.findViewById(R.id.header_title);
+            btn_expand_toggle = (ImageView) itemView.findViewById(R.id.expand_button);
+        }
     }
+
 
     //empty constructor
     public ipAdapter(Context con, List<PointOfInterest> myDataset) {
         mContext = con;
         ipDataset = myDataset;
     }
+
+
 
     public void setIpDataset(List<PointOfInterest> ipDataset) {
         this.ipDataset = ipDataset;
@@ -68,25 +92,76 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     }
 
     // Create new views (invoked by the layout manager)
-    @Override
+  /*  @Override
     public ipAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                    int viewType) {
+
+        switch(viewType){
+            case HEADER:
+                View v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.fragment_indoor_list_header, parent, false);
+
+            case CHILD:
+        }
         // create a new view
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.ip_list_view, parent, false);
+
 
         ViewHolder vh = new ViewHolder(v);
         return vh;
+    }*/
+
+    @Override
+    public ipAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+                                                   int viewType) {
+
+        switch(viewType){
+            case HEADER:
+                View v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.fragment_indoor_list_header, parent, false);
+                ViewHolder vh = new ViewHolder(v);
+                return vh;
+
+            case CHILD:
+               /* TextView itemTextView = new TextView(mContext);
+                itemTextView.setLayoutParams(
+                        new ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT));
+                return new ViewHolder(itemTextView) {
+                };*/
+
+                View childView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.fragment_indoor_list_child, parent, false);
+                ViewHolder childViewholder = new ViewHolder(childView);
+                return childViewholder;
+        }
+
+
+
+        return null;
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         // - get element from your dataset at this position
-        // - replace the contents of the view with that element
+        // - replace the contents of the view with that elemen
+
+        holder.header_title.setText(ipDataset.get(position).getCategory());
+        holder.btn_expand_toggle.setImageResource(R.drawable.add);
+
+        holder.btn_expand_toggle.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                holder.btn_expand_toggle.setImageResource(R.drawable.navigation);
+
+            }
+
+        });
+
 
         //TODO temporär våningsvisare. Ful men praktisk. Fixa snyggare version
-        holder.mTitleView.setText(ipDataset.get(position).getTitle() + " (Våning " + ipDataset.get(position).getFloor() + ")");
+     /*   holder.mTitleView.setText(ipDataset.get(position).getTitle() + " (Våning " + ipDataset.get(position).getFloor() + ")");
         holder.mContentView.setText(ipDataset.get(position).getDescription());
         holder.mIDView.setText(ipDataset.get(position).getId());
 
@@ -137,10 +212,10 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
                     isExpanded = true;
                 }
             }
-        });
+        });*/
     }
 
-    public void collapseView(final View v, ValueAnimator valueAnimator) {
+    public void collapseView(final View v) {
         final int initialHeight = v.getMeasuredHeight();
 
         Animation a = new Animation() {
@@ -166,7 +241,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         v.findViewById(R.id.createQR).setVisibility(View.GONE);
     }
 
-    public void expandView(final View v, ValueAnimator valueAnimator) {
+    public void expandView(final View v) {
 
         if (originalHeight == 0) {
             originalHeight = v.getHeight();
@@ -211,7 +286,8 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             targetHeight = initHeight + (bounds_description.width()/cardwidth +1)*textHeight + (bounds_qr.width()/cardwidth + 1)*textHeight + 100;
             Log.d(TAG, "expandView: bounds.width()/cardwidth = " + targetHeight);
         }
-        else targetHeight = initHeight + (bounds_description.width()/cardwidth +1)*textHeight;
+        else
+            targetHeight = initHeight + (bounds_description.width()/cardwidth +1)*textHeight;
 
         // Older versions of android (pre API 21) cancel animations for views with a height of 0.
         v.getLayoutParams().height = 1;
@@ -300,5 +376,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             }
         }
     }
+
 
 }
