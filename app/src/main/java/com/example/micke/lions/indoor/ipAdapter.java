@@ -89,9 +89,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         mContext = con;
         ipDataset = myDataset;
         sortdedListofIP2D = new ArrayList<Vector<PointOfInterest>>(NR_OF_CATEGORIES);
-        //fill list
-        for (int i=0;i<NR_OF_CATEGORIES;i++)
-            sortdedListofIP2D.add(new Vector<PointOfInterest>());
+
         updateSortedList();
     }
 
@@ -104,9 +102,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         Log.d(TAG, "ipAdapter: 2");
         ipDataset = myDataset;
         sortdedListofIP2D = new ArrayList<Vector<PointOfInterest>>(NR_OF_CATEGORIES);
-        //fill list
-        for (int i=0;i<NR_OF_CATEGORIES;i++)
-            sortdedListofIP2D.add(new Vector<PointOfInterest>());
+
         updateSortedList();
     }
 
@@ -164,19 +160,31 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
+        // TODO: call function in another place. temporary solution
+        if(position == 0){
+            posHeader = 0;
+            posChild = -1;
+        }
 
-        if (sortdedListofIP2D.get(posHeader) != null) {
+        Log.d(TAG, "onBindViewHolder: posChlide: " + posChild + ", posHeader: " + posHeader);
+        if (posHeader < NR_OF_CATEGORIES && sortdedListofIP2D.get(posHeader) != null) {
 
             if (posChild == -1) {
                 holder.header_title.setText(toName(posHeader));
-                holder.btn_expand_toggle.setImageResource(R.drawable.add);
-            } else {
+                if (sortdedListofIP2D.get(posHeader).size() == 0) {
+                    holder.btn_expand_toggle.setImageResource(R.drawable.common_plus_signin_btn_text_light_disabled);
+                } else {
+                    holder.btn_expand_toggle.setImageResource(R.drawable.add);
+                }
+            }
+            else {
                 holder.header_title.setText(sortdedListofIP2D.get(posHeader).get(posChild).getTitle());
             }
 
-            if (posChild < sortdedListofIP2D.get(posHeader).size()-1)
-                posChild++;
-            else {
+            //plussar före eftersom startar på -1
+            posChild++;
+            if (posChild >= sortdedListofIP2D.get(posHeader).size()){
+                Log.d(TAG, "onBindViewHolder: posChild: " + posChild);
                 posChild = -1;
                 posHeader++;
             }
@@ -184,6 +192,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         final ArrayList<PointOfInterest> list = new ArrayList<PointOfInterest>();
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 holder.btn_expand_toggle.setImageResource(R.drawable.navigation);
@@ -200,11 +209,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             }
 
         });
-
-        // TODO: call function in another place. temporary solution
-        if(position == 0)
-            updateSortedList();
-
 
         //TODO temporär våningsvisare. Ful men praktisk. Fixa snyggare version
      /*   holder.mTitleView.setText(ipDataset.get(position).getTitle() + " (Våning " + ipDataset.get(position).getFloor() + ")");
@@ -378,7 +382,18 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return ipDataset.size();
+        updateSortedList();
+        int count = 0;
+        for(int i=0; i < NR_OF_CATEGORIES; i++){
+            count++;
+            if(sortdedListofIP2D.get(i)!=null){
+                for (PointOfInterest p: sortdedListofIP2D.get(i)){
+                    count++;
+                }
+            }
+        }
+        Log.d(TAG, "getItemCount: " + count + ", size = " +ipDataset.size());
+        return count;
     }
 
     public void removeItem(int position) {
@@ -392,7 +407,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         ipDataset.add(position, ip);
         notifyItemInserted(position);
         notifyItemRangeChanged(position, ipDataset.size());
-        updateSortedList();
     }
 
     public void moveItem(int fromPosition, int toPosition) {
@@ -414,7 +428,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
                 removeItem(i);
             }
         }
-        updateSortedList();
     }
 
     private void applyAndAnimateAdditions(List<PointOfInterest> newips) {
@@ -424,7 +437,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
                 addItem(i, ip);
             }
         }
-        updateSortedList();
     }
 
     private void applyAndAnimateMovedItems(List<PointOfInterest> newips) {
@@ -440,8 +452,11 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     private void clearSortedList()
     {
         Log.d(TAG, "clearSortedList: ");
-        for(int i=0; i < NR_OF_CATEGORIES; i++)
-            sortdedListofIP2D.get(i).clear();
+        sortdedListofIP2D.clear();
+
+        //fill list
+        for (int i=0;i<NR_OF_CATEGORIES;i++)
+            sortdedListofIP2D.add(new Vector<PointOfInterest>());
     }
     private void updateSortedList()
     {
@@ -510,17 +525,25 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             return null;
     }
 
+
+
     public static class Item {
         public int type;
-        public String text;
-        public List<PointOfInterest> invisibleChildren;
+        public String title;
+        public String description;
+        public List<Item> invisibleChildren;
 
         public Item() {
         }
-
-        public Item(int type, String text) {
+        public Item(int type, String title) {
             this.type = type;
-            this.text = text;
+            this.title = title;
+        }
+        public Item(int type, String title, String description) {
+            this.type = type;
+            this.title = title;
+            this.description = description;
         }
     }
 }
+
