@@ -38,8 +38,6 @@ public class OutdoorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
         //check for permission to use the camera
         //needed for the QRFragment
         if (ContextCompat.checkSelfPermission(this,
@@ -161,7 +159,7 @@ public class OutdoorActivity extends AppCompatActivity {
 
                 if(parts[0].equals("building")) {
                     //Start a new IndoorActivity for this o to map fragment
-                    goToIP(parts);
+                    goToIP(parts, data.getStringExtra("goalID"), data.getStringExtra("goalFloor"));
                 } else if(parts[0].equals("car")) {
                     //send to OutdoorQRFragment
                     mViewPager.setCurrentItem(2);
@@ -173,6 +171,27 @@ public class OutdoorActivity extends AppCompatActivity {
 
     public void getCar(String[] parts) {
         fireBaseHandler.getCar(qr, parts[1]);
+    }
+
+    public void goToIP(String[] parts, String goalID, String goalFloor) {
+        //Go to map fragment
+        Intent intent = new Intent(this, IndoorActivity.class);
+        Bundle bundle = new Bundle();
+        String buildingId = parts[1];
+        String ipId = "-1";
+        String floor = "";
+        if (parts[5] != null) {
+            ipId = parts[5];
+            floor = parts[3];
+        }
+        bundle.putString("buildingId", buildingId);
+        bundle.putString("ipId", ipId);
+        bundle.putString("floor", floor);
+        bundle.putString("goalID", goalID);
+        bundle.putString("goalFloor", goalFloor);
+        intent.putExtras(bundle);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); //not allowed togeter with startActivityForResult
+        startActivityForResult(intent, 1);
     }
 
     public void goToIP(String[] parts) {

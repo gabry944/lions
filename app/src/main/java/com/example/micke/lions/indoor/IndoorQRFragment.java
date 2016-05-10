@@ -116,6 +116,8 @@ public class IndoorQRFragment extends Fragment implements ZBarScannerView.Result
             //send data to OutdoorActivity
             Intent intent = new Intent();
             intent.putExtra("data", parts);
+            intent.putExtra("goalID", ((IndoorActivity)getActivity()).map.getGoal().getId());
+            intent.putExtra("goalFloor", ((IndoorActivity)getActivity()).map.getGoal().getFloor());
             getActivity().setResult(Activity.RESULT_OK, intent);
             getActivity().finish();
         }

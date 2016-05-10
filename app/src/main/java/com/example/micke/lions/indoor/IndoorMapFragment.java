@@ -198,6 +198,15 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         textView1.setY(0);
         getRelativeLayout().addView(textView1);
         textView1.setVisibility(View.GONE);
+        textView1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                //if the elevator popup was clicked
+                //switch to user floor
+                if(currentFloor.equals(endPoint.getFloor()))
+                    changeFloor(((IndoorActivity)getActivity()).startFloor);
+            }
+        });
 
 
         textView2.setText("Du ska hit");
@@ -234,7 +243,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         //Find the point
         for(IndoorMapMarker m : listOfMarkers) {
             if(m.getId().equals(ipID)) {
-                Log.d(TAG, "showSingleIP: found marker");
                 user = m;
             }
         }
@@ -247,18 +255,17 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         for (IndoorMapMarker m : listOfMarkers) {
             m.getMarker().setVisibility(View.GONE);
-            Log.d(TAG, "showSingleIP: gone");
         }
 
         user.getMarker().setVisibility(View.VISIBLE);
         textView1.setVisibility(View.VISIBLE);
         addPopup(textView1, user.getX(), user.getY());
-        Log.d(TAG, "showSingleIP: visible");
     }
 
     //Shows the user where to go and if the user has a position it shows that position
     //If the goal is on another floor than the user the closeest elevator or staircase is shown
     public void startWayFinding(String goalFloor, String ipID) {
+        resetView();
         setCurrentFloor(goalFloor);
         resetView();
         filterMarkers = true;
@@ -311,7 +318,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 }
             }
         }
-        else if (userHasPos) {
+        else if (userHasPos) { //user != null
             //user and goal are on the same floor
             //Find the goal point
             for(IndoorMapMarker m : listOfMarkers) {
@@ -343,7 +350,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             end.getMarker().setVisibility(View.VISIBLE);
             endPoint = end.getPoint();
             textView2.setVisibility(View.VISIBLE);
-            Log.d("TAG", "X = " + end.getX() + " Y = " + end.getY());
+            //Log.d("TAG", "X = " + end.getX() + " Y = " + end.getY());
             addPopup(textView2, end.getX(), end.getY());
         }
 
@@ -356,9 +363,10 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         }
         else if(end == null) {
             //user and end on different floors but no elevator or staircase found
-            Toast toast = Toast.makeText(getContext(), "Couldn't find an elevator or stairs!", Toast.LENGTH_SHORT);
+            //can also be that user is at goal
+            /*Toast toast = Toast.makeText(getContext(), "Couldn't find an elevator or stairs!", Toast.LENGTH_SHORT);
             toast.show();
-            return;
+            return;*/
         }
 
         //show user
@@ -366,6 +374,11 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             user.getMarker().setVisibility(View.VISIBLE);
             textView1.setVisibility(View.VISIBLE);
             addPopup(textView1, user.getX(), user.getY());
+
+            //if user and end are the same
+            //save the end point
+            if(userID.equals(ipID))
+                endPoint = user.getPoint();
         }
     }
 
@@ -388,32 +401,29 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         //way finding active
         //display what should be shown on this floor
         for(IndoorMapMarker m: listOfMarkers) {
+            m.getMarker().setVisibility(View.GONE);
             if(m.getId().equals(endPoint.getId())){
                 end = m;
                 end.getMarker().setVisibility(View.VISIBLE);
                 textView2.setVisibility(View.VISIBLE);
                 addPopup(textView2, end.getX(), end.getY());
             }
-            else if(!userID.equals("") && m.getId().equals(userID)) {
+            if(m.getId().equals(userID)) {
                 user = m;
                 user.getMarker().setVisibility(View.VISIBLE);
                 textView1.setVisibility(View.VISIBLE);
                 addPopup(textView1, user.getX(), user.getY());
             }
-            else if(m.getId().equals(elevatorID)) {
+            if(m.getId().equals(elevatorID)) {
                 elevator = m;
-                elevator.getMarker().setVisibility(View.VISIBLE);
-            }
-            else {
-                m.getMarker().setVisibility(View.GONE);
             }
         }
 
-        //if we have an elevator
+        //if we have an elevator and the user and goal are on different floors
         //figure out which popup it should have
-        if(elevator != null && end != null)
+        if(elevator != null && end != null && user == null)
         {
-            //if the goal is on this floor
+            //if the goal is on this floor and the user isn't
             //the user should go(textView2) to the goal
             //and the user is at(textView1) the elevator
             textView1.setVisibility(View.VISIBLE);
@@ -593,8 +603,16 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         floorAdapter.notifyDataSetChanged();
         if(firstLoad) {
             //check if there exist a youAreHereID
-            if(!((IndoorActivity)getActivity()).youAreHereID.equals("")){
-                showSingleIP(currentFloor, ((IndoorActivity)getActivity()).youAreHereID);
+            userID = ((IndoorActivity)getActivity()).youAreHereID;
+            if(!userID.equals("")){
+                //the user has a position
+                //is there a goal?
+                String goalID = ((IndoorActivity)getActivity()).startGoalID;
+                if(!goalID.equals("")) {
+                    startWayFinding(((IndoorActivity)getActivity()).startGoalFloor, goalID);
+                }
+                else
+                    showSingleIP(currentFloor, ((IndoorActivity)getActivity()).youAreHereID);
             }
             firstLoad = false;
         }

@@ -36,6 +36,8 @@ public class IndoorActivity extends AppCompatActivity {
     public List<PointOfInterest> myDataset;
     public BuildingAdapter buildingAdapter;
     public String youAreHereID = "";
+    public String startGoalID = "";
+    public String startGoalFloor = "";
     public String startFloor = "";
     private android.support.v7.app.ActionBar actionBar;
 
@@ -100,6 +102,9 @@ public class IndoorActivity extends AppCompatActivity {
             mViewPager.setCurrentItem(0);
         }
 
+        //see if the user already set a goal
+        startGoalID = bundle.getString("goalID");
+        startGoalFloor = bundle.getString("goalFloor");
     }
 
     public FireBaseIndoor getFireBaseHandler() { return fireBaseHandler; }
