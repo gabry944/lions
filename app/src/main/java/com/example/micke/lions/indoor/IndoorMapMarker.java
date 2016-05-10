@@ -56,25 +56,9 @@ public class IndoorMapMarker {
                         break;
                     case MotionEvent.ACTION_UP:
                         if(moving) {
+                            //runs when user lets go of a point
                             moving = false;
-
-                            Log.d("hejhej", getX() + " : " + getY());
-                            float[] pos = mapImage.convertCoordinatesPercent(getX(), getY());
-
-                            PointOfInterest point = new PointOfInterest(
-                                    pointOfInterest.getTitle(),
-                                    pointOfInterest.getDescription(),
-                                    pointOfInterest.getCategory(),
-                                    pos[0],
-                                    pos[1],
-                                    ((IndoorActivity)context).getFireBaseHandler().getFloor(),
-                                    pointOfInterest.getOfficial(),
-                                    pointOfInterest.getId()
-                            );
-                            ((IndoorActivity)context).getFireBaseHandler().updateIp(point,
-                                    Integer.parseInt(((IndoorActivity)context).getFireBaseHandler().getFloor()));
-                            final Toast toast = Toast.makeText(context, "Punkt flyttad!", Toast.LENGTH_SHORT);
-                            toast.show();
+                            updatePoint();
                         }
                         break;
                     case MotionEvent.ACTION_CANCEL:
@@ -129,17 +113,11 @@ public class IndoorMapMarker {
     public void setX(float x){
         localCoord[0] = x;
         point.setX(x);
-        //pointOfInterest.setLatitude(transformCoordToGlobalLatitude(localCoord));
-        //pointOfInterest.setLongitude(transformCoordToGlobalLongitude(localCoord));
-        //TODO Update IP in fierbase
     }
 
     public void setY(float y) {
         localCoord[1] = y;
         point.setY(y);
-        //pointOfInterest.setLatitude(transformCoordToGlobalLatitude(localCoord));
-        //pointOfInterest.setLongitude(transformCoordToGlobalLongitude(localCoord));
-        //TODO Update IP in fierbase
     }
 
     public float[] transformCoordToLocal(float[] globalCoord){
@@ -152,6 +130,25 @@ public class IndoorMapMarker {
 
     public float transformCoordToGlobalLongitude(float[] localCoord){
         return localCoord[1];
+    }
+
+    public void updatePoint() {
+        float[] pos = mapImage.convertCoordinatesPercent(getX(), getY());
+
+        PointOfInterest point = new PointOfInterest(
+                pointOfInterest.getTitle(),
+                pointOfInterest.getDescription(),
+                pointOfInterest.getCategory(),
+                pos[0],
+                pos[1],
+                ((IndoorActivity)context).getFireBaseHandler().getFloor(),
+                pointOfInterest.getOfficial(),
+                pointOfInterest.getId()
+        );
+        ((IndoorActivity)context).getFireBaseHandler().updateIp(point,
+                Integer.parseInt(((IndoorActivity)context).getFireBaseHandler().getFloor()));
+        final Toast toast = Toast.makeText(context, "Punkt flyttad!", Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     private void setUpImageView(){
