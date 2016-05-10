@@ -13,6 +13,10 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageButton;
 
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import android.widget.ImageView;
@@ -177,12 +181,20 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
                 posHeader++;
             }
         }
+        final ArrayList<PointOfInterest> list = new ArrayList<PointOfInterest>();
 
-
-        holder.btn_expand_toggle.setOnClickListener(new View.OnClickListener(){
+        holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 holder.btn_expand_toggle.setImageResource(R.drawable.navigation);
+                expandView(v, holder);
+                int count = 0;
+                /*if(list == null){
+                    while (count < sortdedListofIP2D.get(posHeader).size()-1) {
+                        list.add(sortdedListofIP2D.get(count).get(count));
+                        count++;
+                    }
+                }*/
 
 
             }
@@ -275,7 +287,18 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         v.findViewById(R.id.createQR).setVisibility(View.GONE);
     }
 
-    public void expandView(final View v) {
+    public void expandView(final View v, final ViewHolder holder){
+
+        LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
+        TextView item = new TextView(mContext);
+        item.setText("hej!");
+        item.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        linearLayout.addView(item);
+    }
+
+   /* public void expandView(final View v) {
 
         if (originalHeight == 0) {
             originalHeight = v.getHeight();
@@ -350,7 +373,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         // 1dp/ms
         a.setDuration(((int) (initHeight / v.getContext().getResources().getDisplayMetrics().density)) * 10);
         v.startAnimation(a);
-    }
+    }*/
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
@@ -485,5 +508,19 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             return mContext.getResources().getString(R.string.Stairs);
         else
             return null;
+    }
+
+    public static class Item {
+        public int type;
+        public String text;
+        public List<PointOfInterest> invisibleChildren;
+
+        public Item() {
+        }
+
+        public Item(int type, String text) {
+            this.type = type;
+            this.text = text;
+        }
     }
 }
