@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,8 +80,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private List<IndoorMapMarker> listOfMarkers = new ArrayList<IndoorMapMarker>();
 
     private ImageButton goToList;
-    private TextView textView1;
-    private TextView textView2;
+    private ImageView goHere;
+    private ImageView uAreHere;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -180,35 +181,38 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         return rootView;
     }
 
+    //Sets up initial position of popups and the visibility is "GONE".
+    //Visibility is changed to "VISIBLE" when the textViews are used.
     private void setUpPopup() {
 
-        textView1 = new TextView(getContext());
-        textView2 = new TextView(getContext());
+        goHere = new ImageView(getContext());
+        uAreHere = new ImageView(getContext());
 
-        textView1.setText("Du är här");
-        textView1.setTextSize(10);
-        textView1.setBackgroundResource(R.drawable.popup);
+        goHere.setAdjustViewBounds(true);
+        uAreHere.setAdjustViewBounds(true);
 
-        RelativeLayout.LayoutParams layoutParams1 = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        textView1.setLayoutParams(layoutParams1);
-        textView1.setX(0);
-        textView1.setY(0);
-        getRelativeLayout().addView(textView1);
-        textView1.setVisibility(View.GONE);
+        goHere.setMaxHeight(100);
+        goHere.setMaxWidth(170);
+        goHere.setMinimumHeight(100);
+        goHere.setMinimumWidth(170);
 
+        uAreHere.setMaxHeight(100);
+        uAreHere.setMaxWidth(170);
+        uAreHere.setMinimumHeight(100);
+        uAreHere.setMinimumWidth(170);
 
-        textView2.setText("Du ska hit");
-        textView2.setTextSize(10);
-        textView2.setBackgroundResource(R.drawable.popup);
+        goHere.setX(0);
+        goHere.setY(0);
+        getRelativeLayout().addView(goHere);
+        goHere.setVisibility(View.GONE);
 
-        RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        textView2.setLayoutParams(layoutParams2);
-        textView2.setX(0);
-        textView2.setY(0);
-        getRelativeLayout().addView(textView2);
-        textView2.setVisibility(View.GONE);
+        uAreHere.setX(0);
+        uAreHere.setY(0);
+        getRelativeLayout().addView(uAreHere);
+        uAreHere.setVisibility(View.GONE);
+
+        goHere.setImageResource(R.drawable.speech_bubble_go_here);
+        uAreHere.setImageResource(R.drawable.speech_bubble_u_are_here);
 
     }
 
@@ -286,9 +290,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         }
 
         end.getMarker().setVisibility(View.VISIBLE);
-        textView2.setVisibility(View.VISIBLE);
+        uAreHere.setVisibility(View.VISIBLE);
         Log.d("TAG", "X = " + end.getX() + " Y = " + end.getY());
-        addPopup(textView2, end.getX(), end.getY());
+        addPopup(uAreHere, end.getX(), end.getY());
 
         //Return if we didn't find an elevator/stairs or entrance
         if(entrance == null) {
@@ -299,8 +303,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         entrance.getMarker().setVisibility(View.VISIBLE);
         if(entrance != end)
-            textView1.setVisibility(View.VISIBLE);
-            addPopup(textView1, entrance.getX(), entrance.getY());
+            goHere.setVisibility(View.VISIBLE);
+            addPopup(goHere, entrance.getX(), entrance.getY());
     }
 
     //Calculates the distance between two points
@@ -382,16 +386,16 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     }
 
 
-    private void addPopup(TextView textView, float posX, float posY){
+    private void addPopup(ImageView imageView, float posX, float posY){
 
-        textView.measure(0,0);
-        int x = textView.getMeasuredWidth();
-        int y = textView.getMeasuredHeight();
+        imageView.measure(0,0);
+        int x = imageView.getMeasuredWidth();
+        int y = imageView.getMeasuredHeight();
 
         Log.d(TAG, "addPopup: x = " + x + ", y = " + y);
 
-        textView.setX(posX - x/4);
-        textView.setY(posY - y - 20); // TODO 20 is a magic nuber that is taken from half the sise of the marker
+        imageView.setX(posX - x/4);
+        imageView.setY(posY - y - 20); // TODO 20 is a magic number that is taken from half the size of the marker
     }
 
     @Override
