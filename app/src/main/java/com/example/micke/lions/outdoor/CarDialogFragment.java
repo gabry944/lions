@@ -98,7 +98,7 @@ public class CarDialogFragment extends DialogFragment {
         else {
             if (!gpsIsOn) {
                 parkCar.setEnabled(false);
-                alertNoGps();
+                //alertNoGps();
             }
             else {
                 parkCar.setEnabled(true);

@@ -72,7 +72,7 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        holder.mContentView.setText("Floor " + ipDataset.get(position));
+        holder.mContentView.setText("Våning " + ipDataset.get(position));
 
         //To expand an "item" in the recyclerview
         holder.mView.setOnClickListener(new View.OnClickListener() {
