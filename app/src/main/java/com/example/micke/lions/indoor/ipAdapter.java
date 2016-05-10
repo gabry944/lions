@@ -37,6 +37,8 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     private String TAG = "ipAdapter";
     private Context mContext;
     private int originalHeight = 0;
+    private int posHeader = 0;
+    private int posChild =-1;
 
     private ArrayList<Vector<PointOfInterest>> sortdedListofIP2D;
 
@@ -158,13 +160,30 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-        holder.header_title.setText(ipDataset.get(position).getCategory());
-        holder.btn_expand_toggle.setImageResource(R.drawable.add);
+
+        if (sortdedListofIP2D.get(posHeader) != null) {
+
+            if (posChild == -1) {
+                holder.header_title.setText(toName(posHeader));
+                holder.btn_expand_toggle.setImageResource(R.drawable.add);
+            } else {
+                holder.header_title.setText(sortdedListofIP2D.get(posHeader).get(posChild).getTitle());
+            }
+
+            if (posChild < sortdedListofIP2D.get(posHeader).size()-1)
+                posChild++;
+            else {
+                posChild = -1;
+                posHeader++;
+            }
+        }
+
 
         holder.btn_expand_toggle.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 holder.btn_expand_toggle.setImageResource(R.drawable.navigation);
+
 
             }
 
@@ -173,6 +192,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         // TODO: call function in another place. temporary solution
         if(position == 0)
             updateSortedList();
+
 
         //TODO temporär våningsvisare. Ful men praktisk. Fixa snyggare version
      /*   holder.mTitleView.setText(ipDataset.get(position).getTitle() + " (Våning " + ipDataset.get(position).getFloor() + ")");
@@ -433,9 +453,9 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     }
     private int toPlace(String s)
     {
-        if(s.equals(R.string.ConferenceRoom) || s.equals("Konferansrum")) //TODO borde inte behöva hårdkodda in alternativen
+        if(s.equals(mContext.getResources().getString(R.string.ConferenceRoom)))
             return 0;
-        else if(s.equals(mContext.getResources().getString(R.string.Entrance)) || s.equals("Entré"))
+        else if(s.equals(mContext.getResources().getString(R.string.Entrance)))
             return 1;
         else if(s.equals(mContext.getResources().getString(R.string.Toilet)))
             return 2;
@@ -449,4 +469,21 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             return -1;
     }
 
+    private String toName(int s)
+    {
+        if(s == 0 )
+            return mContext.getResources().getString(R.string.ConferenceRoom);
+        else if(s == 1 )
+            return mContext.getResources().getString(R.string.Entrance);
+        else if(s == 2 )
+            return mContext.getResources().getString(R.string.Toilet);
+        else if(s == 3 )
+            return mContext.getResources().getString(R.string.Printer);
+        else if(s == 4 )
+            return mContext.getResources().getString(R.string.Elevator);
+        else if(s == 5 )
+            return mContext.getResources().getString(R.string.Stairs);
+        else
+            return null;
+    }
 }
