@@ -1,7 +1,10 @@
 package com.example.micke.lions.indoor;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.provider.ContactsContract;
+import android.util.Base64;
 import android.util.Log;
 
 import com.example.micke.lions.DataSetChanged;
@@ -12,6 +15,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +38,14 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
         Firebase ipRef =
                 myFirebaseRef.child("building/" + buildingId + "/floor/" + floor + "/ip/" + point.getId());
         ipRef.setValue(point);
+    }
+
+    //Only call first time a map needs to be uploaded to the server
+    public void addMap(Bitmap bitmap, int floor) {
+        Firebase ipRef =
+                myFirebaseRef.child("building/" + buildingId + "/floor/" + floor + "/mapimage");
+        ipRef.setValue(BitMapToString(bitmap));
+        Log.d("hejfirebase", "updated!");
     }
 
     public void removeIp(PointOfInterest point) {
@@ -134,5 +146,34 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
     }
     public String getFloor() {
         return floorId;
+    }
+
+
+
+    /**
+     * @param bitmap
+     * @return converting bitmap and return a string
+     */
+    public String BitMapToString(Bitmap bitmap){
+        ByteArrayOutputStream baos=new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+        byte [] b=baos.toByteArray();
+        String temp=Base64.encodeToString(b, Base64.DEFAULT);
+        return temp;
+    }
+
+    /**
+     * @param encodedString
+     * @return bitmap (from given string)
+     */
+    public Bitmap StringToBitMap(String encodedString) {
+        try {
+            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        } catch (Exception e) {
+            e.getMessage();
+            return null;
+        }
     }
 }
