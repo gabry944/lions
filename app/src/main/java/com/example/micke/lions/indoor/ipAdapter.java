@@ -252,13 +252,13 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
         int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
         Log.d(TAG, "index collapse= " + index);
-        linearLayout.removeViews(2,sortdedListofIP2D.get(index).size());
+        linearLayout.removeViews(1,sortdedListofIP2D.get(index).size());
     }
 
     public void expandView(final View v, final ViewHolder holder){
 
         LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
-        int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
+        final int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
         Log.d(TAG, "index expand= " + index);
 
         final LayoutInflater lyInflaterForPanel = (LayoutInflater) mContext
@@ -272,6 +272,31 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
             TextView item = (TextView) childLayout.findViewById(R.id.child_content);
             item.setText(sortdedListofIP2D.get(index).get(i).getTitle());
+
+            ImageButton goToMapImage = (ImageButton) childLayout.findViewById(R.id.goToMapImage);
+            if(toName(index).equals(mContext.getResources().getString(R.string.ConferenceRoom)))
+                goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.map_marker_green : R.drawable.navigation);
+            else if(toName(index).equals(mContext.getResources().getString(R.string.Entrance)))
+                goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.entrance_green : R.drawable.entrance_new );
+            else if(toName(index).equals(mContext.getResources().getString(R.string.Toilet)))
+                goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.wc_green : R.drawable.wc );
+            else if(toName(index).equals(mContext.getResources().getString(R.string.Elevator)))
+                goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.elevator_marker_green : R.drawable.elevator_new );
+            else if(toName(index).equals(mContext.getResources().getString(R.string.Stairs)))
+                goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.stairs_green : R.drawable.stairs_menu );
+            else
+                goToMapImage.setImageResource( sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.map_marker_green : R.drawable.navigation);
+
+            final int index2 = i;
+            /*goToMapImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                    mPager.setCurrentItem(0, true);
+                    ((IndoorActivity)mContext).map.highlightIP(sortdedListofIP2D.get(index).get(index2).getFloor(), ((TextView)((View)v.getParent()).findViewById(R.id.id)).getText().toString());
+                }
+            });*/
+
             linearLayout.addView(childLayout);
         }
     }
