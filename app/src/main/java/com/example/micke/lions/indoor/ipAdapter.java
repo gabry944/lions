@@ -271,9 +271,11 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
                     R.layout.fragment_indoor_list_child, null);
 
             TextView item = (TextView) childLayout.findViewById(R.id.child_content);
-            item.setText(sortdedListofIP2D.get(index).get(i).getTitle());
-
             ImageButton goToMapImage = (ImageButton) childLayout.findViewById(R.id.goToMapImage);
+            TextView idText = (TextView) childLayout.findViewById(R.id.id);
+
+            idText.setText(sortdedListofIP2D.get(index).get(i).getId());
+            item.setText(sortdedListofIP2D.get(index).get(i).getTitle());
             if(toName(index).equals(mContext.getResources().getString(R.string.ConferenceRoom)))
                 goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.map_marker_green : R.drawable.navigation);
             else if(toName(index).equals(mContext.getResources().getString(R.string.Entrance)))
@@ -287,15 +289,16 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             else
                 goToMapImage.setImageResource( sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.map_marker_green : R.drawable.navigation);
 
+
             final int index2 = i;
-            /*goToMapImage.setOnClickListener(new View.OnClickListener() {
+            goToMapImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
                     mPager.setCurrentItem(0, true);
                     ((IndoorActivity)mContext).map.highlightIP(sortdedListofIP2D.get(index).get(index2).getFloor(), ((TextView)((View)v.getParent()).findViewById(R.id.id)).getText().toString());
                 }
-            });*/
+            });
 
             linearLayout.addView(childLayout);
         }
