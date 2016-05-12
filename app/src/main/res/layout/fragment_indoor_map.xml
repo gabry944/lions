@@ -20,6 +20,26 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp" />
 
+    <Button
+        android:id="@+id/cancel_way"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="Avbryt"
+        android:background="#FF0000"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="Gå vidare"
+        android:background="#00FF00"
+        android:layout_marginLeft="116dp"
+        android:layout_marginBottom="16dp" />
+
     <!-- A RecyclerView with some commonly used attributes -->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/floor_recycler_view"

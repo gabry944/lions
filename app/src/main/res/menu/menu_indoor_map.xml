@@ -14,10 +14,4 @@
         android:title="addMarker"
         app:showAsAction="always"/>
 
-    <item
-        android:id="@+id/restorePoints"
-        android:icon="@drawable/undo"
-        android:title="restorePoints"
-        app:showAsAction="always"/>
-
 </menu>

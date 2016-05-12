@@ -24,8 +24,10 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -86,6 +88,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private List<IndoorMapMarker> listOfMarkers = new ArrayList<IndoorMapMarker>();
 
     private ImageButton goToList;
+    public Button nextStep;
+    public Button cancel;
     private ImageView goHere;
     private ImageView goHere2;
     private ImageView uAreHere;
@@ -185,6 +189,33 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 mPager.setCurrentItem(1, true);
             }
         });
+
+        cancel = (Button) rootView.findViewById(R.id.cancel_way);
+        cancel.setVisibility(View.GONE);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopWayFinding();
+            }
+        });
+
+        nextStep = (Button) rootView.findViewById(R.id.next);
+        nextStep.setVisibility(View.GONE);
+        nextStep.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(endPoint.getFloor().equals(currentFloor))
+                    stopWayFinding();
+                else
+                    changeFloor(endPoint.getFloor());
+            }
+        });
+
+
+        if(!((IndoorActivity)getActivity()).startFloor.equals("")){
+            //Log.d(TAG, "onCreateView: start floor: " + ((IndoorActivity)getActivity()).startFloor);
+            setCurrentFloor(((IndoorActivity)getActivity()).startFloor);
+        }
 
         return rootView;
     }
@@ -323,6 +354,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         setCurrentFloor(goalFloor);
         resetView();
         filterMarkers = true;
+        cancel.setVisibility(View.VISIBLE);
+        nextStep.setVisibility(View.VISIBLE);
+        nextStep.setText("Gå vidare"); //text changes later if we show goal floor
         floorChange = new ArrayList();
         boolean userHasPos = false;
 
@@ -412,6 +446,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             goHere.setVisibility(View.VISIBLE);
             //Log.d("TAG", "X = " + end.getX() + " Y = " + end.getY());
             addPopup(goHere, end.getX(), end.getY());
+
+            //if the goal is shown the next button should say done
+            nextStep.setText("Klar");
         }
 
         //show elevator
@@ -457,7 +494,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         }
     }
 
-    //sets new floor and shows IP depending on wayfinding
+    //sets new floor and shows IP depending on way finding
     public void changeFloor(String floor){
         //change floor
         setCurrentFloor(floor);
@@ -472,6 +509,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         resetView();
         filterMarkers = true;
+        cancel.setVisibility(View.VISIBLE);
+        nextStep.setVisibility(View.VISIBLE);
+        nextStep.setText("Gå vidare");
         //way finding active
         //display what should be shown on this floor
         for(IndoorMapMarker m: listOfMarkers) {
@@ -481,6 +521,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 end.getMarker().setVisibility(View.VISIBLE);
                 goHere.setVisibility(View.VISIBLE);
                 addPopup(goHere, end.getX(), end.getY());
+                //if end is on this floor the next button should say done
+                nextStep.setText("Klar");
             }
             if(m.getId().equals(userID)) {
                 user = m;
@@ -557,15 +599,74 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         listOfMarkers.add(marker);
 
-
-
         marker.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Checks user have chosen an IP
                 if(filterMarkers) {
+                    //FULASTE JÄÄVLA LÖSNINGEN I GALAXEN???
 
-                    clickForPopups();
+                    //If user have scanned a QR code
+                    if(user != null) {
+                        if (marker.getId() == user.getId() && uAreHere.getVisibility() == View.VISIBLE) {
+                            uAreHere.startAnimation(animToGONE);
+                            uAreHere.setVisibility(View.GONE);
+                        } else if (marker.getId() == user.getId() && uAreHere.getVisibility() == View.GONE) {
+                            uAreHere.startAnimation(animToVISIBLE);
+                            uAreHere.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    //If user have scanned a QR code and clicked on an IP for wayfinding
+                    if(end != null) {
+                        if (marker.getId() == end.getId() && goHere.getVisibility() == View.VISIBLE) {
+                            goHere.startAnimation(animToGONE);
+                            goHere.setVisibility(View.GONE);
+                        } else if (marker.getId() == end.getId() && goHere.getVisibility() == View.GONE) {
+                            goHere.startAnimation(animToVISIBLE);
+                            goHere.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    //If user have clicked on QR code and IP and haven´t changed floor
+                    if(elevator != null && user != null) {
+                        if (marker.getId() == elevator.getId() && goHere.getVisibility() == View.VISIBLE) {
+                            goHere.startAnimation(animToGONE);
+                            goHere.setVisibility(View.GONE);
+                        } else if (marker.getId() == elevator.getId() && goHere.getVisibility() == View.GONE) {
+                            goHere.startAnimation(animToVISIBLE);
+                            goHere.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    //If user have clicked on QR code and IP and have changed floor
+                    if(elevator != null && user == null) {
+                        if (marker.getId() == elevator.getId() && uAreHere.getVisibility() == View.VISIBLE) {
+                            uAreHere.startAnimation(animToGONE);
+                            uAreHere.setVisibility(View.GONE);
+                        } else if (marker.getId() == elevator.getId() && uAreHere.getVisibility() == View.GONE) {
+                            uAreHere.startAnimation(animToVISIBLE);
+                            uAreHere.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    //If user have clicked on QR code and IP and haven´t changed floor
+                    if(staircase != null && user != null){
+                        if(marker.getId() == staircase.getId() && goHere2.getVisibility() == View.VISIBLE){
+                            goHere2.startAnimation(animToGONE);
+                            goHere2.setVisibility(View.GONE);
+                        } else if (marker.getId() == staircase.getId() && goHere2.getVisibility() == View.GONE) {
+                            goHere2.startAnimation(animToVISIBLE);
+                            goHere2.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    //If user have clicked on QR code and IP and have changed floor
+                    if(staircase != null && user == null){
+                        if(marker.getId() == staircase.getId() && uAreHere2.getVisibility() == View.VISIBLE){
+                            uAreHere2.startAnimation(animToGONE);
+                            uAreHere2.setVisibility(View.GONE);
+                        } else if (marker.getId() == staircase.getId() && uAreHere2.getVisibility() == View.GONE) {
+                            uAreHere2.startAnimation(animToVISIBLE);
+                            uAreHere2.setVisibility(View.VISIBLE);
+                        }
+                    }
                 }
             }
         });
@@ -666,9 +767,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             toast.setGravity(Gravity.TOP| Gravity.CENTER, 0, 150);
 
         }
-        else if(id == R.id.restorePoints) {
-            resetView();
-        }
         return false;
     }
 
@@ -683,6 +781,16 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         uAreHere2.setVisibility(View.GONE);
         goHere.setVisibility(View.GONE);
         goHere2.setVisibility(View.GONE);
+        cancel.setVisibility(View.GONE);
+        nextStep.setVisibility(View.GONE);
+    }
+
+    public void stopWayFinding() {
+        resetView();
+        endPoint = new PointOfInterest();
+        userID = "";
+        elevatorID = "";
+        staircaseID = "";
     }
 
     //sets the map of the floor and loads all markers into the listOfMarkers
@@ -780,6 +888,10 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     @Override
     public void getUpdatedDataSet(List<PointOfInterest> pointList) {
+        if(filterMarkers)
+            Log.d(TAG, "getUpdatedDataSet: filter");
+        else
+            Log.d(TAG, "getUpdatedDataSet: no filter");
         RelativeLayout r = mapImage.getRelativeLayout();
         if(!filterMarkers) {
             uAreHere.setVisibility(View.GONE);
@@ -813,6 +925,11 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             else
                 setCurrentFloor(pointList.get(0).getFloor());
             firstLoad = false;
+        }
+        else {
+            if(filterMarkers) {
+                startWayFinding(endPoint.getFloor(), endPoint.getId());
+            }
         }
     }
 
