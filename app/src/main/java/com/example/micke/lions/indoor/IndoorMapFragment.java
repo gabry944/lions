@@ -563,15 +563,74 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         listOfMarkers.add(marker);
 
-
-
         marker.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Checks user have chosen an IP
                 if(filterMarkers) {
+                    //FULASTE JÄÄVLA LÖSNINGEN I GALAXEN???
 
-                    clickForPopups();
+                    //If user have scanned a QR code
+                    if(user != null) {
+                        if (marker.getId() == user.getId() && uAreHere.getVisibility() == View.VISIBLE) {
+                            uAreHere.startAnimation(animToGONE);
+                            uAreHere.setVisibility(View.GONE);
+                        } else if (marker.getId() == user.getId() && uAreHere.getVisibility() == View.GONE) {
+                            uAreHere.startAnimation(animToVISIBLE);
+                            uAreHere.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    //If user have scanned a QR code and clicked on an IP for wayfinding
+                    if(end != null) {
+                        if (marker.getId() == end.getId() && goHere.getVisibility() == View.VISIBLE) {
+                            goHere.startAnimation(animToGONE);
+                            goHere.setVisibility(View.GONE);
+                        } else if (marker.getId() == end.getId() && goHere.getVisibility() == View.GONE) {
+                            goHere.startAnimation(animToVISIBLE);
+                            goHere.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    //If user have clicked on QR code and IP and haven´t changed floor
+                    if(elevator != null && user != null) {
+                        if (marker.getId() == elevator.getId() && goHere.getVisibility() == View.VISIBLE) {
+                            goHere.startAnimation(animToGONE);
+                            goHere.setVisibility(View.GONE);
+                        } else if (marker.getId() == elevator.getId() && goHere.getVisibility() == View.GONE) {
+                            goHere.startAnimation(animToVISIBLE);
+                            goHere.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    //If user have clicked on QR code and IP and have changed floor
+                    if(elevator != null && user == null) {
+                        if (marker.getId() == elevator.getId() && uAreHere.getVisibility() == View.VISIBLE) {
+                            uAreHere.startAnimation(animToGONE);
+                            uAreHere.setVisibility(View.GONE);
+                        } else if (marker.getId() == elevator.getId() && uAreHere.getVisibility() == View.GONE) {
+                            uAreHere.startAnimation(animToVISIBLE);
+                            uAreHere.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    //If user have clicked on QR code and IP and haven´t changed floor
+                    if(staircase != null && user != null){
+                        if(marker.getId() == staircase.getId() && goHere2.getVisibility() == View.VISIBLE){
+                            goHere2.startAnimation(animToGONE);
+                            goHere2.setVisibility(View.GONE);
+                        } else if (marker.getId() == staircase.getId() && goHere2.getVisibility() == View.GONE) {
+                            goHere2.startAnimation(animToVISIBLE);
+                            goHere2.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    //If user have clicked on QR code and IP and have changed floor
+                    if(staircase != null && user == null){
+                        if(marker.getId() == staircase.getId() && uAreHere2.getVisibility() == View.VISIBLE){
+                            uAreHere2.startAnimation(animToGONE);
+                            uAreHere2.setVisibility(View.GONE);
+                        } else if (marker.getId() == staircase.getId() && uAreHere2.getVisibility() == View.GONE) {
+                            uAreHere2.startAnimation(animToVISIBLE);
+                            uAreHere2.setVisibility(View.VISIBLE);
+                        }
+                    }
                 }
             }
         });
@@ -715,62 +774,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                     || p.getCategory().equals(getString(R.string.Elevator))) {
                 addPoint(r, p);
             }
-        }
-    }
-
-    private void clickForPopups(){
-
-        //If user scanned QR code and have chosen an IP(uAreHere & goHere are VISIBLE)
-        //-->View.GONE
-        if(user != null && end != null &&
-                uAreHere.getVisibility() == View.VISIBLE && goHere.getVisibility() == View.VISIBLE){
-
-            uAreHere.startAnimation(animToGONE);
-            goHere.startAnimation(animToGONE);
-
-            uAreHere.setVisibility(View.GONE);
-            goHere.setVisibility(View.GONE);
-        }
-        //If user scanned QR code and have chosen an IP(uAreHere & goHere are GONE)
-        //-->View.VISIBLE
-        else if(user != null && end != null &&
-                uAreHere.getVisibility() == View.GONE && goHere.getVisibility() == View.GONE){
-
-            uAreHere.startAnimation(animToVISIBLE);
-            goHere.startAnimation(animToVISIBLE);
-
-            uAreHere.setVisibility(View.VISIBLE);
-            goHere.setVisibility(View.VISIBLE);
-        }
-        //If user scanned a QR code but haven´t chosen an IP to got to(uAreHere is VISIBLE)
-        //-->Viev.GONE
-        else if(user != null && end == null && uAreHere.getVisibility() == View.VISIBLE){
-
-            uAreHere.startAnimation(animToGONE);
-
-            uAreHere.setVisibility(View.GONE);
-        }
-        //If user scanned a QR code but haven´t chosen an IP to got to(uAreHere is GONE)
-        //-->View.VISIBLE
-        else if(user != null && end == null && uAreHere.getVisibility() == View.GONE){
-
-            uAreHere.startAnimation(animToVISIBLE);
-
-            uAreHere.setVisibility(View.VISIBLE);
-        }
-        //If user have only clicked on IP from list but haven´t scanned a QR code (goHere is VISIBLE)
-        //-->View.GONE
-        else if(user == null && goHere.getVisibility() == View.VISIBLE){
-
-            goHere.startAnimation(animToGONE);
-            goHere.setVisibility(View.GONE);
-        }
-        //If user have only clicked on IP from list but haven´t scanned a QR code (goHere is GONE)
-        //-->View.VISIBLE
-        else if( user == null && goHere.getVisibility() == View.GONE){
-
-            goHere.startAnimation(animToVISIBLE);
-            goHere.setVisibility(View.VISIBLE);
         }
     }
 
