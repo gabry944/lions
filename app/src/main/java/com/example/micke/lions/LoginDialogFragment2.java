@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class LoginDialogFragment extends DialogFragment {
+public class LoginDialogFragment2 extends DialogFragment {
 
     private IndoorActivity indoorActivity = null;
     private OutdoorActivity outdoorActivity = null;
