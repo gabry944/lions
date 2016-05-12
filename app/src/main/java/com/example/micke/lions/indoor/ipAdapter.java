@@ -1,7 +1,5 @@
 package com.example.micke.lions.indoor;
 
-import android.animation.ValueAnimator;
-import android.graphics.Rect;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
@@ -9,38 +7,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.ImageButton;
-
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
-
 import android.widget.ImageView;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.example.micke.lions.R;
-import com.example.micke.lions.Common;
 
 import java.util.Vector;
 
 public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
-    public static final int HEADER = 0;
-    public static final int CHILD = 1;
 
     private int NR_OF_CATEGORIES = 6;
     private List<PointOfInterest> ipDataset;
-    ArrayList<Vector<PointOfInterest>> sortedDataset = new ArrayList<Vector<PointOfInterest>>(5);
-    private int temphHeight;
-    private View tempView;
     private String TAG = "ipAdapter";
     private Context mContext;
-    private int originalHeight = 0;
     private int posHeader = 0;
     private int posChild =-1;
     boolean[] isExpanded = new boolean[NR_OF_CATEGORIES];
@@ -49,24 +32,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-   /* public static class ViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
-        public final View mView;
-        public final TextView mContentView;
-        public final TextView mTitleView;
-        public final ImageButton goToMapImage;
-        public final TextView mIDView;
-
-
-        public ViewHolder(View view) {
-            super(view);
-            mView = view;
-            mTitleView = (TextView) view.findViewById(R.id.title);
-            mContentView = (TextView) view.findViewById(R.id.content);
-            goToMapImage = (ImageButton) view.findViewById(R.id.goToMapImage);
-            mIDView = (TextView) view.findViewById(R.id.id);
-        }
-    }*/
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView header_title;
@@ -81,7 +46,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             btn_expand_toggle = (ImageView) itemView.findViewById(R.id.expand_button);
         }
     }
-
 
     //empty constructor
     public ipAdapter(Context con, List<PointOfInterest> myDataset) {
@@ -108,25 +72,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
         updateSortedList();
     }
-
-    // Create new views (invoked by the layout manager)
-  /*  @Override
-    public ipAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
-
-        switch(viewType){
-            case HEADER:
-                View v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.fragment_indoor_list_header, parent, false);
-
-            case CHILD:
-        }
-        // create a new view
-
-
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
-    }*/
 
     @Override
     public ipAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
@@ -177,75 +122,9 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
                     collapseView(v);
                     isExpanded[index] = false;
                 }
-
-                int count = 0;
-                /*if(list == null){
-                    while (count < sortdedListofIP2D.get(posHeader).size()-1) {
-                        list.add(sortdedListofIP2D.get(count).get(count));
-                        count++;
-                    }
-                }*/
-
-
             }
 
         });
-
-
-
-        //TODO temporär våningsvisare. Ful men praktisk. Fixa snyggare version
-     /*   holder.mTitleView.setText(ipDataset.get(position).getTitle() + " (Våning " + ipDataset.get(position).getFloor() + ")");
-        holder.mContentView.setText(ipDataset.get(position).getDescription());
-        holder.mIDView.setText(ipDataset.get(position).getId());
-
-        String category = ipDataset.get(position).getCategory();
-        if(category.equals("Entré"))
-            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.entrance_green : R.drawable.entrance_new );
-        else if(category.equals("Hiss"))
-            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.elevator_marker_green : R.drawable.elevator_new );
-        else if (category.equals("Trappa"))
-            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.stairs_green : R.drawable.stairs_menu );
-        else if (category.equals("Toalett"))
-            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.wc_green : R.drawable.wc);
-        else
-            holder.goToMapImage.setImageResource( ipDataset.get(position).getOfficial() ? R.drawable.map_marker_green : R.drawable.navigation);
-
-        holder.goToMapImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
-                mPager.setCurrentItem(0, true);
-                ((IndoorActivity)mContext).map.highlightIP(ipDataset.get(position).getFloor(), ((TextView)((View)v.getParent()).findViewById(R.id.id)).getText().toString());
-            }
-        });
-
-
-        //To expand an "item" in the recyclerview
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                ValueAnimator valueAnimator = ValueAnimator.ofInt(0);
-
-                if(isExpanded){
-
-                    if (tempView != null && tempView != v) {
-                        collapseView(tempView, valueAnimator);
-                        expandView(v, valueAnimator);
-                    }
-
-                    else if(tempView == v){
-                        collapseView(v, valueAnimator);
-                        isExpanded = false;
-                    }
-                }
-
-                //if(isExpanded == false)
-                else{
-                    expandView(v, valueAnimator);
-                    isExpanded = true;
-                }
-            }
-        });*/
     }
 
     public void collapseView(final View v){
@@ -303,111 +182,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             linearLayout.addView(childLayout);
         }
     }
-
-   /* public void collapseView(final View v) {
-        final int initialHeight = v.getMeasuredHeight();
-
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-
-                v.getLayoutParams().height = (initialHeight + temphHeight) - (int) (initialHeight * interpolatedTime);
-                v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-
-        };
-
-        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density) * 4);
-        v.startAnimation(a);
-
-        v.findViewById(R.id.content).setVisibility(View.GONE);
-        v.findViewById(R.id.qr_code).setVisibility(View.GONE);
-        v.findViewById(R.id.createQR).setVisibility(View.GONE);
-    }*/
-
-
-
-   /* public void expandView(final View v) {
-
-        if (originalHeight == 0) {
-            originalHeight = v.getHeight();
-        }
-        tempView = v;
-
-
-        v.measure(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT);
-        final int initHeight = v.getMeasuredHeight();
-        temphHeight = initHeight;
-
-
-        //must set to visible AFTER the extraction of the height
-        TextView contentView = (TextView)v.findViewById(R.id.content);
-        TextView qrContentView = (TextView) v.findViewById(R.id.qr_code);
-        ImageButton qrButton = (ImageButton) v.findViewById(R.id.createQR);
-        contentView.setVisibility(View.VISIBLE);
-
-
-
-        //get length of text by bounds.width after these two lines
-        Rect bounds_description = new Rect();
-        contentView.getPaint().getTextBounds((String) contentView.getText(), 0, contentView.getText().length(), bounds_description);
-
-        Rect bounds_qr = new Rect();
-
-        if(Common.IsAdmin()) {
-            qrContentView.getPaint().getTextBounds((String) qrContentView.getText(), 0, qrContentView.getText().length(), bounds_qr);
-        }
-
-
-        int cardwidth = v.getWidth() - 12 *4;
-        int textHeight = v.getHeight() - 12 *2;
-
-        Log.d(TAG, "expandView: bounds.width()/cardwidth = " + bounds_description.width()/cardwidth);
-        Log.d(TAG, "expandView: (bounds.width()/cardwidth +1)*textHeight = " + (bounds_description.width()/cardwidth +1)*textHeight);
-        //get desired size of card by calculating number of rows
-        final int targetHeight;
-        if(Common.IsAdmin()){
-            qrContentView.setVisibility(View.VISIBLE);
-            qrButton.setVisibility(View.VISIBLE);
-            targetHeight = initHeight + (bounds_description.width()/cardwidth +1)*textHeight + (bounds_qr.width()/cardwidth + 1)*textHeight + 100;
-            Log.d(TAG, "expandView: bounds.width()/cardwidth = " + targetHeight);
-        }
-        else
-            targetHeight = initHeight + (bounds_description.width()/cardwidth +1)*textHeight;
-
-        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
-        v.getLayoutParams().height = 1;
-        v.setVisibility(View.VISIBLE);
-
-
-
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                //Make it expand in a more "adaptive way".
-                if (targetHeight/initHeight <2)
-                    v.getLayoutParams().height = (int) (initHeight * interpolatedTime * 2);
-                else
-                    v.getLayoutParams().height = (int) (initHeight * interpolatedTime * (targetHeight/initHeight));
-                v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-
-        };
-
-        // 1dp/ms
-        a.setDuration(((int) (initHeight / v.getContext().getResources().getDisplayMetrics().density)) * 10);
-        v.startAnimation(a);
-    }*/
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
@@ -469,8 +243,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         }
     }
 
-    private void clearSortedList()
-    {
+    private void clearSortedList() {
         Log.d(TAG, "clearSortedList: ");
         sortdedListofIP2D.clear();
 
@@ -478,8 +251,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         for (int i=0;i<NR_OF_CATEGORIES;i++)
             sortdedListofIP2D.add(new Vector<PointOfInterest>());
     }
-    private void updateSortedList()
-    {
+    private void updateSortedList() {
         Log.d(TAG, "updateSortedList: ipDataset size = " + ipDataset.size() );
         clearSortedList();
         for (PointOfInterest p: ipDataset) {
@@ -509,8 +281,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             }
         }
     }
-    private int toPlace(String s)
-    {
+    private int toPlace(String s) {
         if(s.equals(mContext.getResources().getString(R.string.ConferenceRoom)))
             return 0;
         else if(s.equals(mContext.getResources().getString(R.string.Entrance)))
@@ -527,8 +298,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             return -1;
     }
 
-    private String toName(int s)
-    {
+    private String toName(int s) {
         if(s == 0 )
             return mContext.getResources().getString(R.string.ConferenceRoom);
         else if(s == 1 )
@@ -544,8 +314,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         else
             return null;
     }
-
-
 
     public static class Item {
         public int type;
