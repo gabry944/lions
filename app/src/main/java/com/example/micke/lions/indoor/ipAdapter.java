@@ -152,9 +152,9 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
             holder.header_title.setText(toName(posHeader));
             if (sortdedListofIP2D.get(posHeader).size() == 0) {
-                holder.btn_expand_toggle.setImageResource(R.drawable.common_plus_signin_btn_text_light_disabled);
+                holder.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
             } else {
-                holder.btn_expand_toggle.setImageResource(R.drawable.add);
+                holder.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
             }
             posHeader++;
         }
@@ -167,13 +167,13 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
                 LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
                 int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
 
-                holder.btn_expand_toggle.setImageResource(R.drawable.navigation);
+                holder.btn_expand_toggle.setImageResource(R.drawable.arrow_up);
                 if(!isExpanded[index]){
                     expandView(v, holder);
                     isExpanded[index] = true;
                 }
                 else{
-                    holder.btn_expand_toggle.setImageResource(R.drawable.add);
+                    holder.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
                     collapseView(v);
                     isExpanded[index] = false;
                 }
