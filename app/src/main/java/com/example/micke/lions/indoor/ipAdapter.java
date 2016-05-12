@@ -261,13 +261,18 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
         Log.d(TAG, "index expand= " + index);
 
+        final LayoutInflater lyInflaterForPanel = (LayoutInflater) mContext
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+
         for(int i = 0; i < sortdedListofIP2D.get(index).size(); i++){
-            TextView item = new TextView(mContext);
+
+            LinearLayout childLayout = (LinearLayout) lyInflaterForPanel.inflate(
+                    R.layout.fragment_indoor_list_child, null);
+
+            TextView item = (TextView) childLayout.findViewById(R.id.child_content);
             item.setText(sortdedListofIP2D.get(index).get(i).getTitle());
-            item.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT));
-            linearLayout.addView(item);
+            linearLayout.addView(childLayout);
         }
     }
 
