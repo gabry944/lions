@@ -3,10 +3,10 @@ package com.example.micke.lions.indoor;
 import android.app.DialogFragment;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -22,23 +22,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.micke.lions.Common;
 import com.example.micke.lions.InloggChange;
 import com.example.micke.lions.R;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -75,6 +71,11 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     //Scale test
     private MapImage mapImage;
     private BitmapLoading bitmapLoading;
+    //This is how you upload a new mapimage to firebase for a specified floor:
+    //fireBaseIndoor.addMap(bitmapLoading.getFloorImage(R.drawable.map_t3), 3);
+
+    //Sorts map images by which floor they are for
+    private List<FloorMapimage> images;
 
     //Stores all ips for the whole building
     private List<PointOfInterest> pointList;
@@ -167,15 +168,14 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         Log.d("point", "getting dimensions...");
         getDimensions(r);
 
-        //mapImage
         mapImage = (MapImage) rootView.findViewById(R.id.scale_test);
-        mapImage.setImage(new BitmapDrawable(getResources(), bitmapLoading.getFloorImage(R.drawable.map_t3)));
         mapImage.setParent(r);
         mapImage.setCallback(this);
 
         setHasOptionsMenu(true);
 
         pointList = fireBaseIndoor.getPoints(buildingId, this);
+        images = fireBaseIndoor.getMapimages(buildingId, this);
 
         goToList = (ImageButton) rootView.findViewById(R.id.goToIndoorList1);
         goToList.setOnClickListener(new View.OnClickListener() {
@@ -185,12 +185,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 mPager.setCurrentItem(1, true);
             }
         });
-
-
-        if(!((IndoorActivity)getActivity()).startFloor.equals("")){
-            //Log.d(TAG, "onCreateView: start floor: " + ((IndoorActivity)getActivity()).startFloor);
-            setCurrentFloor(((IndoorActivity)getActivity()).startFloor);
-        }
 
         return rootView;
     }
@@ -467,7 +461,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     public void changeFloor(String floor){
         //change floor
         setCurrentFloor(floor);
-
         //if way finding not active
         //show all IP on this floor
         if(!filterMarkers){
@@ -555,6 +548,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     }
 
     private void addPoint(RelativeLayout parent, PointOfInterest ip) {
+        //TODO
         final float[] point = mapImage.convertCoordinates(ip.getLatitude(), ip.getLongitude());
 
         final IndoorMapMarker marker = new IndoorMapMarker(ip, point[0], point[1], parent.getContext());
@@ -696,16 +690,14 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         mapImage.resetView();
         fireBaseIndoor.setFloor(floor);
         currentFloor = floor;
-
-        if (floor.equals("3")) {
-            mapImage.setImage(new BitmapDrawable(getResources(), bitmapLoading.getFloorImage(R.drawable.map_t3)));
-        } else if (floor.equals("4")) {
-            mapImage.setImage(new BitmapDrawable(getResources(), bitmapLoading.getFloorImage(R.drawable.map_t4)));
+        for(FloorMapimage i : images) {
+            if(floor.equals(Integer.toString(i.floor))) {
+                mapImage.setImage(new BitmapDrawable(getResources(), i.mapimage));
+                mapImage.init();
+            }
         }
-
         mapImage.resetView();
 
-//        RelativeLayout r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
         RelativeLayout r = mapImage.getRelativeLayout();
         for (IndoorMapMarker p : listOfMarkers)
             r.removeView(p.getMarker());
@@ -772,6 +764,18 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             goHere.startAnimation(animToVISIBLE);
             goHere.setVisibility(View.VISIBLE);
         }
+    }
+
+
+    //This function takes care of map initialization for the mapimage and markers
+    @Override
+    public void getMapimagesDataSet(List<FloorMapimage> mapimageList) {
+        images = mapimageList;
+        if(!indoorActivity.startFloor.equals("")){
+            changeFloor(indoorActivity.startFloor);
+        }
+        //Standard floor is 3 because reasons.
+        else changeFloor("3");
     }
 
     @Override

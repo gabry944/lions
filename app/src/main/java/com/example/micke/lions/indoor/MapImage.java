@@ -34,7 +34,7 @@ public class MapImage extends RelativeLayout {
         init();
     }
 
-    private void init() {
+    public void init() {
         inflate(getContext(), R.layout.scale_test, this);
         this.imageView = (ImageView) findViewById(R.id.imageView);
 
@@ -61,6 +61,7 @@ public class MapImage extends RelativeLayout {
 
     public void setImage(BitmapDrawable bitmapDrawable) {
         imageView.setImageDrawable(bitmapDrawable);
+        init();
     }
 
     public void setParent(RelativeLayout relativeLayout) {
