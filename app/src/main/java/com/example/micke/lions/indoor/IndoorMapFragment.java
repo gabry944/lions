@@ -195,7 +195,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resetView();
+                stopWayFinding();
             }
         });
 
@@ -205,7 +205,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             @Override
             public void onClick(View v) {
                 if(endPoint.getFloor().equals(currentFloor))
-                    resetView();
+                    stopWayFinding();
                 else
                     changeFloor(endPoint.getFloor());
             }
@@ -708,9 +708,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             toast.setGravity(Gravity.TOP| Gravity.CENTER, 0, 150);
 
         }
-        else if(id == R.id.restorePoints) {
-            resetView();
-        }
         return false;
     }
 
@@ -727,6 +724,14 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         goHere2.setVisibility(View.GONE);
         cancel.setVisibility(View.GONE);
         nextStep.setVisibility(View.GONE);
+    }
+
+    public void stopWayFinding() {
+        resetView();
+        endPoint = new PointOfInterest();
+        userID = "";
+        elevatorID = "";
+        staircaseID = "";
     }
 
     //sets the map of the floor and loads all markers into the listOfMarkers
@@ -814,6 +819,10 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     @Override
     public void getUpdatedDataSet(List<PointOfInterest> pointList) {
+        if(filterMarkers)
+            Log.d(TAG, "getUpdatedDataSet: filter");
+        else
+            Log.d(TAG, "getUpdatedDataSet: no filter");
         RelativeLayout r = mapImage.getRelativeLayout();
         if(!filterMarkers) {
             uAreHere.setVisibility(View.GONE);
@@ -847,6 +856,11 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             else
                 setCurrentFloor(pointList.get(0).getFloor());
             firstLoad = false;
+        }
+        else {
+            if(filterMarkers) {
+                startWayFinding(endPoint.getFloor(), endPoint.getId());
+            }
         }
     }
 
