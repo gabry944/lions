@@ -10,7 +10,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,6 +17,7 @@ import android.view.MenuItem;
 import com.example.micke.lions.Common;
 import com.example.micke.lions.R;
 import com.example.micke.lions.indoor.IndoorActivity;
+import com.example.micke.lions.LoginDialogFragment;
 
 public class OutdoorActivity extends AppCompatActivity {
 
@@ -25,6 +25,8 @@ public class OutdoorActivity extends AppCompatActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 0;
     private static final int MY_PERMISSIONS_REQUEST_MAP = 1;
+
+    public MenuItem adminButton;
 
     private OutdoorPageSliderAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
@@ -111,7 +113,7 @@ public class OutdoorActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_outdoor_activity, menu);
 
-        MenuItem adminButton = menu.findItem(R.id.admin);
+        adminButton = menu.findItem(R.id.admin);
         Common.setAdminButton(adminButton, this);
         return true;
     }
@@ -119,12 +121,15 @@ public class OutdoorActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.admin) {
-            if(Common.IsAdmin())
+        if(id ==  R.id.admin){
+            if (Common.IsAdmin()) {
                 Common.LogOut(map, list, qr);
-            else
-                Common.MakeAdmin(map, list, qr);
-            Common.setAdminButton(item, this);
+                Common.setAdminButton(adminButton, this);
+            }
+            else {
+                LoginDialogFragment login = new LoginDialogFragment();
+                login.show(getFragmentManager(), "login_fragment");
+            }
         }
         return false;
     }

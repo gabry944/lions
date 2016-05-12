@@ -1,11 +1,9 @@
 package com.example.micke.lions.indoor;
 
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -13,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.example.micke.lions.Common;
+import com.example.micke.lions.LoginDialogFragment;
 import com.example.micke.lions.outdoor.BuildingAdapter;
 import com.example.micke.lions.R;
 
@@ -40,6 +39,7 @@ public class IndoorActivity extends AppCompatActivity {
     public String startGoalFloor = "";
     public String startFloor = "";
     private android.support.v7.app.ActionBar actionBar;
+    public MenuItem adminButton;
 
     @Override
     public void onCreate(Bundle state) {
@@ -126,7 +126,7 @@ public class IndoorActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_indoor_activity, menu);
-        MenuItem adminButton = menu.findItem(R.id.admin);
+        adminButton = menu.findItem(R.id.admin);
         Common.setAdminButton(adminButton, this);
 
         return true;
@@ -136,22 +136,23 @@ public class IndoorActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-            if(id ==  R.id.admin){
-                if (Common.IsAdmin())
-                    Common.LogOut(map, list, qr);
-                else
-                    Common.MakeAdmin(map, list, qr);
-                MenuView.ItemView adminButton = (MenuView.ItemView) findViewById(R.id.admin);
-                Common.setAdminButton(item, this);
+        if(id ==  R.id.admin){
+            if (Common.IsAdmin()) {
+                Common.LogOut(map, list, qr);
+                Common.setAdminButton(adminButton, this);
             }
-
-            //Finishes activity and starting outdoorActivity.
-            if(id == android.R.id.home) {
-                onBackPressed();
-                this.finish();
-                return true;
+            else {
+                LoginDialogFragment login = new LoginDialogFragment();
+                login.show(getFragmentManager(), "login_fragment");
             }
+        }
 
+        //Finishes activity and starting outdoorActivity.
+        if(id == android.R.id.home) {
+            onBackPressed();
+            this.finish();
+            return true;
+        }
 
         return false;
     }

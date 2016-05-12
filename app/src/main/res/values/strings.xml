@@ -21,7 +21,12 @@
     <string name="abort">Avbryt</string>
     <string name="remove">Ta bort</string>
     <string name="change">Ändra</string>
+    <string name="ok">Ok</string>
     <string name="adminRequierdForChangingPoint">"Du måste vara admin för att ändra en officiell punkt"</string>
+
+    <string name="adminText">Användarnamn och lösenord?</string>
+    <string name="username">Användarnamn</string>
+    <string name="password">Lösenord</string>
 
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
         AIzaSyCutrsxJ6Vh_OdgQvpPQU4C40-UlVca9dI
@@ -37,6 +42,8 @@
     <string name="Toilet"> Toalett </string>
     <string name="Stairs"> Trappa </string>
     <string name="Printer"> Skrivare </string>
+    <string name="create_car_prompt">Vill du skapa en ny bil och kopiera URL-addressen?</string>
+    <string name="create_car_info">Skriv ut bilden som finns på URL-addressen.</string>
 
     <string-array name="category_array">
         <item>@string/non_chosen</item>
