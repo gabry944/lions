@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import android.widget.ImageView;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.example.micke.lions.R;
@@ -42,8 +43,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     private int originalHeight = 0;
     private int posHeader = 0;
     private int posChild =-1;
-    private boolean isExpanded = false;
-
+    boolean[] isExpanded = new boolean[NR_OF_CATEGORIES];
     private ArrayList<Vector<PointOfInterest>> sortdedListofIP2D;
 
     // Provide a reference to the views for each data item
@@ -89,6 +89,9 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         mContext = con;
         ipDataset = myDataset;
         sortdedListofIP2D = new ArrayList<Vector<PointOfInterest>>(NR_OF_CATEGORIES);
+        for(int i = 0; i < isExpanded.length; i++){
+            isExpanded[i] = false;
+        }
 
         updateSortedList();
     }
@@ -129,31 +132,10 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     public ipAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                    int viewType) {
 
-        switch(viewType){
-            case HEADER:
-                View v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.fragment_indoor_list_header, parent, false);
-                ViewHolder vh = new ViewHolder(v);
-                return vh;
-
-            case CHILD:
-               /* TextView itemTextView = new TextView(mContext);
-                itemTextView.setLayoutParams(
-                        new ViewGroup.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT));
-                return new ViewHolder(itemTextView) {
-                };*/
-
-                View childView = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.fragment_indoor_list_child, parent, false);
-                ViewHolder childViewholder = new ViewHolder(childView);
-                return childViewholder;
-        }
-
-
-
-        return null;
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.fragment_indoor_list_header, parent, false);
+            ViewHolder vh = new ViewHolder(v);
+            return vh;
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -163,46 +145,37 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         // TODO: call function in another place. temporary solution
         if(position == 0){
             posHeader = 0;
-            posChild = -1;
         }
 
         Log.d(TAG, "onBindViewHolder: posChlide: " + posChild + ", posHeader: " + posHeader);
         if (posHeader < NR_OF_CATEGORIES && sortdedListofIP2D.get(posHeader) != null) {
 
-            if (posChild == -1) {
-                holder.header_title.setText(toName(posHeader));
-                if (sortdedListofIP2D.get(posHeader).size() == 0) {
-                    holder.btn_expand_toggle.setImageResource(R.drawable.common_plus_signin_btn_text_light_disabled);
-                } else {
-                    holder.btn_expand_toggle.setImageResource(R.drawable.add);
-                }
+            holder.header_title.setText(toName(posHeader));
+            if (sortdedListofIP2D.get(posHeader).size() == 0) {
+                holder.btn_expand_toggle.setImageResource(R.drawable.common_plus_signin_btn_text_light_disabled);
+            } else {
+                holder.btn_expand_toggle.setImageResource(R.drawable.add);
             }
-            else {
-                holder.header_title.setText(sortdedListofIP2D.get(posHeader).get(posChild).getTitle());
-            }
-
-            //plussar före eftersom startar på -1
-            posChild++;
-            if (posChild >= sortdedListofIP2D.get(posHeader).size()){
-                Log.d(TAG, "onBindViewHolder: posChild: " + posChild);
-                posChild = -1;
-                posHeader++;
-            }
+            posHeader++;
         }
-        final ArrayList<PointOfInterest> list = new ArrayList<PointOfInterest>();
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+
+                LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
+                int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
+
                 holder.btn_expand_toggle.setImageResource(R.drawable.navigation);
-                if(!isExpanded){
+                if(!isExpanded[index]){
                     expandView(v, holder);
-                    isExpanded = true;
+                    isExpanded[index] = true;
                 }
                 else{
+                    holder.btn_expand_toggle.setImageResource(R.drawable.add);
                     collapseView(v);
-                    isExpanded = false;
+                    isExpanded[index] = false;
                 }
 
                 int count = 0;
@@ -217,6 +190,8 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             }
 
         });
+
+
 
         //TODO temporär våningsvisare. Ful men praktisk. Fixa snyggare version
      /*   holder.mTitleView.setText(ipDataset.get(position).getTitle() + " (Våning " + ipDataset.get(position).getFloor() + ")");
@@ -273,6 +248,29 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         });*/
     }
 
+    public void collapseView(final View v){
+        LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
+        int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
+        Log.d(TAG, "index collapse= " + index);
+        linearLayout.removeViews(2,sortdedListofIP2D.get(index).size());
+    }
+
+    public void expandView(final View v, final ViewHolder holder){
+
+        LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
+        int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
+        Log.d(TAG, "index expand= " + index);
+
+        for(int i = 0; i < sortdedListofIP2D.get(index).size(); i++){
+            TextView item = new TextView(mContext);
+            item.setText(sortdedListofIP2D.get(index).get(i).getTitle());
+            item.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
+            linearLayout.addView(item);
+        }
+    }
+
    /* public void collapseView(final View v) {
         final int initialHeight = v.getMeasuredHeight();
 
@@ -299,25 +297,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         v.findViewById(R.id.createQR).setVisibility(View.GONE);
     }*/
 
-    public void collapseView(final View v){
-       // v.findViewById(R.id.layout).setVisibility(View.GONE);
-    }
 
-    public void expandView(final View v, final ViewHolder holder){
-
-        LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
-
-
-        for(int i = 0; i < sortdedListofIP2D.get(0).size(); i++){
-            TextView item = new TextView(mContext);
-            item.setText(sortdedListofIP2D.get(0).get(i).getTitle());
-            item.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT));
-            linearLayout.addView(item);
-
-        }
-    }
 
    /* public void expandView(final View v) {
 
@@ -400,17 +380,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         updateSortedList();
-        int count = 0;
-        for(int i=0; i < NR_OF_CATEGORIES; i++){
-            count++;
-            if(sortdedListofIP2D.get(i)!=null){
-                for (PointOfInterest p: sortdedListofIP2D.get(i)){
-                    count++;
-                }
-            }
-        }
-        Log.d(TAG, "getItemCount: " + count + ", size = " +ipDataset.size());
-        return count;
+        return  NR_OF_CATEGORIES;
     }
 
     public void removeItem(int position) {
