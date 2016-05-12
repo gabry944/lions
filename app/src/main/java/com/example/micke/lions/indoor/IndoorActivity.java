@@ -1,11 +1,9 @@
 package com.example.micke.lions.indoor;
 
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -13,7 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.example.micke.lions.Common;
-import com.example.micke.lions.loginDialogFragment;
+import com.example.micke.lions.LoginDialogFragment;
 import com.example.micke.lions.outdoor.BuildingAdapter;
 import com.example.micke.lions.R;
 
@@ -144,7 +142,7 @@ public class IndoorActivity extends AppCompatActivity {
                 Common.setAdminButton(adminButton, this);
             }
             else {
-                loginDialogFragment login = new loginDialogFragment();
+                LoginDialogFragment login = new LoginDialogFragment();
                 login.show(getFragmentManager(), "login_fragment");
             }
         }

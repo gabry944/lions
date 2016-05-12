@@ -63,9 +63,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     //way finding
     private boolean filterMarkers;
-    private IndoorMapMarker end = null, elevator = null, user = null;
+    private IndoorMapMarker end = null, elevator = null, staircase = null, user = null;
     private PointOfInterest endPoint = new PointOfInterest();
-            private String userID = "", elevatorID = "";
+            private String userID = "", elevatorID = "", staircaseID = "";
     private List<IndoorMapMarker> floorChange;
 
 
@@ -86,7 +86,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     private ImageButton goToList;
     private ImageView goHere;
+    private ImageView goHere2;
     private ImageView uAreHere;
+    private ImageView uAreHere2;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -186,7 +188,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
 
         if(!((IndoorActivity)getActivity()).startFloor.equals("")){
-            Log.d(TAG, "onCreateView: start floor: " + ((IndoorActivity)getActivity()).startFloor);
+            //Log.d(TAG, "onCreateView: start floor: " + ((IndoorActivity)getActivity()).startFloor);
             setCurrentFloor(((IndoorActivity)getActivity()).startFloor);
         }
 
@@ -198,10 +200,14 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private void setUpPopup() {
 
         goHere = new ImageView(getContext());
+        goHere2 = new ImageView(getContext());
         uAreHere = new ImageView(getContext());
+        uAreHere2 = new ImageView(getContext());
 
         goHere.setAdjustViewBounds(true);
+        goHere2.setAdjustViewBounds(true);
         uAreHere.setAdjustViewBounds(true);
+        uAreHere2.setAdjustViewBounds(true);
 
         goHere.setMaxHeight(100);
         goHere.setMaxWidth(170);
@@ -220,24 +226,27 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             }
         });
 
+        goHere2.setMaxHeight(100);
+        goHere2.setMaxWidth(170);
+        goHere2.setMinimumHeight(100);
+        goHere2.setMinimumWidth(170);
+        goHere2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                //if the goal popup was clicked
+                //end way finding
+                //else switch to goal floor
+                if(currentFloor.equals(endPoint.getFloor()))
+                    resetView();
+                else
+                    changeFloor(endPoint.getFloor());
+            }
+        });
+
         uAreHere.setMaxHeight(100);
         uAreHere.setMaxWidth(170);
         uAreHere.setMinimumHeight(100);
         uAreHere.setMinimumWidth(170);
-
-        goHere.setX(0);
-        goHere.setY(0);
-        getRelativeLayout().addView(goHere);
-        goHere.setVisibility(View.GONE);
-
-
-        uAreHere.setX(0);
-        uAreHere.setY(0);
-        getRelativeLayout().addView(uAreHere);
-        uAreHere.setVisibility(View.GONE);
-
-        goHere.setImageResource(R.drawable.speech_bubble_go_here);
-        uAreHere.setImageResource(R.drawable.speech_bubble_u_are_here);
         uAreHere.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -248,6 +257,42 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             }
         });
 
+        uAreHere2.setMaxHeight(100);
+        uAreHere2.setMaxWidth(170);
+        uAreHere2.setMinimumHeight(100);
+        uAreHere2.setMinimumWidth(170);
+        uAreHere2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                //if the elevator popup was clicked
+                //switch to user floor
+                if(currentFloor.equals(endPoint.getFloor()))
+                    changeFloor(((IndoorActivity)getActivity()).startFloor);
+            }
+        });
+
+        goHere.setX(0);
+        goHere.setY(0);
+        getRelativeLayout().addView(goHere);
+        goHere.setVisibility(View.GONE);
+        goHere2.setX(0);
+        goHere2.setY(0);
+        getRelativeLayout().addView(goHere2);
+        goHere2.setVisibility(View.GONE);
+
+        uAreHere.setX(0);
+        uAreHere.setY(0);
+        getRelativeLayout().addView(uAreHere);
+        uAreHere.setVisibility(View.GONE);
+        uAreHere2.setX(0);
+        uAreHere2.setY(0);
+        getRelativeLayout().addView(uAreHere2);
+        uAreHere2.setVisibility(View.GONE);
+
+        goHere.setImageResource(R.drawable.speech_bubble_go_here);
+        goHere2.setImageResource(R.drawable.speech_bubble_go_here);
+        uAreHere.setImageResource(R.drawable.speech_bubble_u_are_here);
+        uAreHere2.setImageResource(R.drawable.speech_bubble_u_are_here);
     }
 
     public void showSingleIP(String floor, String ipID) {
@@ -278,7 +323,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     }
 
     //Shows the user where to go and if the user has a position it shows that position
-    //If the goal is on another floor than the user the closeest elevator or staircase is shown
+    //If the goal is on another floor than the user the closest elevator and staircase is shown
     public void startWayFinding(String goalFloor, String ipID) {
         resetView();
         setCurrentFloor(goalFloor);
@@ -323,13 +368,19 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                     user = m;
             }
 
-            //Find the closest elevator or staircase
-            float distance = Float.MAX_VALUE;
+            //Find the closest elevator and staircase
+            float distanceE = Float.MAX_VALUE;
+            float distanceS = Float.MAX_VALUE;
             for (IndoorMapMarker m : listOfMarkers) {
-                if ((m.getCategory().equals(getString(R.string.Elevator)) || m.getCategory().equals(getString(R.string.Stairs)))
-                        && distance > calcDistance(m.getX(), m.getY(), user.getX(), user.getY())) {
+                if (m.getCategory().equals(getString(R.string.Elevator))
+                        && distanceE > calcDistance(m.getX(), m.getY(), user.getX(), user.getY())) {
                     elevator = m;
-                    distance = calcDistance(m.getX(), m.getY(), user.getX(), user.getY());
+                    distanceE = calcDistance(m.getX(), m.getY(), user.getX(), user.getY());
+                }
+                else if (m.getCategory().equals(getString(R.string.Stairs))
+                        && distanceE > calcDistance(m.getX(), m.getY(), user.getX(), user.getY())) {
+                    staircase = m;
+                    distanceS = calcDistance(m.getX(), m.getY(), user.getX(), user.getY());
                 }
             }
         }
@@ -377,9 +428,24 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             addPopup(goHere, elevator.getX(), elevator.getY());
         }
         else if(end == null) {
-            //user and end on different floors but no elevator or staircase found
+            //user and end on different floors but no elevator found
             //can also be that user is at goal
-            /*Toast toast = Toast.makeText(getContext(), "Couldn't find an elevator or stairs!", Toast.LENGTH_SHORT);
+            /*Toast toast = Toast.makeText(getContext(), "Couldn't find an elevator!", Toast.LENGTH_SHORT);
+            toast.show();
+            return;*/
+        }
+
+        //show staircase
+        if(staircase != null) {
+            staircase.getMarker().setVisibility(View.VISIBLE);
+            staircaseID = staircase.getId();
+            goHere2.setVisibility(View.VISIBLE);
+            addPopup(goHere2, staircase.getX(), staircase.getY());
+        }
+        else if(end == null) {
+            //user and end on different floors but no staircase found
+            //can also be that user is at goal
+            /*Toast toast = Toast.makeText(getContext(), "Couldn't find any stairs!", Toast.LENGTH_SHORT);
             toast.show();
             return;*/
         }
@@ -432,6 +498,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             if(m.getId().equals(elevatorID)) {
                 elevator = m;
             }
+            if(m.getId().equals(staircaseID)) {
+                staircase = m;
+            }
         }
 
         //if we have an elevator and the user and goal are on different floors
@@ -441,13 +510,33 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             //if the goal is on this floor and the user isn't
             //the user should go to the goal
             //and the user is at the elevator
+            elevator.getMarker().setVisibility(View.VISIBLE);
             uAreHere.setVisibility(View.VISIBLE);
             addPopup(uAreHere, elevator.getX(), elevator.getY());
         }
         else if(elevator != null) {
             //the user should go to the elevator
+            elevator.getMarker().setVisibility(View.VISIBLE);
             goHere.setVisibility(View.VISIBLE);
             addPopup(goHere, elevator.getX(), elevator.getY());
+        }
+
+        //if we have a staircase and the user and goal are on different floors
+        //figure out which popup it should have
+        if(staircase != null && end != null && user == null)
+        {
+            //if the goal is on this floor and the user isn't
+            //the user should go to the goal
+            //and the user is at the elevator
+            staircase.getMarker().setVisibility(View.VISIBLE);
+            uAreHere2.setVisibility(View.VISIBLE);
+            addPopup(uAreHere2, staircase.getX(), staircase.getY());
+        }
+        else if(staircase != null) {
+            //the user should go to the elevator
+            staircase.getMarker().setVisibility(View.VISIBLE);
+            goHere2.setVisibility(View.VISIBLE);
+            addPopup(goHere2, staircase.getX(), staircase.getY());
         }
     }
 
@@ -555,8 +644,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         int x = imageView.getMeasuredWidth();
         int y = imageView.getMeasuredHeight();
 
-        Log.d(TAG, "addPopup: x = " + x + ", y = " + y);
-
         imageView.setX(posX - x/4);
         imageView.setY(posY - y - listOfMarkers.get(0).getMarker().getMaxHeight() / 2.0f);
     }
@@ -596,9 +683,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         filterMarkers = false;
         end = null;
         elevator = null;
+        staircase = null;
         user = null;
         uAreHere.setVisibility(View.GONE);
+        uAreHere2.setVisibility(View.GONE);
         goHere.setVisibility(View.GONE);
+        goHere2.setVisibility(View.GONE);
     }
 
     //sets the map of the floor and loads all markers into the listOfMarkers
