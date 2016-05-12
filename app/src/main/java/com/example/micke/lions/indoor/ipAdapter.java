@@ -303,8 +303,14 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
                 @Override
                 public void onClick(View v) {
                     TextView detailInfo = (TextView) v.findViewById(R.id.child_detail_content);
-                    detailInfo.setVisibility(View.VISIBLE);
-                    detailInfo.setText(sortdedListofIP2D.get(index).get(index2).getDescription());
+                    if(detailInfo.getVisibility() == View.GONE){
+                        detailInfo.setVisibility(View.VISIBLE);
+                        detailInfo.setText(sortdedListofIP2D.get(index).get(index2).getDescription());
+                    }
+                    else
+                    {
+                        detailInfo.setVisibility(View.GONE);
+                    }
                 }
             });
 
