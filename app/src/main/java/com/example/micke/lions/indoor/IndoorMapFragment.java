@@ -95,6 +95,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     private RelativeLayout r = null;
 
+    //Animation from VISIBLE to GONE
+    private Animation animToGONE = null;
+
+    //Animation from GONE to VISIBLE
+    private Animation animToVISIBLE = null;
+
     public IndoorMapFragment() {
     }
 
@@ -141,6 +147,11 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         mFloorRecyclerView.setAdapter(floorAdapter);
 
+        animToGONE = new AlphaAnimation(1.0f, 0.0f);
+        animToGONE.setDuration(200);
+
+        animToVISIBLE = new AlphaAnimation(0.0f, 1.0f);
+        animToVISIBLE.setDuration(200);
 
         //For the map
         r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
@@ -463,30 +474,15 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         listOfMarkers.add(marker);
 
+
+
         marker.getMarker().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Checks user have chosen an IP
                 if(filterMarkers) {
-                    if (uAreHere.getVisibility() == View.VISIBLE || goHere.getVisibility() == View.VISIBLE) {
-                        Animation animation = new AlphaAnimation(1.0f, 0.0f);
-                        animation.setDuration(200);
 
-                        uAreHere.startAnimation(animation);
-                        goHere.startAnimation(animation);
-
-                        uAreHere.setVisibility(View.GONE);
-                        goHere.setVisibility(View.GONE);
-
-                    } else if (uAreHere.getVisibility() == View.GONE || goHere.getVisibility() == View.GONE) {
-                        Animation animation = new AlphaAnimation(0.0f, 1.0f);
-                        animation.setDuration(200);
-
-                        uAreHere.startAnimation(animation);
-                        goHere.startAnimation(animation);
-
-                        uAreHere.setVisibility(View.VISIBLE);
-                        goHere.setVisibility(View.VISIBLE);
-                    }
+                    clickForPopups();
                 }
             }
         });
@@ -629,6 +625,62 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                     || p.getCategory().equals(getString(R.string.Elevator))) {
                 addPoint(r, p);
             }
+        }
+    }
+
+    private void clickForPopups(){
+
+        //If user scanned QR code and have chosen an IP(uAreHere & goHere are VISIBLE)
+        //-->View.GONE
+        if(user != null && end != null &&
+                uAreHere.getVisibility() == View.VISIBLE && goHere.getVisibility() == View.VISIBLE){
+
+            uAreHere.startAnimation(animToGONE);
+            goHere.startAnimation(animToGONE);
+
+            uAreHere.setVisibility(View.GONE);
+            goHere.setVisibility(View.GONE);
+        }
+        //If user scanned QR code and have chosen an IP(uAreHere & goHere are GONE)
+        //-->View.VISIBLE
+        else if(user != null && end != null &&
+                uAreHere.getVisibility() == View.GONE && goHere.getVisibility() == View.GONE){
+
+            uAreHere.startAnimation(animToVISIBLE);
+            goHere.startAnimation(animToVISIBLE);
+
+            uAreHere.setVisibility(View.VISIBLE);
+            goHere.setVisibility(View.VISIBLE);
+        }
+        //If user scanned a QR code but haven´t chosen an IP to got to(uAreHere is VISIBLE)
+        //-->Viev.GONE
+        else if(user != null && end == null && uAreHere.getVisibility() == View.VISIBLE){
+
+            uAreHere.startAnimation(animToGONE);
+
+            uAreHere.setVisibility(View.GONE);
+        }
+        //If user scanned a QR code but haven´t chosen an IP to got to(uAreHere is GONE)
+        //-->View.VISIBLE
+        else if(user != null && end == null && uAreHere.getVisibility() == View.GONE){
+
+            uAreHere.startAnimation(animToVISIBLE);
+
+            uAreHere.setVisibility(View.VISIBLE);
+        }
+        //If user have only clicked on IP from list but haven´t scanned a QR code (goHere is VISIBLE)
+        //-->View.GONE
+        else if(user == null && goHere.getVisibility() == View.VISIBLE){
+
+            goHere.startAnimation(animToGONE);
+            goHere.setVisibility(View.GONE);
+        }
+        //If user have only clicked on IP from list but haven´t scanned a QR code (goHere is GONE)
+        //-->View.VISIBLE
+        else if( user == null && goHere.getVisibility() == View.GONE){
+
+            goHere.startAnimation(animToVISIBLE);
+            goHere.setVisibility(View.VISIBLE);
         }
     }
 
