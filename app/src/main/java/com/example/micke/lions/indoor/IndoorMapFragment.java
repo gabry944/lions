@@ -89,6 +89,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private ImageButton goToList;
     public Button nextStep;
     public Button cancel;
+    public TextView goalFloorText;
     private ImageView goHere;
     private ImageView goHere2;
     private ImageView uAreHere;
@@ -211,6 +212,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             }
         });
 
+        goalFloorText = (TextView) rootView.findViewById(R.id.goal_floor_text);
+        goalFloorText.setVisibility(View.GONE);
 
         if(!((IndoorActivity)getActivity()).startFloor.equals("")){
             //Log.d(TAG, "onCreateView: start floor: " + ((IndoorActivity)getActivity()).startFloor);
@@ -357,6 +360,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         cancel.setVisibility(View.VISIBLE);
         nextStep.setVisibility(View.VISIBLE);
         nextStep.setText("Gå vidare"); //text changes later if we show goal floor
+        goalFloorText.setVisibility(View.VISIBLE);
+        goalFloorText.setText("Målet är på våning " + currentFloor);
         floorChange = new ArrayList();
         boolean userHasPos = false;
 
@@ -513,6 +518,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         cancel.setVisibility(View.VISIBLE);
         nextStep.setVisibility(View.VISIBLE);
         nextStep.setText("Gå vidare");
+        goalFloorText.setVisibility(View.VISIBLE);
+        goalFloorText.setText("Målet är på våning " + currentFloor);
         //way finding active
         //display what should be shown on this floor
         for(IndoorMapMarker m: listOfMarkers) {
@@ -724,6 +731,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         goHere2.setVisibility(View.GONE);
         cancel.setVisibility(View.GONE);
         nextStep.setVisibility(View.GONE);
+        goalFloorText.setVisibility(View.GONE);
     }
 
     public void stopWayFinding() {
