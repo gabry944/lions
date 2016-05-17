@@ -140,31 +140,6 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
         return list;
     }
 
-    //Used by floor menu in the map
-    public List<String> getFloors(String buildingId, final IndoorMapMarkerChange indoorMapMarkerChange) {
-        final List<String> list = new ArrayList<>();
-
-        myFirebaseRef.child("building/" + buildingId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot building) {
-                list.clear();
-                DataSnapshot floors = building.child("floor");
-
-                for (DataSnapshot floor : floors.getChildren()) {
-                    list.add(floor.getKey().toString());
-                }
-                indoorMapMarkerChange.dataSetChanged();
-
-            }
-
-            @Override
-            public void onCancelled(FirebaseError error) {
-            }
-        });
-
-        return list;
-    }
-
     public void setFloor(String f) {
         floorId = f;
     }

@@ -27,6 +27,7 @@
     <string name="adminText">Användarnamn och lösenord?</string>
     <string name="username">Användarnamn</string>
     <string name="password">Lösenord</string>
+    <string name="addfloor">+ Lägg till våning</string>string>
 
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
         AIzaSyCutrsxJ6Vh_OdgQvpPQU4C40-UlVca9dI
