@@ -202,24 +202,32 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
     public void removeItem(int position) {
         ipDataset.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, ipDataset.size());
+        //notifyItemRemoved(position);
+        //notifyItemRangeChanged(position, ipDataset.size());
+        updateSortedList();
+        notifyDataSetChanged();
 
     }
 
     public void addItem(int position, PointOfInterest ip) {
         ipDataset.add(position, ip);
-        notifyItemInserted(position);
-        notifyItemRangeChanged(position, ipDataset.size());
+        //notifyItemInserted(position);
+        //notifyItemRangeChanged(position, ipDataset.size());
+        updateSortedList();
+        notifyDataSetChanged();
     }
 
     public void moveItem(int fromPosition, int toPosition) {
         final PointOfInterest ip = ipDataset.remove(fromPosition);
         ipDataset.add(toPosition, ip);
-        notifyItemMoved(fromPosition, toPosition);
+        //notifyItemMoved(fromPosition, toPosition);
+        updateSortedList();
+        notifyDataSetChanged();
     }
 
     public void updateAdapter(List<PointOfInterest> ipSet) {
+        Log.d(TAG, "updateAdapter: ");
+
         applyAndAnimateRemovals(ipSet);
         applyAndAnimateAdditions(ipSet);
         applyAndAnimateMovedItems(ipSet);
@@ -277,7 +285,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             else
                 sortdedListofIP2D.get(place1).add(p);
         }
-
         Log.d(TAG, "updatesortedlist succeeded with " + sortdedListofIP2D.size());
        // printSortedList();
     }
