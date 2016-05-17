@@ -156,4 +156,8 @@ public class IndoorActivity extends AppCompatActivity {
 
         return false;
     }
+
+    public String getCurrentBuilding() {
+        return currentBuilding;
+    }
 }
