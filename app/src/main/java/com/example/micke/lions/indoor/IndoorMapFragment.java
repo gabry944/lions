@@ -67,7 +67,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private boolean filterMarkers;
     private IndoorMapMarker end = null, elevator = null, staircase = null, user = null;
     private PointOfInterest endPoint = new PointOfInterest();
-            private String userID = "", elevatorID = "", staircaseID = "";
+            private String userID = "", elevatorTitle = "", staircaseTitle = "";
     private List<IndoorMapMarker> floorChange;
 
 
@@ -459,7 +459,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         //show elevator
         if(elevator != null) {
             elevator.getMarker().setVisibility(View.VISIBLE);
-            elevatorID = elevator.getId();
+            elevatorTitle = elevator.getTitle();
             goHere.setVisibility(View.VISIBLE);
             addPopup(goHere, elevator.getX(), elevator.getY());
         }
@@ -474,7 +474,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         //show staircase
         if(staircase != null) {
             staircase.getMarker().setVisibility(View.VISIBLE);
-            staircaseID = staircase.getId();
+            staircaseTitle = staircase.getTitle();
             goHere2.setVisibility(View.VISIBLE);
             addPopup(goHere2, staircase.getX(), staircase.getY());
         }
@@ -538,10 +538,10 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 uAreHere.setVisibility(View.VISIBLE);
                 addPopup(uAreHere, user.getX(), user.getY());
             }
-            if(m.getId().equals(elevatorID)) {
+            if(m.getTitle().equals(elevatorTitle)) {
                 elevator = m;
             }
-            if(m.getId().equals(staircaseID)) {
+            if(m.getTitle().equals(staircaseTitle)) {
                 staircase = m;
             }
         }
@@ -797,8 +797,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         resetView();
         endPoint = new PointOfInterest();
         userID = "";
-        elevatorID = "";
-        staircaseID = "";
+        elevatorTitle = "";
+        staircaseTitle = "";
     }
 
     //sets the map of the floor and loads all markers into the listOfMarkers
@@ -821,8 +821,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             r.removeView(p.getMarker());
         listOfMarkers.clear();
         for (PointOfInterest p : pointList) {
-            if (p.getFloor().equals(floor) || p.getCategory().equals(getString(R.string.Stairs))
-                    || p.getCategory().equals(getString(R.string.Elevator))) {
+            if (p.getFloor().equals(floor))// || p.getCategory().equals(getString(R.string.Stairs)) || p.getCategory().equals(getString(R.string.Elevator)))
+            {
                 addPoint(r, p);
             }
         }
@@ -830,10 +830,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     @Override
     public void getUpdatedDataSet(List<PointOfInterest> pointList) {
-        if(filterMarkers)
-            Log.d(TAG, "getUpdatedDataSet: filter");
-        else
-            Log.d(TAG, "getUpdatedDataSet: no filter");
         RelativeLayout r = mapImage.getRelativeLayout();
         if(!filterMarkers) {
             uAreHere.setVisibility(View.GONE);
@@ -844,8 +840,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             }
             listOfMarkers.clear();
             for (PointOfInterest p : pointList) {
-                if (p.getFloor().equals(currentFloor) || p.getCategory().equals(getString(R.string.Stairs))
-                        || p.getCategory().equals(getString(R.string.Elevator)))
+                if (p.getFloor().equals(currentFloor))// || p.getCategory().equals(getString(R.string.Stairs)) || p.getCategory().equals(getString(R.string.Elevator)))
                     addPoint(r, p);
             }
             floorAdapter.notifyDataSetChanged();

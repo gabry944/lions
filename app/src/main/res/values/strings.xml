@@ -23,6 +23,8 @@
     <string name="change">Ändra</string>
     <string name="ok">Ok</string>
     <string name="adminRequierdForChangingPoint">"Du måste vara admin för att ändra en officiell punkt"</string>
+    <string name="createdElevator">Lägg till en hiss med samma namn på en annan våning för att lägga till vart denna hiss leder</string>
+    <string name="createdStairs">Lägg till en trappa med samma namn på en annan våning för att lägga till vart denna trappa leder</string>
 
     <string name="adminText">Användarnamn och lösenord?</string>
     <string name="username">Användarnamn</string>
