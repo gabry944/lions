@@ -20,12 +20,10 @@ import java.util.Vector;
 
 public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
-    private int NR_OF_CATEGORIES = 6;
+    private int NR_OF_CATEGORIES = 7;
     private List<PointOfInterest> ipDataset;
     private String TAG = "ipAdapter";
     private Context mContext;
-    private int posHeader = 0;
-    private int posChild =-1;
     boolean[] isExpanded = new boolean[NR_OF_CATEGORIES];
     private ArrayList<Vector<PointOfInterest>> sortdedListofIP2D;
 
@@ -87,21 +85,18 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
+        Log.d(TAG, "onBindViewHolder: pos = " + position);
         // TODO: call function in another place. temporary solution
-        if(position == 0){
-            posHeader = 0;
-        }
 
-        Log.d(TAG, "onBindViewHolder: posChlide: " + posChild + ", posHeader: " + posHeader);
-        if (posHeader < NR_OF_CATEGORIES && sortdedListofIP2D.get(posHeader) != null) {
 
-            holder.header_title.setText(toName(posHeader));
-            if (sortdedListofIP2D.get(posHeader).size() == 0) {
+        if (position < NR_OF_CATEGORIES && sortdedListofIP2D.get(position) != null) {
+
+            holder.header_title.setText(toName(position));
+            if (sortdedListofIP2D.get(position).size() == 0) {
                 holder.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
             } else {
                 holder.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
             }
-            posHeader++;
         }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -282,6 +277,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             else
                 sortdedListofIP2D.get(place1).add(p);
         }
+
         Log.d(TAG, "updatesortedlist succeeded with " + sortdedListofIP2D.size());
        // printSortedList();
     }
@@ -309,6 +305,8 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             return 4;
         else if(s.equals(mContext.getResources().getString(R.string.Stairs)))
             return 5;
+        else if(s.equals(mContext.getResources().getString(R.string.Other)))
+            return 6;
         else
             return -1;
     }
@@ -326,6 +324,8 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             return mContext.getResources().getString(R.string.Elevator);
         else if(s == 5 )
             return mContext.getResources().getString(R.string.Stairs);
+        else if(s == 6 )
+            return mContext.getResources().getString(R.string.Other);
         else
             return null;
     }
