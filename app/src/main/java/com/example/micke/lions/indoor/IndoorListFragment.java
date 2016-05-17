@@ -108,7 +108,7 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast toast = Toast.makeText(getContext(), R.string.addMarkerExplanation, Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getContext(), R.string.addMarkerExplanation, Toast.LENGTH_LONG);
                 toast.show();
                 ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
                 mPager.setCurrentItem(0, true);

@@ -6,6 +6,6 @@
     android:id="@+id/addBuildingBtn"
     android:icon="@drawable/add"
     android:title="addMarker"
-    app:showAsAction="always"/>
+    app:showAsAction="never"/>
 
 </menu>

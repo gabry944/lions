@@ -101,7 +101,7 @@ public class IndoorQRFragment extends Fragment implements ZBarScannerView.Result
 
         //Toast to show result
         Toast toast = Toast.makeText(getContext(),
-                rawResult.getContents(), Toast.LENGTH_SHORT);
+                rawResult.getContents(), Toast.LENGTH_LONG);
         toast.show();
 
         //
