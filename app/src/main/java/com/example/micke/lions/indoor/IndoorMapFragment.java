@@ -57,8 +57,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private FireBaseIndoor fireBaseIndoor;
     private String buildingId;
     private Context context;
-    private String currentFloor;
-    private boolean firstLoad = true;
+    public String currentFloor;
+    public boolean firstLoad = true;
 
     //way finding
     private boolean filterMarkers;
@@ -156,16 +156,16 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         mFloorRecyclerView.setAdapter(floorAdapter);
 
-        animToGONE = new AlphaAnimation(1.0f, 0.0f);
-        animToGONE.setDuration(200);
-
-        animToVISIBLE = new AlphaAnimation(0.0f, 1.0f);
-        animToVISIBLE.setDuration(200);
-
         //For the map
         r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
         r.setScaleX(1.0f);
         r.setScaleY(1.0f);
+
+        //for the popups
+        animToGONE = new AlphaAnimation(1.0f, 0.0f);
+        animToGONE.setDuration(200);
+        animToVISIBLE = new AlphaAnimation(0.0f, 1.0f);
+        animToVISIBLE.setDuration(200);
 
         //Sets popup properties.
         setUpPopup();
@@ -498,6 +498,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     //sets new floor and shows IP depending on way finding
     public void changeFloor(String floor){
+        Log.d(TAG, "changeFloor: ");
         //change floor
         setCurrentFloor(floor);
         //if way finding not active
@@ -509,6 +510,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             return;
         }
 
+        Log.d(TAG, "changeFloor: way finding active");
         resetView();
         filterMarkers = true;
         cancel.setVisibility(View.VISIBLE);
@@ -747,8 +749,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     }
 
     @Override
-    public void onCreateOptionsMenu(
-            Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_indoor_map, menu);
     }
 
@@ -818,6 +819,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             if(floor.equals(Integer.toString(i.floor))) {
                 //This will indirectly call fillFloorWithPoints() above once image is done loading
                 mapImage.setImage(new BitmapDrawable(getResources(), i.mapimage));
+                fillFloorWithPoints();
             }
         }
         mapImage.resetView();
