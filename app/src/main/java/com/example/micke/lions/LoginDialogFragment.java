@@ -85,9 +85,9 @@ public class LoginDialogFragment extends DialogFragment {
                 else {
                     Toast toast = null;
                     if(indoorActivity != null)
-                        toast = Toast.makeText(indoorActivity, "Fel användarnamn eller lösenord", Toast.LENGTH_SHORT);
+                        toast = Toast.makeText(indoorActivity, "Fel användarnamn eller lösenord", Toast.LENGTH_LONG);
                     else if(outdoorActivity != null)
-                        toast = Toast.makeText(outdoorActivity, "Fel användarnamn eller lösenord", Toast.LENGTH_SHORT);
+                        toast = Toast.makeText(outdoorActivity, "Fel användarnamn eller lösenord", Toast.LENGTH_LONG);
                     toast.show();
                 }
 
