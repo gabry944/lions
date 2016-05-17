@@ -149,7 +149,7 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
     public boolean onQueryTextChange(String newText) {
         filterText = newText;
         myDataset = indoorActivity.getFireBaseHandler().getPoints(buildingId, this, true);
-
+        Log.d("hejdata", "text changed. new size = " + myDataset.size());
         return true;
     }
 

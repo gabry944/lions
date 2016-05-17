@@ -195,6 +195,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
+        Log.d(TAG, "getItemCount called");
         updateSortedList();
         return  NR_OF_CATEGORIES;
     }
@@ -261,7 +262,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     }
 
     private void clearSortedList() {
-        Log.d(TAG, "clearSortedList: ");
         sortdedListofIP2D.clear();
 
         //fill list
@@ -274,7 +274,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         for (PointOfInterest p: ipDataset) {
            // Log.d(TAG, "updateSortedList: fetch from ipDataset");
             String cat = p.getCategory();
-            //turn category name to numer like 0, 1, 2, ...
+            //turn category name to number like 0, 1, 2, ...
             int place1 = toPlace(cat);
             if (place1 == -1)
                 Log.d(TAG, "ipAdapter: något har gått fel nät vi konverterade categorier till int. Ttitle: " + p.getTitle() + " cat = " + cat);
@@ -285,7 +285,8 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             else
                 sortdedListofIP2D.get(place1).add(p);
         }
-        printSortedList();
+        Log.d(TAG, "updatesortedlist succeeded with " + sortdedListofIP2D.size());
+       // printSortedList();
     }
     private void printSortedList(){
         Log.d(TAG, "printSortedList: size = " + sortdedListofIP2D.size());
