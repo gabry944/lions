@@ -165,6 +165,16 @@ public class ChangePointDialogFragment extends DialogFragment {
                         point1, point2, fireBaseIndoor.getFloor(), official.isChecked(), ipId);
                 fireBaseIndoor.updateIp(point, Integer.parseInt(fireBaseIndoor.getFloor()));
 
+                if (spinner.getSelectedItem().toString().equals("Hiss")){
+                    //Ask to add the elevator on more floors
+                    Toast toast = Toast.makeText(indoorActivity, R.string.createdElevator, Toast.LENGTH_LONG);
+                    toast.show();
+                }
+                else if(spinner.getSelectedItem().toString().equals("Trappa")){
+                    //Ask to add the stairs on more floors
+                    Toast toast = Toast.makeText(indoorActivity, R.string.createdStairs, Toast.LENGTH_LONG);
+                    toast.show();
+                }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
