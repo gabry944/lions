@@ -833,6 +833,10 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         images = mapimageList;
 
+        int firstFloor = 1;
+        if(mapimageList.size() > 0)
+            firstFloor = mapimageList.get(0).floor;
+
         for(FloorMapimage fmi : mapimageList) {
             mFloors.add(""+fmi.floor);
         }
@@ -840,8 +844,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         if(!indoorActivity.startFloor.equals("")){
             changeFloor(indoorActivity.startFloor);
         }
-        //Standard floor is 3 because reasons.
-        else changeFloor("3");
+        else changeFloor(""+firstFloor);
     }
 
     @Override

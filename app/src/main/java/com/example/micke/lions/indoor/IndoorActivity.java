@@ -174,25 +174,25 @@ public class IndoorActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == 1) {
                 Uri selectedImageUri = data.getData();
-                selectedImagePath = getPath(selectedImageUri);
-                BitmapDrawable b = new BitmapDrawable(getResources(), selectedImagePath);
-                if(b.getIntrinsicWidth() * b.getIntrinsicHeight() < 1000000) {
-                    try {
-                        map.fireBaseIndoor.addMap(getBitmapFromUri(selectedImageUri), map.nextFloorToAdd());
-                        Log.d("hejgal", "uploaded image");
-                    } catch (IOException e) {
-                        Log.d("hejgal", "error reading image");
+
+                try {
+                    Bitmap b = getBitmapFromUri(selectedImageUri);
+
+                    //Max width or height in pixels. Used for optimization
+                    int maxSize = 500;
+
+                    if(b.getWidth() * b.getHeight() < Math.pow(maxSize, 2)) {
+                        map.fireBaseIndoor.addMap(b, map.nextFloorToAdd());
+                        Toast toast = Toast.makeText(this, "Uploaded image with great Success!", Toast.LENGTH_LONG);
+                        toast.show();
                     }
-                }
-                else {
-                    Toast toast = Toast.makeText(this, "Image too large! Compressing...", Toast.LENGTH_LONG);
-                    toast.show();
-                    try {
-                        map.fireBaseIndoor.addMap(getResizedBitmap(getBitmapFromUri(selectedImageUri), 1000), map.nextFloorToAdd());
-                        Log.d("hejgal", "uploaded image");
-                    } catch (IOException e) {
-                        Log.d("hejgal", "error reading image");
+                    else {
+                        map.fireBaseIndoor.addMap(getResizedBitmap(b, maxSize), map.nextFloorToAdd());
+                        Toast toast = Toast.makeText(this, "Image too large! Uploaded with compression", Toast.LENGTH_LONG);
+                        toast.show();
                     }
+                } catch (IOException e) {
+                    Log.d("hejgal", "error reading image");
                 }
             }
         }
