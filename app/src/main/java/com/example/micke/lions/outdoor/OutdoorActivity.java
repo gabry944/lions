@@ -109,12 +109,12 @@ public class OutdoorActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_outdoor_activity, menu);
-
         adminButton = menu.findItem(R.id.admin);
         Common.setAdminButton(adminButton, this);
+
         return true;
     }
 
