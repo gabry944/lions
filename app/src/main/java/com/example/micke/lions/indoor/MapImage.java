@@ -34,7 +34,7 @@ public class MapImage extends RelativeLayout {
         init();
     }
 
-    private void init() {
+    public void init() {
         inflate(getContext(), R.layout.scale_test, this);
         this.imageView = (ImageView) findViewById(R.id.imageView);
 
@@ -48,6 +48,8 @@ public class MapImage extends RelativeLayout {
                 int[] viewCoords = new int[2];
                 imageView.getLocationOnScreen(viewCoords);
                 imageYOffset = viewCoords[1];
+                //Asynchronous load times requires us to do a callback to map fragment here
+                mIndoorMapFragment.fillFloorWithPoints();
                 return true;
             }
         });
@@ -61,6 +63,7 @@ public class MapImage extends RelativeLayout {
 
     public void setImage(BitmapDrawable bitmapDrawable) {
         imageView.setImageDrawable(bitmapDrawable);
+        init();
     }
 
     public void setParent(RelativeLayout relativeLayout) {
@@ -184,7 +187,6 @@ public class MapImage extends RelativeLayout {
         //Top left corner
         point[0] = (percentageX * imageWidth );
         point[1] = (percentageY * imageHeight );
-
 
         Log.d("touch", "x: " + point[0] + " percentageX: " + percentageX + " xscale: " + relativeLayout.getScaleX()
                 + " imagewidth: " + imageWidth + " viewcoords[0]: " + viewCoords[0]);
