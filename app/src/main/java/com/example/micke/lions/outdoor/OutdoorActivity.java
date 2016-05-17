@@ -206,13 +206,18 @@ public class OutdoorActivity extends AppCompatActivity {
         String buildingId = parts[1];
         String ipId = "-1";
         String floor = "";
+        String currentBuilding = "";
         if (parts[5] != null) {
             ipId = parts[5];
             floor = parts[3];
         }
+        if(parts[6] != null){
+           currentBuilding = parts[6];
+        }
         bundle.putString("buildingId", buildingId);
         bundle.putString("ipId", ipId);
         bundle.putString("floor", floor);
+        bundle.putString("buildingTitle", currentBuilding);
         intent.putExtras(bundle);
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); //not allowed togeter with startActivityForResult
         startActivityForResult(intent, 1);
