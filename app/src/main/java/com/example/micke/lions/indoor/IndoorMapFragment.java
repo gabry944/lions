@@ -54,7 +54,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private View rootView;
     private List<String> mFloors;
     public FloorAdapter floorAdapter;
-    private FireBaseIndoor fireBaseIndoor;
+    public FireBaseIndoor fireBaseIndoor;
     private String buildingId;
     private Context context;
     public String currentFloor;
@@ -72,8 +72,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private int displayHeight;
 
     //Scale test
-    private MapImage mapImage;
-    private BitmapLoading bitmapLoading;
+    public MapImage mapImage;
+    public BitmapLoading bitmapLoading;
     //This is how you upload a new mapimage to firebase for a specified floor:
     //fireBaseIndoor.addMap(bitmapLoading.getFloorImage(R.drawable.map_t3), 3);
 
@@ -933,5 +933,14 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     private RelativeLayout getRelativeLayout(){ return r;}
 
+    //Admin can not choose a floor currently
+    public int nextFloorToAdd() {
+        Log.d(TAG, "nextFloorToAdd: start");
+        if(mFloors.size() > 0) {
+            Log.d(TAG, "nextFloorToAdd: if");
+            return Integer.parseInt(mFloors.get(mFloors.size() - 1)) + 1;
+        }
+        else
+            return 1;
+    }
 }
-

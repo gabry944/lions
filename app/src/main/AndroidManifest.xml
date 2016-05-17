@@ -12,6 +12,7 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="com.shop.shoppinglist.permission.MAPS_RECEIVE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <permission      android:name="com.shop.shoppinglist.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
 
     <application

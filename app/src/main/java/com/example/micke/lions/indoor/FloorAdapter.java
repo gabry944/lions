@@ -1,7 +1,13 @@
 package com.example.micke.lions.indoor;
 
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Rect;
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -87,10 +93,16 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
                     floor = Character.toString(floor.charAt(floor.length()-1));
                 else floor = "";
 
-                if(floor != "")
+                if(!floor.equals(""))
                     mIndoorMapFragment.changeFloor(floor);
-                else
-                    Log.d("hejadmin", "admin should add an image!"); // TODO: tell admin to add a floor image
+                else {
+                    Intent intent = new Intent();
+                    intent.setType("image/*");
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    mIndoorMapFragment.getActivity().startActivityForResult(Intent.createChooser(intent,
+                            "Select Picture"), 1);
+                    Log.d("hejgallery", "called");
+                }
             }
         });
     }
