@@ -177,10 +177,11 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         mapImage = (MapImage) rootView.findViewById(R.id.scale_test);
         mapImage.setParent(r);
         mapImage.setCallback(this);
-
+        mapImage.setImage(new BitmapDrawable(getResources(), bitmapLoading.getFloorImage(R.drawable.loading)));
         setHasOptionsMenu(true);
 
-        pointList = fireBaseIndoor.getPoints(buildingId, this);
+        //Don't load points until map images are loaded
+        pointList = new ArrayList<>();
         images = fireBaseIndoor.getMapimages(buildingId, this);
 
         goToList = (ImageButton) rootView.findViewById(R.id.goToIndoorList1);
@@ -881,6 +882,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     //This function takes care of map initialization for the mapimage and markers
     @Override
     public void getMapimagesDataSet(List<FloorMapimage> mapimageList) {
+        //Start loading points
+        pointList = fireBaseIndoor.getPoints(buildingId, this);
+
         images = mapimageList;
         if(!indoorActivity.startFloor.equals("")){
             changeFloor(indoorActivity.startFloor);
