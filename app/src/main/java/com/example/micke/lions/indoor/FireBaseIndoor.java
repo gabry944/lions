@@ -42,8 +42,7 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
 
     //Only call first time a map needs to be uploaded to the server
     public void addMap(Bitmap bitmap, int floor) {
-        Firebase imgRef =
-                myFirebaseRef.child("buildingimages/" + buildingId + "/" + floor);
+        Firebase imgRef = myFirebaseRef.child("buildingimages/" + buildingId + "/" + floor);
         imgRef.setValue(encodeThumbnail(bitmap));
     }
 
@@ -131,31 +130,6 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
                     }
                 }
                 indoorMapFragment.getUpdatedDataSet(list);
-            }
-
-            @Override
-            public void onCancelled(FirebaseError error) {
-            }
-        });
-
-        return list;
-    }
-
-    //Used by floor menu in the map
-    public List<String> getFloors(String buildingId, final IndoorMapMarkerChange indoorMapMarkerChange) {
-        final List<String> list = new ArrayList<>();
-
-        myFirebaseRef.child("building/" + buildingId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot building) {
-                list.clear();
-                DataSnapshot floors = building.child("floor");
-
-                for (DataSnapshot floor : floors.getChildren()) {
-                    list.add(floor.getKey().toString());
-                }
-                indoorMapMarkerChange.dataSetChanged();
-
             }
 
             @Override

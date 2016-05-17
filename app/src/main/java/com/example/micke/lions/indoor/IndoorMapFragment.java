@@ -135,7 +135,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         buildingId = indoorActivity.getBuildingId();
         rootView = inflater.inflate(R.layout.fragment_indoor_map, container, false);
-        mFloors = fireBaseIndoor.getFloors(buildingId, this);
+        mFloors = new ArrayList<>();
         floorAdapter = new FloorAdapter(this, mFloors);
 
         //Get display dimensions
@@ -756,6 +756,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.floors) {
+            floorAdapter.setData(mFloors); //add updates here
             if(getActivity().findViewById(R.id.floor_recycler_view).getVisibility() == View.GONE)
                 getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.VISIBLE);
             else
@@ -822,63 +823,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         mapImage.resetView();
     }
 
-    private void clickForPopups(){
-
-        //If user scanned QR code and have chosen an IP(uAreHere & goHere are VISIBLE)
-        //-->View.GONE
-        if(user != null && end != null &&
-                uAreHere.getVisibility() == View.VISIBLE && goHere.getVisibility() == View.VISIBLE){
-
-            uAreHere.startAnimation(animToGONE);
-            goHere.startAnimation(animToGONE);
-
-            uAreHere.setVisibility(View.GONE);
-            goHere.setVisibility(View.GONE);
-        }
-        //If user scanned QR code and have chosen an IP(uAreHere & goHere are GONE)
-        //-->View.VISIBLE
-        else if(user != null && end != null &&
-                uAreHere.getVisibility() == View.GONE && goHere.getVisibility() == View.GONE){
-
-            uAreHere.startAnimation(animToVISIBLE);
-            goHere.startAnimation(animToVISIBLE);
-
-            uAreHere.setVisibility(View.VISIBLE);
-            goHere.setVisibility(View.VISIBLE);
-        }
-        //If user scanned a QR code but haven´t chosen an IP to got to(uAreHere is VISIBLE)
-        //-->Viev.GONE
-        else if(user != null && end == null && uAreHere.getVisibility() == View.VISIBLE){
-
-            uAreHere.startAnimation(animToGONE);
-
-            uAreHere.setVisibility(View.GONE);
-        }
-        //If user scanned a QR code but haven´t chosen an IP to got to(uAreHere is GONE)
-        //-->View.VISIBLE
-        else if(user != null && end == null && uAreHere.getVisibility() == View.GONE){
-
-            uAreHere.startAnimation(animToVISIBLE);
-
-            uAreHere.setVisibility(View.VISIBLE);
-        }
-        //If user have only clicked on IP from list but haven´t scanned a QR code (goHere is VISIBLE)
-        //-->View.GONE
-        else if(user == null && goHere.getVisibility() == View.VISIBLE){
-
-            goHere.startAnimation(animToGONE);
-            goHere.setVisibility(View.GONE);
-        }
-        //If user have only clicked on IP from list but haven´t scanned a QR code (goHere is GONE)
-        //-->View.VISIBLE
-        else if( user == null && goHere.getVisibility() == View.GONE){
-
-            goHere.startAnimation(animToVISIBLE);
-            goHere.setVisibility(View.VISIBLE);
-        }
-    }
-
-
     //This function takes care of map initialization for the mapimage and markers
     @Override
     public void getMapimagesDataSet(List<FloorMapimage> mapimageList) {
@@ -886,6 +830,11 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         pointList = fireBaseIndoor.getPoints(buildingId, this);
 
         images = mapimageList;
+
+        for(FloorMapimage fmi : mapimageList) {
+            mFloors.add(""+fmi.floor);
+        }
+
         if(!indoorActivity.startFloor.equals("")){
             changeFloor(indoorActivity.startFloor);
         }

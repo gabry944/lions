@@ -13,8 +13,10 @@ import android.view.animation.Transformation;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.micke.lions.Common;
 import com.example.micke.lions.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> {
@@ -43,15 +45,16 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
     //empty constructor
     public FloorAdapter(IndoorMapFragment indoorMapFragment, List<String> myDataset) {
         mIndoorMapFragment = indoorMapFragment;
-        ipDataset = myDataset;
+        ipDataset = new ArrayList<>();
     }
 
-    public void setFloorDataset(List<String> ipDataset) {
-        this.ipDataset = ipDataset;
-    }
-    // Provide a suitable constructor (depends on the kind of dataset)
-    public FloorAdapter(List<String> myDataset) {
-        ipDataset = myDataset;
+    public void setData(List<String> dataset) {
+        ipDataset = new ArrayList<>();
+        for(String s : dataset) {
+            ipDataset.add("Våning " + s);
+        }
+        if(Common.IsAdmin())
+            ipDataset.add(mIndoorMapFragment.getResources().getString(R.string.addfloor));
     }
 
     // Create new views (invoked by the layout manager)
@@ -72,13 +75,22 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        holder.mContentView.setText("Våning " + ipDataset.get(position));
+        holder.mContentView.setText(ipDataset.get(position));
 
         //To expand an "item" in the recyclerview
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                mIndoorMapFragment.changeFloor(ipDataset.get(position));
+                String floor = ipDataset.get(position);
+
+                if(!floor.equals(mIndoorMapFragment.getResources().getString(R.string.addfloor)))
+                    floor = Character.toString(floor.charAt(floor.length()-1));
+                else floor = "";
+
+                if(floor != "")
+                    mIndoorMapFragment.changeFloor(floor);
+                else
+                    Log.d("hejadmin", "admin should add an image!"); // TODO: tell admin to add a floor image
             }
         });
     }
