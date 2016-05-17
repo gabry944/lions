@@ -42,6 +42,7 @@
     <string name="Toilet"> Toalett </string>
     <string name="Stairs"> Trappa </string>
     <string name="Printer"> Skrivare </string>
+    <string name="Other">Övrigt</string>
     <string name="create_car_prompt">Vill du skapa en ny bil och kopiera URL-addressen?</string>
     <string name="create_car_info">Skriv ut bilden som finns på URL-addressen.</string>
 
@@ -53,5 +54,6 @@
         <item>@string/Toilet</item>
         <item>@string/Stairs</item>
         <item>@string/Printer</item>
+        <item>@string/Other</item>
     </string-array>
 </resources>
