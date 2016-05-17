@@ -42,8 +42,7 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
 
     //Only call first time a map needs to be uploaded to the server
     public void addMap(Bitmap bitmap, int floor) {
-        Firebase imgRef =
-                myFirebaseRef.child("buildingimages/" + buildingId + "/" + floor);
+        Firebase imgRef = myFirebaseRef.child("buildingimages/" + buildingId + "/" + floor);
         imgRef.setValue(encodeThumbnail(bitmap));
     }
 
