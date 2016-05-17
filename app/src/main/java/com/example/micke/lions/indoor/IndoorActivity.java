@@ -1,7 +1,15 @@
 package com.example.micke.lions.indoor;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,12 +17,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.micke.lions.Common;
 import com.example.micke.lions.LoginDialogFragment;
 import com.example.micke.lions.outdoor.BuildingAdapter;
 import com.example.micke.lions.R;
 
+import java.io.FileDescriptor;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -40,6 +51,7 @@ public class IndoorActivity extends AppCompatActivity {
     public String startFloor = "";
     private android.support.v7.app.ActionBar actionBar;
     public MenuItem adminButton;
+    private String selectedImagePath = ""; //Used by admin when adding a map from gallery
 
     @Override
     public void onCreate(Bundle state) {
@@ -155,5 +167,80 @@ public class IndoorActivity extends AppCompatActivity {
         }
 
         return false;
+    }
+
+    //Called when image has been loaded from gallery by admin
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 1) {
+                Uri selectedImageUri = data.getData();
+
+                try {
+                    Bitmap b = getBitmapFromUri(selectedImageUri);
+
+                    //Max width or height in pixels. Used for optimization
+                    int maxSize = 500;
+
+                    if(b.getWidth() * b.getHeight() < Math.pow(maxSize, 2)) {
+                        map.fireBaseIndoor.addMap(b, map.nextFloorToAdd());
+                        Toast toast = Toast.makeText(this, "Uploaded image with great Success!", Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                    else {
+                        map.fireBaseIndoor.addMap(getResizedBitmap(b, maxSize), map.nextFloorToAdd());
+                        Toast toast = Toast.makeText(this, "Image too large! Uploaded with compression", Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                } catch (IOException e) {
+                    Log.d("hejgal", "error reading image");
+                }
+            }
+        }
+    }
+
+
+    //helper to retrieve the path of an image URI
+    public String getPath(Uri uri) {
+        // just some safety built in
+        if( uri == null ) {
+            // TODO perform some logging or show user feedback
+            return null;
+        }
+        // try to retrieve the image from the media store first
+        // this will only work for images selected from gallery
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+        if( cursor != null ){
+            int column_index = cursor
+                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        }
+        // this is our fallback here
+        return uri.getPath();
+    }
+
+    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
+            ParcelFileDescriptor parcelFileDescriptor =
+                    getContentResolver().openFileDescriptor(uri, "r");
+            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+            Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+            parcelFileDescriptor.close();
+            return image;
+    }
+
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float)width / (float) height;
+        if (bitmapRatio > 0) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
     }
 }

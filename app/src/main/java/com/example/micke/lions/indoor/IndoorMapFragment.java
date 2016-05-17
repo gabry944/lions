@@ -54,11 +54,11 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private View rootView;
     private List<String> mFloors;
     public FloorAdapter floorAdapter;
-    private FireBaseIndoor fireBaseIndoor;
+    public FireBaseIndoor fireBaseIndoor;
     private String buildingId;
     private Context context;
-    private String currentFloor;
-    private boolean firstLoad = true;
+    public String currentFloor;
+    public boolean firstLoad = true;
 
     //way finding
     private boolean filterMarkers;
@@ -72,8 +72,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private int displayHeight;
 
     //Scale test
-    private MapImage mapImage;
-    private BitmapLoading bitmapLoading;
+    public MapImage mapImage;
+    public BitmapLoading bitmapLoading;
     //This is how you upload a new mapimage to firebase for a specified floor:
     //fireBaseIndoor.addMap(bitmapLoading.getFloorImage(R.drawable.map_t3), 3);
 
@@ -156,16 +156,16 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         mFloorRecyclerView.setAdapter(floorAdapter);
 
-        animToGONE = new AlphaAnimation(1.0f, 0.0f);
-        animToGONE.setDuration(200);
-
-        animToVISIBLE = new AlphaAnimation(0.0f, 1.0f);
-        animToVISIBLE.setDuration(200);
-
         //For the map
         r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
         r.setScaleX(1.0f);
         r.setScaleY(1.0f);
+
+        //for the popups
+        animToGONE = new AlphaAnimation(1.0f, 0.0f);
+        animToGONE.setDuration(200);
+        animToVISIBLE = new AlphaAnimation(0.0f, 1.0f);
+        animToVISIBLE.setDuration(200);
 
         //Sets popup properties.
         setUpPopup();
@@ -498,6 +498,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     //sets new floor and shows IP depending on way finding
     public void changeFloor(String floor){
+        Log.d(TAG, "changeFloor: ");
         //change floor
         setCurrentFloor(floor);
         //if way finding not active
@@ -509,6 +510,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             return;
         }
 
+        Log.d(TAG, "changeFloor: way finding active");
         resetView();
         filterMarkers = true;
         cancel.setVisibility(View.VISIBLE);
@@ -747,8 +749,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     }
 
     @Override
-    public void onCreateOptionsMenu(
-            Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_indoor_map, menu);
     }
 
@@ -818,6 +819,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             if(floor.equals(Integer.toString(i.floor))) {
                 //This will indirectly call fillFloorWithPoints() above once image is done loading
                 mapImage.setImage(new BitmapDrawable(getResources(), i.mapimage));
+                fillFloorWithPoints();
             }
         }
         mapImage.resetView();
@@ -831,6 +833,10 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         images = mapimageList;
 
+        int firstFloor = 1;
+        if(mapimageList.size() > 0)
+            firstFloor = mapimageList.get(0).floor;
+
         for(FloorMapimage fmi : mapimageList) {
             mFloors.add(""+fmi.floor);
         }
@@ -838,8 +844,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         if(!indoorActivity.startFloor.equals("")){
             changeFloor(indoorActivity.startFloor);
         }
-        //Standard floor is 3 because reasons.
-        else changeFloor("3");
+        else changeFloor(""+firstFloor);
     }
 
     @Override
@@ -931,5 +936,11 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     private RelativeLayout getRelativeLayout(){ return r;}
 
+    //Admin can not choose a floor currently
+    public int nextFloorToAdd() {
+        if(mFloors.size() > 0)
+            return Integer.parseInt(mFloors.get(mFloors.size()-1))+1;
+        else
+            return 1;
+    }
 }
-

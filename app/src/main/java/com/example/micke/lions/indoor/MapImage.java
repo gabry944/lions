@@ -35,6 +35,7 @@ public class MapImage extends RelativeLayout {
     }
 
     public void init() {
+        Log.d("MapImage", "init: ");
         inflate(getContext(), R.layout.scale_test, this);
         this.imageView = (ImageView) findViewById(R.id.imageView);
 
@@ -48,8 +49,6 @@ public class MapImage extends RelativeLayout {
                 int[] viewCoords = new int[2];
                 imageView.getLocationOnScreen(viewCoords);
                 imageYOffset = viewCoords[1];
-                //Asynchronous load times requires us to do a callback to map fragment here
-                mIndoorMapFragment.fillFloorWithPoints();
                 return true;
             }
         });
