@@ -24,8 +24,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     private List<PointOfInterest> ipDataset;
     private String TAG = "ipAdapter";
     private Context mContext;
-    private int posHeader = 0;
-    private int posChild =-1;
     boolean[] isExpanded = new boolean[NR_OF_CATEGORIES];
     private ArrayList<Vector<PointOfInterest>> sortdedListofIP2D;
 
@@ -89,20 +87,16 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
         Log.d(TAG, "onBindViewHolder: pos = " + position);
         // TODO: call function in another place. temporary solution
-        if(position == 0){
-            posHeader = 0;
-        }
 
-        Log.d(TAG, "onBindViewHolder: posChlide: " + posChild + ", posHeader: " + posHeader);
-        if (posHeader < NR_OF_CATEGORIES && sortdedListofIP2D.get(posHeader) != null) {
 
-            holder.header_title.setText(toName(posHeader));
-            if (sortdedListofIP2D.get(posHeader).size() == 0) {
+        if (position < NR_OF_CATEGORIES && sortdedListofIP2D.get(position) != null) {
+
+            holder.header_title.setText(toName(position));
+            if (sortdedListofIP2D.get(position).size() == 0) {
                 holder.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
             } else {
                 holder.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
             }
-            posHeader++;
         }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
