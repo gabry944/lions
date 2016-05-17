@@ -198,6 +198,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
         Marker carMarker = mMap.addMarker(new MarkerOptions()
                 .position(point)
                 .title(car.getName())
+                .snippet("car")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
 
         carMarkerList.add(carMarker);
@@ -220,13 +221,15 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public boolean onMarkerClick(Marker marker) {
 
-        Log.d("marker", "marker clicked");
-        Intent intent = new Intent(getContext(), IndoorActivity.class);
-        Bundle bundle = new Bundle();
-        String buildingId = marker.getSnippet();
-        bundle.putString("buildingId", buildingId);
-        intent.putExtras(bundle);
-        getActivity().startActivityForResult(intent, 1);
+        String snippet = marker.getSnippet();
+        //If it´s a car snippet == car, else it´s the building Id.
+        if(!snippet.equals("car")){
+            Intent intent = new Intent(getContext(), IndoorActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("buildingId", snippet);
+            intent.putExtras(bundle);
+            getActivity().startActivityForResult(intent, 1);
+        }
         return false;
     }
 
