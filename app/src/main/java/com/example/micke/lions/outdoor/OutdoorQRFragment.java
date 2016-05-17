@@ -139,7 +139,7 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
             Log.d(TAG, "handleResult: before toast but inside if");
             //Toast to show result
             Toast toast = Toast.makeText(getContext(),
-                    rawResult.getContents(), Toast.LENGTH_SHORT);
+                    rawResult.getContents(), Toast.LENGTH_LONG);
             toast.show();
 
             //

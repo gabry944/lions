@@ -329,23 +329,5 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             return null;
     }
 
-    public static class Item {
-        public int type;
-        public String title;
-        public String description;
-        public List<Item> invisibleChildren;
-
-        public Item() {
-        }
-        public Item(int type, String title) {
-            this.type = type;
-            this.title = title;
-        }
-        public Item(int type, String title, String description) {
-            this.type = type;
-            this.title = title;
-            this.description = description;
-        }
-    }
 }
 

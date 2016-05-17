@@ -462,7 +462,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         else if(end == null) {
             //user and end on different floors but no elevator found
             //can also be that user is at goal
-            /*Toast toast = Toast.makeText(getContext(), "Couldn't find an elevator!", Toast.LENGTH_SHORT);
+            /*Toast toast = Toast.makeText(getContext(), "Couldn't find an elevator!", Toast.LENGTH_LONG);
             toast.show();
             return;*/
         }
@@ -477,7 +477,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         else if(end == null) {
             //user and end on different floors but no staircase found
             //can also be that user is at goal
-            /*Toast toast = Toast.makeText(getContext(), "Couldn't find any stairs!", Toast.LENGTH_SHORT);
+            /*Toast toast = Toast.makeText(getContext(), "Couldn't find any stairs!", Toast.LENGTH_LONG);
             toast.show();
             return;*/
         }
@@ -694,7 +694,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                     }
                 }
                 else {
-                    final Toast toast = Toast.makeText(context, "Gå ur vägbeskrivning för att ändra punkt.", Toast.LENGTH_SHORT);
+                    final Toast toast = Toast.makeText(context, "Gå ur vägbeskrivning för att ändra punkt.", Toast.LENGTH_LONG);
                     toast.show();
                 }
                 return false;
@@ -766,7 +766,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
             Toast toast = Toast.makeText(context, R.string.addMarkerExplanation, duration);
             toast.show();
-            toast.setGravity(Gravity.TOP| Gravity.CENTER, 0, 150);
 
         }
         return false;

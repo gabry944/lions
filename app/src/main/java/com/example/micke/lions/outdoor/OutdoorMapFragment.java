@@ -124,7 +124,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
             int duration = Toast.LENGTH_LONG;
 
             Toast toast = Toast.makeText(context, R.string.addMarkerExplanation, duration);
-            toast.setGravity(Gravity.TOP| Gravity.CENTER, 0, 150);
+            //toast.setGravity(Gravity.TOP| Gravity.CENTER, 0, 150);
             toast.show();
         }
         return false;
