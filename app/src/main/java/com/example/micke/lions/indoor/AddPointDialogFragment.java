@@ -96,21 +96,18 @@ public class AddPointDialogFragment extends DialogFragment {
                     dialogBuilder.show();
 
                 } else {
-                    Log.d(TAG, "onClick: all fields ok");
                     PointOfInterest point = new PointOfInterest(title.getText().toString(),
                             description.getText().toString(), category.getSelectedItem().toString(),
                             point1, point2, fireBaseIndoor.getFloor(), official.isChecked(), ipId);
                     fireBaseIndoor.updateIp(point, Integer.parseInt(fireBaseIndoor.getFloor()));
 
-                    if(category.getSelectedItem().toString().equals(R.string.Elevator)){
+                    if(category.getSelectedItem().toString().equals("Hiss")){
                         //Ask to add the elevator on more floors
-                        Log.d(TAG, "onClick: skapat hiss");
                         Toast toast = Toast.makeText(getActivity(), R.string.createdElevator, Toast.LENGTH_LONG);
                         toast.show();
                     }
-                    else if(category.getSelectedItem().toString().equals(R.string.Stairs)){
+                    else if(category.getSelectedItem().toString().equals("Trappa")){
                         //Ask to add the stairs on more floors
-                        Log.d(TAG, "onClick: skapat trappa");
                         Toast toast = Toast.makeText(getActivity(), R.string.createdStairs, Toast.LENGTH_LONG);
                         toast.show();
                     }
