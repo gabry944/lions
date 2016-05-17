@@ -211,12 +211,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             }
         });
 
-
-        if(!((IndoorActivity)getActivity()).startFloor.equals("")){
-            //Log.d(TAG, "onCreateView: start floor: " + ((IndoorActivity)getActivity()).startFloor);
-            setCurrentFloor(((IndoorActivity)getActivity()).startFloor);
-        }
-
         return rootView;
     }
 
@@ -592,7 +586,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private void addPoint(RelativeLayout parent, PointOfInterest ip) {
         //TODO
         final float[] point = mapImage.convertCoordinates(ip.getLatitude(), ip.getLongitude());
-
         final IndoorMapMarker marker = new IndoorMapMarker(ip, point[0], point[1], parent.getContext());
 
         parent.addView(marker.getMarker());
@@ -793,29 +786,30 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         staircaseID = "";
     }
 
-    //sets the map of the floor and loads all markers into the listOfMarkers
-    private void setCurrentFloor(String floor) {
-        mapImage.resetView();
-        fireBaseIndoor.setFloor(floor);
-        currentFloor = floor;
-        for(FloorMapimage i : images) {
-            if(floor.equals(Integer.toString(i.floor))) {
-                mapImage.setImage(new BitmapDrawable(getResources(), i.mapimage));
-                mapImage.init();
-            }
-        }
-        mapImage.resetView();
-
+    //Only called by mapImage's init() method. Adds points to the image after the image is loaded
+    public void fillFloorWithPoints() {
         RelativeLayout r = mapImage.getRelativeLayout();
         for (IndoorMapMarker p : listOfMarkers)
             r.removeView(p.getMarker());
         listOfMarkers.clear();
         for (PointOfInterest p : pointList) {
-            if (p.getFloor().equals(floor) || p.getCategory().equals(getString(R.string.Stairs))
+            if (p.getFloor().equals(currentFloor) || p.getCategory().equals(getString(R.string.Stairs))
                     || p.getCategory().equals(getString(R.string.Elevator))) {
                 addPoint(r, p);
             }
         }
+    }
+    //sets the map of the floor and loads all markers into the listOfMarkers
+    private void setCurrentFloor(String floor) {
+        fireBaseIndoor.setFloor(floor);
+        currentFloor = floor;
+        for(FloorMapimage i : images) {
+            if(floor.equals(Integer.toString(i.floor))) {
+                //This will indirectly call fillFloorWithPoints() above once image is done loading
+                mapImage.setImage(new BitmapDrawable(getResources(), i.mapimage));
+            }
+        }
+        mapImage.resetView();
     }
 
     private void clickForPopups(){
@@ -888,10 +882,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     @Override
     public void getUpdatedDataSet(List<PointOfInterest> pointList) {
-        if(filterMarkers)
-            Log.d(TAG, "getUpdatedDataSet: filter");
-        else
-            Log.d(TAG, "getUpdatedDataSet: no filter");
+        Log.d(TAG, "getUpdatedDataSet: filter = " + filterMarkers);
         RelativeLayout r = mapImage.getRelativeLayout();
         if(!filterMarkers) {
             uAreHere.setVisibility(View.GONE);
@@ -920,10 +911,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                     startWayFinding(goalFloor, goalID);
                 } else
                     showSingleIP(currentFloor, ((IndoorActivity) getActivity()).youAreHereID);
-
             }
-            else
-                setCurrentFloor(pointList.get(0).getFloor());
             firstLoad = false;
         }
         else {

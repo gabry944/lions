@@ -274,7 +274,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             //turn category name to numer like 0, 1, 2, ...
             int place1 = toPlace(cat);
             if (place1 == -1)
-                Log.d(TAG, "ipAdapter: något har gått fel nät vi konverterade categorier till int. cat = " + cat);
+                Log.d(TAG, "ipAdapter: något har gått fel nät vi konverterade categorier till int. Ttitle: " + p.getTitle() + " cat = " + cat);
             if (sortdedListofIP2D.get(place1) == null){
                 sortdedListofIP2D.set(place1, new Vector<PointOfInterest>());
                 sortdedListofIP2D.get(place1).add(p);
