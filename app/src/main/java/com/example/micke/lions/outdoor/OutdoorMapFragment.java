@@ -224,7 +224,9 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
         Intent intent = new Intent(getContext(), IndoorActivity.class);
         Bundle bundle = new Bundle();
         String buildingId = marker.getSnippet();
+        String currentBuilding = marker.getTitle();
         bundle.putString("buildingId", buildingId);
+        bundle.putString("buildingTitle", currentBuilding);
         intent.putExtras(bundle);
         getActivity().startActivityForResult(intent, 1);
         return false;
