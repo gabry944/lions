@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.micke.lions.Common;
 import com.example.micke.lions.LoginDialogFragment;
@@ -168,26 +169,37 @@ public class IndoorActivity extends AppCompatActivity {
         return false;
     }
 
+    //Called when image has been loaded from gallery by admin
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == 1) {
                 Uri selectedImageUri = data.getData();
                 selectedImagePath = getPath(selectedImageUri);
                 BitmapDrawable b = new BitmapDrawable(getResources(), selectedImagePath);
-                try {
-                    map.fireBaseIndoor.addMap(getBitmapFromUri(selectedImageUri), map.nextFloorToAdd());
-                    Log.d("hejgal", "uploaded image");
+                if(b.getIntrinsicWidth() * b.getIntrinsicHeight() < 1000000) {
+                    try {
+                        map.fireBaseIndoor.addMap(getBitmapFromUri(selectedImageUri), map.nextFloorToAdd());
+                        Log.d("hejgal", "uploaded image");
+                    } catch (IOException e) {
+                        Log.d("hejgal", "error reading image");
+                    }
                 }
-                catch (IOException e){
-                    Log.d("hejgal", "error reading image");
+                else {
+                    Toast toast = Toast.makeText(this, "Image too large! Compressing...", Toast.LENGTH_LONG);
+                    toast.show();
+                    try {
+                        map.fireBaseIndoor.addMap(getResizedBitmap(getBitmapFromUri(selectedImageUri), 1000), map.nextFloorToAdd());
+                        Log.d("hejgal", "uploaded image");
+                    } catch (IOException e) {
+                        Log.d("hejgal", "error reading image");
+                    }
                 }
             }
         }
     }
 
-    /**
-     * helper to retrieve the path of an image URI
-     */
+
+    //helper to retrieve the path of an image URI
     public String getPath(Uri uri) {
         // just some safety built in
         if( uri == null ) {
@@ -215,5 +227,20 @@ public class IndoorActivity extends AppCompatActivity {
             Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
             parcelFileDescriptor.close();
             return image;
+    }
+
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float)width / (float) height;
+        if (bitmapRatio > 0) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
     }
 }

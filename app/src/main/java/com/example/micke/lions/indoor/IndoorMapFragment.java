@@ -935,8 +935,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     //Admin can not choose a floor currently
     public int nextFloorToAdd() {
-        return Integer.parseInt(mFloors.get(mFloors.size()-1))+1;
+        if(mFloors.size() > 0)
+            return Integer.parseInt(mFloors.get(mFloors.size()-1))+1;
+        else
+            return 1;
     }
-
 }
-
