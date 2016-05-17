@@ -26,6 +26,8 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     private Context mContext;
     boolean[] isExpanded = new boolean[NR_OF_CATEGORIES];
     private ArrayList<Vector<PointOfInterest>> sortdedListofIP2D;
+    private ArrayList<View> categoriesViews;
+    
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -45,12 +47,17 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         }
     }
 
-    //empty constructor
     public ipAdapter(Context con, List<PointOfInterest> myDataset) {
-        Log.d(TAG, "ipAdapter: 1");
+        Log.d(TAG, "constructor 1");
         mContext = con;
         ipDataset = myDataset;
         sortdedListofIP2D = new ArrayList<Vector<PointOfInterest>>(NR_OF_CATEGORIES);
+        categoriesViews = new ArrayList<View>(NR_OF_CATEGORIES);
+        //fill list
+        for (int i=0;i<NR_OF_CATEGORIES;i++)
+            categoriesViews.add(null);
+        Log.d(TAG, "constructor 1: cat size = " + categoriesViews.size());
+        Log.d(TAG, "constructor 1: sort size = " + sortdedListofIP2D.size());
         for(int i = 0; i < isExpanded.length; i++){
             isExpanded[i] = false;
         }
@@ -64,21 +71,25 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     }
     // Provide a suitable constructor (depends on the kind of dataset)
     public ipAdapter(List<PointOfInterest> myDataset) {
-        Log.d(TAG, "ipAdapter: 2");
+        Log.d(TAG, "constructor 2");
         ipDataset = myDataset;
         sortdedListofIP2D = new ArrayList<Vector<PointOfInterest>>(NR_OF_CATEGORIES);
+        categoriesViews = new ArrayList<View>(NR_OF_CATEGORIES);
 
         updateSortedList();
     }
 
     @Override
-    public ipAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
-
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.fragment_indoor_list_header, parent, false);
-            ViewHolder vh = new ViewHolder(v);
-            return vh;
+    public ipAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewNumber)
+    {
+        Log.d(TAG, "onCreateViewHolder: viewType = " + viewNumber);
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.fragment_indoor_list_header, parent, false);
+        Log.d(TAG, "onCreateViewHolder: cat size = " + categoriesViews.size());
+        Log.d(TAG, "onCreateViewHolder: sort size = " + sortdedListofIP2D.size());
+        categoriesViews.set(viewNumber, v);
+        ViewHolder vh = new ViewHolder(v);
+        return vh;
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -86,7 +97,6 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
         Log.d(TAG, "onBindViewHolder: pos = " + position);
-        // TODO: call function in another place. temporary solution
 
 
         if (position < NR_OF_CATEGORIES && sortdedListofIP2D.get(position) != null) {
@@ -105,11 +115,12 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             public void onClick(View v) {
 
                 LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
+                //TODO kan bli fel
                 int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
 
                 holder.btn_expand_toggle.setImageResource(R.drawable.arrow_up);
                 if(!isExpanded[index]){
-                    expandView(v, holder);
+                    expandView(v);
                     isExpanded[index] = true;
                 }
                 else{
@@ -129,7 +140,10 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         linearLayout.removeViews(1,sortdedListofIP2D.get(index).size());
     }
 
-    public void expandView(final View v, final ViewHolder holder){
+    public void expandView(final View v){
+
+        Log.d(TAG, "expandView: v = " + v);
+        Log.d(TAG, "expandView: layout = " + v.findViewById(R.id.layout));
 
         LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
         final int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
@@ -226,11 +240,17 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     }
 
     public void updateAdapter(List<PointOfInterest> ipSet) {
-        Log.d(TAG, "updateAdapter: ");
+        Log.d(TAG, "updateAdapter: innan update");
 
+        //update list
         applyAndAnimateRemovals(ipSet);
         applyAndAnimateAdditions(ipSet);
         applyAndAnimateMovedItems(ipSet);
+
+        //expand categories
+        expandAllCategories();
+
+        Log.d(TAG, "updateAdapter: efter update");
     }
 
     private void applyAndAnimateRemovals(List<PointOfInterest> newips) {
@@ -258,6 +278,19 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             if (fromPosition >= 0 && fromPosition != toPosition) {
                 moveItem(fromPosition, toPosition);
             }
+        }
+    }
+
+    private void expandAllCategories(){
+        View v;
+        for(int i = 0; i<NR_OF_CATEGORIES; i++)
+        {
+            v = categoriesViews.get(i);
+            ImageView mImageButton = (ImageView) v.findViewById(R.id.expand_button);
+            mImageButton.setImageResource(R.drawable.arrow_up);
+            Log.d(TAG, "expandAllCategories: v = " + v);
+            expandView(v);
+            isExpanded[i] = true;
         }
     }
 
