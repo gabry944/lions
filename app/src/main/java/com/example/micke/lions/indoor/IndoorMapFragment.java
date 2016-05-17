@@ -177,10 +177,11 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         mapImage = (MapImage) rootView.findViewById(R.id.scale_test);
         mapImage.setParent(r);
         mapImage.setCallback(this);
-
+        mapImage.setImage(new BitmapDrawable(getResources(), bitmapLoading.getFloorImage(R.drawable.loading)));
         setHasOptionsMenu(true);
 
-        pointList = fireBaseIndoor.getPoints(buildingId, this);
+        //Don't load points until map images are loaded
+        pointList = new ArrayList<>();
         images = fireBaseIndoor.getMapimages(buildingId, this);
 
         goToList = (ImageButton) rootView.findViewById(R.id.goToIndoorList1);
@@ -462,7 +463,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         else if(end == null) {
             //user and end on different floors but no elevator found
             //can also be that user is at goal
-            /*Toast toast = Toast.makeText(getContext(), "Couldn't find an elevator!", Toast.LENGTH_SHORT);
+            /*Toast toast = Toast.makeText(getContext(), "Couldn't find an elevator!", Toast.LENGTH_LONG);
             toast.show();
             return;*/
         }
@@ -477,7 +478,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         else if(end == null) {
             //user and end on different floors but no staircase found
             //can also be that user is at goal
-            /*Toast toast = Toast.makeText(getContext(), "Couldn't find any stairs!", Toast.LENGTH_SHORT);
+            /*Toast toast = Toast.makeText(getContext(), "Couldn't find any stairs!", Toast.LENGTH_LONG);
             toast.show();
             return;*/
         }
@@ -694,7 +695,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                     }
                 }
                 else {
-                    final Toast toast = Toast.makeText(context, "Gå ur vägbeskrivning för att ändra punkt.", Toast.LENGTH_SHORT);
+                    final Toast toast = Toast.makeText(context, "Gå ur vägbeskrivning för att ändra punkt.", Toast.LENGTH_LONG);
                     toast.show();
                 }
                 return false;
@@ -766,7 +767,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
             Toast toast = Toast.makeText(context, R.string.addMarkerExplanation, duration);
             toast.show();
-            toast.setGravity(Gravity.TOP| Gravity.CENTER, 0, 150);
 
         }
         return false;
@@ -882,6 +882,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     //This function takes care of map initialization for the mapimage and markers
     @Override
     public void getMapimagesDataSet(List<FloorMapimage> mapimageList) {
+        //Start loading points
+        pointList = fireBaseIndoor.getPoints(buildingId, this);
+
         images = mapimageList;
         if(!indoorActivity.startFloor.equals("")){
             changeFloor(indoorActivity.startFloor);

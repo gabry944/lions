@@ -60,7 +60,6 @@ public class LoginDialogFragment extends DialogFragment {
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 Log.d(TAG, "onClick: authenticate");
-                //TODO get admin fields from firebase instead
                 //Compare login details with the current admin accounts
                 boolean authenticated = false;
                 Log.d("hejadmin", "accounts = " + accounts.size());
@@ -86,9 +85,9 @@ public class LoginDialogFragment extends DialogFragment {
                 else {
                     Toast toast = null;
                     if(indoorActivity != null)
-                        toast = Toast.makeText(indoorActivity, "Fel användarnamn eller lösenord", Toast.LENGTH_SHORT);
+                        toast = Toast.makeText(indoorActivity, "Fel användarnamn eller lösenord", Toast.LENGTH_LONG);
                     else if(outdoorActivity != null)
-                        toast = Toast.makeText(outdoorActivity, "Fel användarnamn eller lösenord", Toast.LENGTH_SHORT);
+                        toast = Toast.makeText(outdoorActivity, "Fel användarnamn eller lösenord", Toast.LENGTH_LONG);
                     toast.show();
                 }
 

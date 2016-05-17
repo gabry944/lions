@@ -42,9 +42,9 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
 
     //Only call first time a map needs to be uploaded to the server
     public void addMap(Bitmap bitmap, int floor) {
-        Firebase ipRef =
-                myFirebaseRef.child("building/" + buildingId + "/floor/" + floor + "/mapimage");
-        ipRef.setValue(encodeThumbnail(bitmap));
+        Firebase imgRef =
+                myFirebaseRef.child("buildingimages/" + buildingId + "/" + floor);
+        imgRef.setValue(encodeThumbnail(bitmap));
     }
 
     public void removeIp(PointOfInterest point) {
@@ -93,18 +93,15 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
     public List<FloorMapimage> getMapimages(String buildingId, final IndoorMapMarkerChange indoorMapFragment) {
         final List<FloorMapimage> list = new ArrayList<>();
 
-        myFirebaseRef.child("building/" + buildingId).addListenerForSingleValueEvent(new ValueEventListener() {
+        myFirebaseRef.child("buildingimages/" + buildingId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot building) {
-                DataSnapshot floors = building.child("floor");
-                for (DataSnapshot floor : floors.getChildren()) {
-                    if(floor.child("mapimage").getValue() != null) {
-                        Bitmap bitmap = decodeThumbnail(floor.child("mapimage").getValue().toString());
-
-                        list.add(new FloorMapimage(bitmap, Integer.parseInt(floor.getKey())));
+                for (DataSnapshot image : building.getChildren()) {
+                    if(image.getValue() != null) {
+                        Bitmap bitmap = decodeThumbnail(image.getValue().toString());
+                        list.add(new FloorMapimage(bitmap, Integer.parseInt(image.getKey())));
                     }
                 }
-                Log.d("hejimg", "list size = " + list.size());
                 indoorMapFragment.getMapimagesDataSet(list);
             }
 

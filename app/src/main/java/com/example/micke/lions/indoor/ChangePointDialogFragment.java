@@ -154,7 +154,7 @@ public class ChangePointDialogFragment extends DialogFragment {
             public void onClick(DialogInterface dialog, int id) {
                 IndoorMapMarker marker = indoorActivity.map.findMarkerById(ipId);
                 if(marker != null) marker.setMoving(true);
-                final Toast toast = Toast.makeText(indoorActivity, "Flytta punkten genom att dra den dit du önskar.", Toast.LENGTH_SHORT);
+                final Toast toast = Toast.makeText(indoorActivity, "Flytta punkten genom att dra den dit du önskar.", Toast.LENGTH_LONG);
                 toast.show();
             }
         });

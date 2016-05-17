@@ -6,12 +6,12 @@
         android:id="@+id/floors"
         android:icon="@drawable/stairs_menu"
         android:title="floors"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/addInterestPoint"
         android:icon="@drawable/add"
         android:title="addMarker"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
 </menu>
