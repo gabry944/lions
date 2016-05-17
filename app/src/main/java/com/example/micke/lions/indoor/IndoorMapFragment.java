@@ -64,7 +64,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private boolean filterMarkers;
     private IndoorMapMarker end = null, elevator = null, staircase = null, user = null;
     private PointOfInterest endPoint = new PointOfInterest();
-            private String userID = "", elevatorID = "", staircaseID = "";
+            private String userID = "", elevatorTitle = "", staircaseTitle = "";
     private List<IndoorMapMarker> floorChange;
 
 
@@ -135,7 +135,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         buildingId = indoorActivity.getBuildingId();
         rootView = inflater.inflate(R.layout.fragment_indoor_map, container, false);
-        mFloors = fireBaseIndoor.getFloors(buildingId, this);
+        mFloors = new ArrayList<>();
         floorAdapter = new FloorAdapter(this, mFloors);
 
         //Get display dimensions
@@ -456,7 +456,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         //show elevator
         if(elevator != null) {
             elevator.getMarker().setVisibility(View.VISIBLE);
-            elevatorID = elevator.getId();
+            elevatorTitle = elevator.getTitle();
             goHere.setVisibility(View.VISIBLE);
             addPopup(goHere, elevator.getX(), elevator.getY());
         }
@@ -471,7 +471,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         //show staircase
         if(staircase != null) {
             staircase.getMarker().setVisibility(View.VISIBLE);
-            staircaseID = staircase.getId();
+            staircaseTitle = staircase.getTitle();
             goHere2.setVisibility(View.VISIBLE);
             addPopup(goHere2, staircase.getX(), staircase.getY());
         }
@@ -534,10 +534,10 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 uAreHere.setVisibility(View.VISIBLE);
                 addPopup(uAreHere, user.getX(), user.getY());
             }
-            if(m.getId().equals(elevatorID)) {
+            if(m.getTitle().equals(elevatorTitle)) {
                 elevator = m;
             }
-            if(m.getId().equals(staircaseID)) {
+            if(m.getTitle().equals(staircaseTitle)) {
                 staircase = m;
             }
         }
@@ -756,6 +756,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.floors) {
+            floorAdapter.setData(mFloors); //add updates here
             if(getActivity().findViewById(R.id.floor_recycler_view).getVisibility() == View.GONE)
                 getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.VISIBLE);
             else
@@ -792,8 +793,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         resetView();
         endPoint = new PointOfInterest();
         userID = "";
-        elevatorID = "";
-        staircaseID = "";
+        elevatorTitle = "";
+        staircaseTitle = "";
     }
 
     //Only called by mapImage's init() method. Adds points to the image after the image is loaded
@@ -803,8 +804,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             r.removeView(p.getMarker());
         listOfMarkers.clear();
         for (PointOfInterest p : pointList) {
-            if (p.getFloor().equals(currentFloor) || p.getCategory().equals(getString(R.string.Stairs))
-                    || p.getCategory().equals(getString(R.string.Elevator))) {
+            if (p.getFloor().equals(currentFloor))// || p.getCategory().equals(getString(R.string.Stairs)) || p.getCategory().equals(getString(R.string.Elevator)))
+            {
                 addPoint(r, p);
             }
         }
@@ -822,63 +823,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         mapImage.resetView();
     }
 
-    private void clickForPopups(){
-
-        //If user scanned QR code and have chosen an IP(uAreHere & goHere are VISIBLE)
-        //-->View.GONE
-        if(user != null && end != null &&
-                uAreHere.getVisibility() == View.VISIBLE && goHere.getVisibility() == View.VISIBLE){
-
-            uAreHere.startAnimation(animToGONE);
-            goHere.startAnimation(animToGONE);
-
-            uAreHere.setVisibility(View.GONE);
-            goHere.setVisibility(View.GONE);
-        }
-        //If user scanned QR code and have chosen an IP(uAreHere & goHere are GONE)
-        //-->View.VISIBLE
-        else if(user != null && end != null &&
-                uAreHere.getVisibility() == View.GONE && goHere.getVisibility() == View.GONE){
-
-            uAreHere.startAnimation(animToVISIBLE);
-            goHere.startAnimation(animToVISIBLE);
-
-            uAreHere.setVisibility(View.VISIBLE);
-            goHere.setVisibility(View.VISIBLE);
-        }
-        //If user scanned a QR code but haven´t chosen an IP to got to(uAreHere is VISIBLE)
-        //-->Viev.GONE
-        else if(user != null && end == null && uAreHere.getVisibility() == View.VISIBLE){
-
-            uAreHere.startAnimation(animToGONE);
-
-            uAreHere.setVisibility(View.GONE);
-        }
-        //If user scanned a QR code but haven´t chosen an IP to got to(uAreHere is GONE)
-        //-->View.VISIBLE
-        else if(user != null && end == null && uAreHere.getVisibility() == View.GONE){
-
-            uAreHere.startAnimation(animToVISIBLE);
-
-            uAreHere.setVisibility(View.VISIBLE);
-        }
-        //If user have only clicked on IP from list but haven´t scanned a QR code (goHere is VISIBLE)
-        //-->View.GONE
-        else if(user == null && goHere.getVisibility() == View.VISIBLE){
-
-            goHere.startAnimation(animToGONE);
-            goHere.setVisibility(View.GONE);
-        }
-        //If user have only clicked on IP from list but haven´t scanned a QR code (goHere is GONE)
-        //-->View.VISIBLE
-        else if( user == null && goHere.getVisibility() == View.GONE){
-
-            goHere.startAnimation(animToVISIBLE);
-            goHere.setVisibility(View.VISIBLE);
-        }
-    }
-
-
     //This function takes care of map initialization for the mapimage and markers
     @Override
     public void getMapimagesDataSet(List<FloorMapimage> mapimageList) {
@@ -886,6 +830,11 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         pointList = fireBaseIndoor.getPoints(buildingId, this);
 
         images = mapimageList;
+
+        for(FloorMapimage fmi : mapimageList) {
+            mFloors.add(""+fmi.floor);
+        }
+
         if(!indoorActivity.startFloor.equals("")){
             changeFloor(indoorActivity.startFloor);
         }
@@ -895,7 +844,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     @Override
     public void getUpdatedDataSet(List<PointOfInterest> pointList) {
-        Log.d(TAG, "getUpdatedDataSet: filter = " + filterMarkers);
         RelativeLayout r = mapImage.getRelativeLayout();
         if(!filterMarkers) {
             uAreHere.setVisibility(View.GONE);
@@ -906,8 +854,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             }
             listOfMarkers.clear();
             for (PointOfInterest p : pointList) {
-                if (p.getFloor().equals(currentFloor) || p.getCategory().equals(getString(R.string.Stairs))
-                        || p.getCategory().equals(getString(R.string.Elevator)))
+                if (p.getFloor().equals(currentFloor))// || p.getCategory().equals(getString(R.string.Stairs)) || p.getCategory().equals(getString(R.string.Elevator)))
                     addPoint(r, p);
             }
             floorAdapter.notifyDataSetChanged();
@@ -918,12 +865,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             if (!userID.equals("")) {
                 //the user has a position
                 //is there a goal?
-                String goalID = ((IndoorActivity) getActivity()).startGoalID;
-                String goalFloor = ((IndoorActivity) getActivity()).startGoalFloor;
+                String goalID = indoorActivity.startGoalID;
+                String goalFloor = indoorActivity.startGoalFloor;
                 if (!goalID.equals("") && !goalFloor.equals("")) {
                     startWayFinding(goalFloor, goalID);
                 } else
-                    showSingleIP(currentFloor, ((IndoorActivity) getActivity()).youAreHereID);
+                    showSingleIP(currentFloor, indoorActivity.youAreHereID);
             }
             firstLoad = false;
         }
