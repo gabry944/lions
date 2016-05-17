@@ -147,7 +147,7 @@ public class IndoorMapMarker {
         );
         ((IndoorActivity)context).getFireBaseHandler().updateIp(point,
                 Integer.parseInt(((IndoorActivity)context).getFireBaseHandler().getFloor()));
-        final Toast toast = Toast.makeText(context, "Punkt flyttad!", Toast.LENGTH_SHORT);
+        final Toast toast = Toast.makeText(context, "Punkt flyttad!", Toast.LENGTH_LONG);
         toast.show();
     }
 

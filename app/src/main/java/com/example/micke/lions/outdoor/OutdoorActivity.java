@@ -40,6 +40,9 @@ public class OutdoorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //Let firebase start loading its data before anything else
+        fireBaseHandler = new FireBaseOutdoor(getApplicationContext());
+
         //check for permission to use the camera
         //needed for the QRFragment
         if (ContextCompat.checkSelfPermission(this,
@@ -63,8 +66,6 @@ public class OutdoorActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_outdoor);
-
-        fireBaseHandler = new FireBaseOutdoor(getApplicationContext());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -109,12 +110,12 @@ public class OutdoorActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_outdoor_activity, menu);
-
         adminButton = menu.findItem(R.id.admin);
         Common.setAdminButton(adminButton, this);
+
         return true;
     }
 
@@ -206,13 +207,18 @@ public class OutdoorActivity extends AppCompatActivity {
         String buildingId = parts[1];
         String ipId = "-1";
         String floor = "";
+        String currentBuilding = "";
         if (parts[5] != null) {
             ipId = parts[5];
             floor = parts[3];
         }
+        if(parts[6] != null){
+           currentBuilding = parts[6];
+        }
         bundle.putString("buildingId", buildingId);
         bundle.putString("ipId", ipId);
         bundle.putString("floor", floor);
+        bundle.putString("buildingTitle", currentBuilding);
         intent.putExtras(bundle);
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); //not allowed togeter with startActivityForResult
         startActivityForResult(intent, 1);

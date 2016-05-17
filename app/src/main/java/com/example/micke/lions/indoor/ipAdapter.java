@@ -20,7 +20,7 @@ import java.util.Vector;
 
 public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
-    private int NR_OF_CATEGORIES = 6;
+    private int NR_OF_CATEGORIES = 7;
     private List<PointOfInterest> ipDataset;
     private String TAG = "ipAdapter";
     private Context mContext;
@@ -87,6 +87,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
+        Log.d(TAG, "onBindViewHolder: pos = " + position);
         // TODO: call function in another place. temporary solution
         if(position == 0){
             posHeader = 0;
@@ -274,7 +275,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             //turn category name to numer like 0, 1, 2, ...
             int place1 = toPlace(cat);
             if (place1 == -1)
-                Log.d(TAG, "ipAdapter: något har gått fel nät vi konverterade categorier till int. cat = " + cat);
+                Log.d(TAG, "ipAdapter: något har gått fel nät vi konverterade categorier till int. Ttitle: " + p.getTitle() + " cat = " + cat);
             if (sortdedListofIP2D.get(place1) == null){
                 sortdedListofIP2D.set(place1, new Vector<PointOfInterest>());
                 sortdedListofIP2D.get(place1).add(p);
@@ -282,7 +283,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             else
                 sortdedListofIP2D.get(place1).add(p);
         }
-       // printSortedList();
+        //printSortedList();
     }
     private void printSortedList(){
         Log.d(TAG, "printSortedList: size = " + sortdedListofIP2D.size());
@@ -308,6 +309,8 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             return 4;
         else if(s.equals(mContext.getResources().getString(R.string.Stairs)))
             return 5;
+        else if(s.equals(mContext.getResources().getString(R.string.Other)))
+            return 6;
         else
             return -1;
     }
@@ -325,27 +328,11 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             return mContext.getResources().getString(R.string.Elevator);
         else if(s == 5 )
             return mContext.getResources().getString(R.string.Stairs);
+        else if(s == 6 )
+            return mContext.getResources().getString(R.string.Other);
         else
             return null;
     }
 
-    public static class Item {
-        public int type;
-        public String title;
-        public String description;
-        public List<Item> invisibleChildren;
-
-        public Item() {
-        }
-        public Item(int type, String title) {
-            this.type = type;
-            this.title = title;
-        }
-        public Item(int type, String title, String description) {
-            this.type = type;
-            this.title = title;
-            this.description = description;
-        }
-    }
 }
 

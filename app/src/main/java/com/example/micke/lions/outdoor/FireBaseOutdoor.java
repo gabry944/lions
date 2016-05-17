@@ -41,8 +41,6 @@ public class FireBaseOutdoor extends FireBaseHandler implements Serializable {
                 list.clear();
                 for (DataSnapshot building : buildings.getChildren()) {
                     Building b = new Building(building.getValue(Building.class));
-                    Log.d("loadall", b.getLatitude() + " " + b.getLongitude() + " " + b.getId() + " " + b.getName());
-                    Log.d("loadall", building.toString());
                     list.add(b);
                 }
                 buildingDataSetChanged.dataSetChanged(list);
@@ -63,7 +61,6 @@ public class FireBaseOutdoor extends FireBaseHandler implements Serializable {
                 list.clear();
                 Log.d("outdoor", "data changed");
                 for (DataSnapshot building : buildings.getChildren()) {
-                    Log.d("outdoorb", building.toString());
                     Building b = new Building(building.getValue(Building.class));
                     list.add(b);
                 }

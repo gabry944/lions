@@ -2,6 +2,8 @@ package com.example.micke.lions.indoor;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -125,14 +127,37 @@ public class ChangePointDialogFragment extends DialogFragment {
         submit.setVisibility(View.GONE);
         cancel.setVisibility(View.GONE);
 
+        Button getQRCode = (Button) dialogView.findViewById(R.id.button_get_qr_code);
+        getQRCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=" +
+                        "building/" + indoorActivity.getBuildingId() + "/floor/"
+                        + fireBaseIndoor.getFloor() + "/ip/" + ipId
+                        + "&qzone=1&margin=0&size=400x400&ecc=L";
+
+                Log.d("url", url);
+
+                getActivity();
+                ClipboardManager clipboard = (ClipboardManager) indoorActivity
+                        .getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("", url);
+                clipboard.setPrimaryClip(clip);
+
+                Toast toast = Toast.makeText(indoorActivity,
+                        "URL kopierad", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
+
         builder.setNeutralButton("Flytta punkt", new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int id) {
-            IndoorMapMarker marker = indoorActivity.map.findMarkerById(ipId);
-            if(marker != null) marker.setMoving(true);
-            final Toast toast = Toast.makeText(indoorActivity, "Flytta punkten genom att dra den dit du önskar.", Toast.LENGTH_SHORT);
-            toast.show();
-        }
-    });
+            public void onClick(DialogInterface dialog, int id) {
+                IndoorMapMarker marker = indoorActivity.map.findMarkerById(ipId);
+                if(marker != null) marker.setMoving(true);
+                final Toast toast = Toast.makeText(indoorActivity, "Flytta punkten genom att dra den dit du önskar.", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 PointOfInterest point = new PointOfInterest(titleField.getText().toString(),

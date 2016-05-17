@@ -42,10 +42,9 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
 
     //Only call first time a map needs to be uploaded to the server
     public void addMap(Bitmap bitmap, int floor) {
-        Firebase ipRef =
-                myFirebaseRef.child("building/" + buildingId + "/floor/" + floor + "/mapimage");
-        ipRef.setValue(BitMapToString(bitmap));
-        Log.d("hejfirebase", "updated!");
+        Firebase imgRef =
+                myFirebaseRef.child("buildingimages/" + buildingId + "/" + floor);
+        imgRef.setValue(encodeThumbnail(bitmap));
     }
 
     public void removeIp(PointOfInterest point) {
@@ -78,6 +77,32 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
                 else
                     dataSetChangedInterface.dataSetChanged();
 
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
+
+        return list;
+    }
+
+    //Loads bitmaps for the current building from firebase. Maps are special in that they are only
+    //loaded once on starup. This means that if admin adds another map while a user is using the app,
+    //the user needs to restart to see changes.
+    public List<FloorMapimage> getMapimages(String buildingId, final IndoorMapMarkerChange indoorMapFragment) {
+        final List<FloorMapimage> list = new ArrayList<>();
+
+        myFirebaseRef.child("buildingimages/" + buildingId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot building) {
+                for (DataSnapshot image : building.getChildren()) {
+                    if(image.getValue() != null) {
+                        Bitmap bitmap = decodeThumbnail(image.getValue().toString());
+                        list.add(new FloorMapimage(bitmap, Integer.parseInt(image.getKey())));
+                    }
+                }
+                indoorMapFragment.getMapimagesDataSet(list);
             }
 
             @Override
@@ -154,26 +179,14 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
      * @param bitmap
      * @return converting bitmap and return a string
      */
-    public String BitMapToString(Bitmap bitmap){
-        ByteArrayOutputStream baos=new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
-        byte [] b=baos.toByteArray();
-        String temp=Base64.encodeToString(b, Base64.DEFAULT);
-        return temp;
+    public String encodeThumbnail(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        return Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT);
     }
 
-    /**
-     * @param encodedString
-     * @return bitmap (from given string)
-     */
-    public Bitmap StringToBitMap(String encodedString) {
-        try {
-            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-            return bitmap;
-        } catch (Exception e) {
-            e.getMessage();
-            return null;
-        }
+    private Bitmap decodeThumbnail(String thumbData) {
+        byte[] bytes = Base64.decode(thumbData, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
 }

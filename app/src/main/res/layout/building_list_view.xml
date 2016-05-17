@@ -1,47 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
-    <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/card_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        card_view:cardCornerRadius="4dp"
-        android:layout_margin="5dp">
 
         <TextView
             android:id="@+id/id"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:visibility="gone"/>
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/building_title"
             android:textSize="20sp"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/list_margin"
+            android:layout_margin="10sp"
+            android:layout_weight="1"
             android:textAppearance="?attr/textAppearanceListItem" />
 
         <ImageButton
-            android:id="@+id/goToMapImage"
+            android:id="@+id/goToMapImage_outdoor"
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
-            android:src ="@drawable/navigation"
             android:scaleType="centerCrop"
             android:background="@android:color/transparent"
             android:paddingRight="12sp"
-            android:paddingTop="10sp"
+            android:src ="@drawable/navigation"
             android:maxWidth="@dimen/icon_size"
             android:maxHeight="@dimen/icon_size"
-            android:layout_gravity="end"/>
-
-    </android.support.v7.widget.CardView>
+            android:layout_gravity="end" />
 
 
 </LinearLayout>

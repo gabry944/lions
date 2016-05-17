@@ -34,7 +34,6 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHo
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public final View mView;
-        public final TextView mContentView;
         public final TextView mTitleView;
         public final ImageButton goToMapImage;
         public final TextView mIDView;
@@ -42,9 +41,8 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHo
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mTitleView = (TextView) view.findViewById(R.id.title);
-            mContentView = (TextView) view.findViewById(R.id.content);
-            goToMapImage = (ImageButton) view.findViewById(R.id.goToMapImage);
+            mTitleView = (TextView) view.findViewById(R.id.building_title);
+            goToMapImage = (ImageButton) view.findViewById(R.id.goToMapImage_outdoor);
             mIDView = (TextView) view.findViewById(R.id.id);
         }
     }
@@ -109,83 +107,6 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHo
                 ((OutdoorActivity)mContext).startActivityForResult(intent, 1);
             }
         });
-    }
-
-    public void collapseView(final View v) {
-        final int initialHeight = v.getMeasuredHeight();
-
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-
-                v.getLayoutParams().height = (initialHeight + temphHeight) - (int) (initialHeight * interpolatedTime);
-                v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-
-        };
-
-        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density) * 4);
-        v.startAnimation(a);
-
-        v.findViewById(R.id.content).setVisibility(View.GONE);
-    }
-
-    public void expandView(final View v) {
-        tempView = v;
-
-        v.measure(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT);
-        final int initHeight = v.getMeasuredHeight();
-        temphHeight = initHeight;
-
-
-        //must set to visible AFTER the extraction of the height
-        TextView contentView = (TextView)v.findViewById(R.id.content);
-        contentView.setVisibility(View.VISIBLE);
-
-        //get length of text by bounds.width after these two lines
-        Rect bounds = new Rect();
-        contentView.getPaint().getTextBounds((String) contentView.getText(), 0, contentView.getText().length(), bounds);
-
-        int cardwidth = v.getWidth() - 12 *4;
-        int textHeight = v.getHeight() - 12 *2;
-
-        Log.d(TAG, "expandView: bounds.width()/cardwidth = " + bounds.width()/cardwidth);
-        Log.d(TAG, "expandView: (bounds.width()/cardwidth +1)*textHeight = " + (bounds.width()/cardwidth +1)*textHeight);
-        //get desired size of card by calculating number of rows
-        final int targetHeight = initHeight + (bounds.width()/cardwidth +1)*textHeight;
-
-        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
-        v.getLayoutParams().height = 1;
-        v.setVisibility(View.VISIBLE);
-
-
-
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                //Make it expand in a more "adaptive way".
-                if (targetHeight/initHeight <2)
-                    v.getLayoutParams().height = (int) (initHeight * interpolatedTime * 2);
-                else
-                    v.getLayoutParams().height = (int) (initHeight * interpolatedTime * (targetHeight/initHeight));
-                v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-
-        };
-
-        // 1dp/ms
-        a.setDuration(((int) (initHeight / v.getContext().getResources().getDisplayMetrics().density)) * 10);
-        v.startAnimation(a);
     }
 
     // Return the size of your dataset (invoked by the layout manager)
