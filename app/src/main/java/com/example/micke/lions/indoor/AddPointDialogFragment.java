@@ -2,6 +2,7 @@ package com.example.micke.lions.indoor;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.micke.lions.Common;
 import com.example.micke.lions.R;
@@ -98,6 +100,17 @@ public class AddPointDialogFragment extends DialogFragment {
                             description.getText().toString(), category.getSelectedItem().toString(),
                             point1, point2, fireBaseIndoor.getFloor(), official.isChecked(), ipId);
                     fireBaseIndoor.updateIp(point, Integer.parseInt(fireBaseIndoor.getFloor()));
+
+                    if(category.getSelectedItem().toString().equals("Hiss")){
+                        //Ask to add the elevator on more floors
+                        Toast toast = Toast.makeText(getActivity(), R.string.createdElevator, Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                    else if(category.getSelectedItem().toString().equals("Trappa")){
+                        //Ask to add the stairs on more floors
+                        Toast toast = Toast.makeText(getActivity(), R.string.createdStairs, Toast.LENGTH_LONG);
+                        toast.show();
+                    }
 
                     dialogBuilder.cancel();
                 }
