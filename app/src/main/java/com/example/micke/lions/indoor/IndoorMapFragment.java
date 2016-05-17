@@ -29,6 +29,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.micke.lions.Common;
@@ -90,6 +91,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private ImageButton goToList;
     public Button nextStep;
     public Button cancel;
+    public TextView goalFloorText;
     private ImageView goHere;
     private ImageView goHere2;
     private ImageView uAreHere;
@@ -210,6 +212,9 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                     changeFloor(endPoint.getFloor());
             }
         });
+
+        goalFloorText = (TextView) rootView.findViewById(R.id.goal_floor_text);
+        goalFloorText.setVisibility(View.GONE);
 
         return rootView;
     }
@@ -351,6 +356,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         cancel.setVisibility(View.VISIBLE);
         nextStep.setVisibility(View.VISIBLE);
         nextStep.setText("Gå vidare"); //text changes later if we show goal floor
+        goalFloorText.setVisibility(View.VISIBLE);
+        goalFloorText.setText("Målet är på våning " + currentFloor);
         floorChange = new ArrayList();
         boolean userHasPos = false;
 
@@ -506,6 +513,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         cancel.setVisibility(View.VISIBLE);
         nextStep.setVisibility(View.VISIBLE);
         nextStep.setText("Gå vidare");
+        goalFloorText.setVisibility(View.VISIBLE);
+        goalFloorText.setText("Målet är på våning " + currentFloor);
         //way finding active
         //display what should be shown on this floor
         for(IndoorMapMarker m: listOfMarkers) {
@@ -776,6 +785,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         goHere2.setVisibility(View.GONE);
         cancel.setVisibility(View.GONE);
         nextStep.setVisibility(View.GONE);
+        goalFloorText.setVisibility(View.GONE);
     }
 
     public void stopWayFinding() {

@@ -40,6 +40,19 @@
         android:layout_marginLeft="116dp"
         android:layout_marginBottom="16dp" />
 
+    <TextView
+        android:id="@+id/goal_floor_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:background="#FFFFFF"
+        android:layout_marginBottom="100dp" />
+
     <!-- A RecyclerView with some commonly used attributes -->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/floor_recycler_view"
