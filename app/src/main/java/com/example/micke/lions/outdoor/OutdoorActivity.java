@@ -40,6 +40,9 @@ public class OutdoorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //Let firebase start loading its data before anything else
+        fireBaseHandler = new FireBaseOutdoor(getApplicationContext());
+
         //check for permission to use the camera
         //needed for the QRFragment
         if (ContextCompat.checkSelfPermission(this,
@@ -63,8 +66,6 @@ public class OutdoorActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_outdoor);
-
-        fireBaseHandler = new FireBaseOutdoor(getApplicationContext());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
