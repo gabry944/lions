@@ -609,8 +609,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         final IndoorMapMarker marker = new IndoorMapMarker(ip, point[0], point[1], parent.getContext());
 
         parent.addView(marker.getMarker());
-        //marker.getPopup().setText(marker.getTitle());
 
+        //Should be done in IndoorMapMarker but easier this way
         marker.getPopup().setText(marker.getTitle());
         marker.getPopup().setTextColor(ContextCompat.getColor(getActivity(), R.color.black));
 
@@ -621,6 +621,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         marker.getPopup().setX(marker.getX() - x/2);
         marker.getPopup().setY(marker.getY() - y - marker.getMarker().getMaxHeight()/2.0f);
 
+        //Adds the popup to the layout(map)
         parent.addView(marker.getPopup());
 
         listOfMarkers.add(marker);
