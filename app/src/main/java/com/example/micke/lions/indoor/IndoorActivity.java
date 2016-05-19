@@ -139,7 +139,6 @@ public class IndoorActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        Log.d("backback", "menuitem pressed: " + item + " " + item.toString());
 
         if(id ==  R.id.admin){
             if (Common.IsAdmin()) {
@@ -154,7 +153,6 @@ public class IndoorActivity extends AppCompatActivity {
 
         //Finishes activity and starting outdoorActivity.
         if(id == android.R.id.home) {
-            Log.d("backback", "back arrow pressed (home)");
             onBackPressed();
             this.finish();
             return true;

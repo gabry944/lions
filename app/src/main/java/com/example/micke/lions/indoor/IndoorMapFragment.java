@@ -958,24 +958,19 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     }
 
     public void initDrawer(IndoorMapFragment indoorMapFragment) {
-        Log.d("draweradapter", "initDrawer -------------------------------------");
         mDrawerLayout = (DrawerLayout) indoorActivity.findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(
-                indoorActivity, mDrawerLayout, indoorActivity.toolbar,
+                indoorActivity, mDrawerLayout,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close){
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
-                // open I am not going to put anything here)
-
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                // Code here will execute once drawer is closed
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);

@@ -139,22 +139,6 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        Log.d("backback", "menuitem pressed: " + item + " " + item.toString());
-
-        //Finishes activity and starting outdoorActivity.
-        if(id == android.R.id.home) {
-            Log.d("backback", "back arrow pressed (home)");
-//            onBackPressed();
-//            this.finish();
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
     public void dataSetChanged() { ipadapter.notifyDataSetChanged(); }
 
     @Override
