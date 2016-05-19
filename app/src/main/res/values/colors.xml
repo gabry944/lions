@@ -5,10 +5,12 @@
     <color name="colorAccent">#E17187</color>
     <color name="colorOutDoorStatusbar">#b37700</color>
     <color name="colorOutDoorToolbar">#cc8800</color>
-    <color name="colorInDoorStatusbar">#ffd633</color>
-    <color name="colorInDoorToolbar">#ffdb4d</color>
+    <color name="colorInDoorStatusbar">#FEC300</color>
+    <color name="colorInDoorToolbar">#FEC300</color>
     <color name="white">#FFF</color>
     <color name="blue">#1a75ff</color>
     <color name="green">#1aff75</color>
     <color name="cardColor">#9ED1B4</color>
+    <color name="black">#000000</color>
+
 </resources>

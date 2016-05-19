@@ -8,6 +8,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -608,6 +609,19 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         final IndoorMapMarker marker = new IndoorMapMarker(ip, point[0], point[1], parent.getContext());
 
         parent.addView(marker.getMarker());
+        //marker.getPopup().setText(marker.getTitle());
+
+        marker.getPopup().setText(marker.getTitle());
+        marker.getPopup().setTextColor(ContextCompat.getColor(getActivity(), R.color.black));
+
+        marker.getPopup().measure(0,0);
+        int x = marker.getPopup().getMeasuredWidth();
+        int y = marker.getPopup().getMeasuredHeight();
+
+        marker.getPopup().setX(marker.getX() - x/2);
+        marker.getPopup().setY(marker.getY() - y - marker.getMarker().getMaxHeight()/2.0f);
+
+        parent.addView(marker.getPopup());
 
         listOfMarkers.add(marker);
 
@@ -679,7 +693,22 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                             uAreHere2.setVisibility(View.VISIBLE);
                         }
                     }
+                }else {
+
+                    marker.getPopup().startAnimation(animToVISIBLE);
+                    marker.getPopup().setVisibility(View.VISIBLE);
+                    //marker.getPopup().startAnimation(animToGONE);
+                    //marker.getPopup().setVisibility(View.GONE);
+
+                    marker.getPopup().postDelayed(new Runnable() {
+                        public void run() {
+                            marker.getPopup().startAnimation(animToGONE);
+                            marker.getPopup().setVisibility(View.GONE);
+                        }
+                    }, 1500);
+
                 }
+
             }
         });
 
