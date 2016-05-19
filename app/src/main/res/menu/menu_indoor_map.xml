@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/floors"
-        android:icon="@drawable/stairs_menu"
+        android:icon="@drawable/stairs_menu_white"
         android:title="floors"
         app:showAsAction="ifRoom"/>
 
