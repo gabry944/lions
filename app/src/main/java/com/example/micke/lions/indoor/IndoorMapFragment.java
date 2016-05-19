@@ -612,7 +612,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         //Should be done in IndoorMapMarker but easier this way
         marker.getPopup().setText(marker.getTitle());
-        marker.getPopup().setTextColor(ContextCompat.getColor(getActivity(), R.color.black));
+        marker.getPopup().setTextColor(indoorActivity.getResources().getColor(R.color.black));
 
         marker.getPopup().measure(0,0);
         int x = marker.getPopup().getMeasuredWidth();
@@ -891,7 +891,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         }
         if (firstLoad) {
             //check if there exist a youAreHereID
-            userID = ((IndoorActivity) getActivity()).youAreHereID;
+            userID = indoorActivity.youAreHereID;
             if (!userID.equals("")) {
                 //the user has a position
                 //is there a goal?
@@ -984,6 +984,5 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         for (FloorMapImage fmi : images) {
             fmi.remove();
         }
-        indoorActivity = null;
     }
 }
