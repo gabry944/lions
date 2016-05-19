@@ -182,6 +182,12 @@ public class ChangePointDialogFragment extends DialogFragment {
             }
         });
 
+        if(Common.IsAdmin()) {
+            getQRCode.setVisibility(View.VISIBLE);
+        } else {
+            getQRCode.setVisibility(View.GONE);
+        }
+
         builder.create().show();
     }
 }
