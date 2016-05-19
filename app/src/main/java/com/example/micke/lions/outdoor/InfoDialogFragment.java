@@ -52,7 +52,7 @@ public class InfoDialogFragment extends DialogFragment {
         textView6.setTypeface(myCustomFont);
 
         dialogBuilder
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Jag förstår", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
 
             }
