@@ -848,7 +848,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         for(FloorMapImage i : images) {
             if(floor.equals(Integer.toString(i.floor))) {
                 //This will indirectly call fillFloorWithPoints() above once image is done loading
-                mapImage.setImage(new BitmapDrawable(getResources(), i.mapimage));
+                mapImage.setImage(new BitmapDrawable(indoorActivity.getResources(), i.mapimage));
                 fillFloorWithPoints();
             }
         }
