@@ -137,7 +137,6 @@ public class OutdoorQRFragment extends Fragment implements ZBarScannerView.Resul
             // Do something with the result here
             Log.v("qr", rawResult.getContents()); // Prints scan results
             Log.d(TAG, "handleResult: before toast but inside if");
-            
 
             //
             String[] parts = rawResult.getContents().split("/");
