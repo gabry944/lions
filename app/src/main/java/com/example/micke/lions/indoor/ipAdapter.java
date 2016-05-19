@@ -149,6 +149,8 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         Log.d(TAG, "collapseView: index förut = " + index33);*/
         final int index = categoriesViews.indexOf(v);
         Log.d(TAG, "expandView: index = " + index);
+        TextView header_title = (TextView) v.findViewById(R.id.header_title);
+        Log.d(TAG, "expandView: categorie: " + header_title.getText());
 
         final LayoutInflater lyInflaterForPanel = (LayoutInflater) mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -221,7 +223,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         //notifyItemRemoved(position);
         //notifyItemRangeChanged(position, ipDataset.size());
         updateSortedList();
-        notifyDataSetChanged();
+        //notifyDataSetChanged();
 
     }
 
@@ -230,7 +232,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         //notifyItemInserted(position);
         //notifyItemRangeChanged(position, ipDataset.size());
         updateSortedList();
-        notifyDataSetChanged();
+        //notifyDataSetChanged();
     }
 
     public void moveItem(int fromPosition, int toPosition) {
@@ -238,7 +240,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         ipDataset.add(toPosition, ip);
         //notifyItemMoved(fromPosition, toPosition);
         updateSortedList();
-        notifyDataSetChanged();
+        //notifyDataSetChanged();
     }
 
     public void updateAdapter(List<PointOfInterest> ipSet) {
@@ -248,6 +250,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         applyAndAnimateRemovals(ipSet);
         applyAndAnimateAdditions(ipSet);
         applyAndAnimateMovedItems(ipSet);
+        notifyDataSetChanged();
 
         //updateSortedList();
         printSortedList();
