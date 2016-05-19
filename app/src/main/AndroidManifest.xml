@@ -11,9 +11,12 @@
          location permissions for the 'MyLocation' functionality. 
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="com.shop.shoppinglist.permission.MAPS_RECEIVE"/>
+    <uses-permission android:name="com.shop.shoppinglist.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <permission      android:name="com.shop.shoppinglist.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
+
+    <permission
+        android:name="com.shop.shoppinglist.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
 
     <application
         android:allowBackup="true"
@@ -23,8 +26,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".outdoor.OutdoorActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,8 +37,8 @@
         <activity
             android:name=".indoor.IndoorActivity"
             android:parentActivityName=".outdoor.OutdoorActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -47,10 +50,10 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
     </application>
 
 </manifest>

@@ -27,7 +27,6 @@ public class IndoorPageSliderAdapter extends FragmentPagerAdapter {
             ((IndoorActivity)mContext).map = IndoorMapFragment.newInstance(position + 1);
             return ((IndoorActivity)mContext).map;
         } else if(position == 1) {
-
             ((IndoorActivity)mContext).list = IndoorListFragment.newInstance(position + 1);
             return ((IndoorActivity)mContext).list;
         } else {
