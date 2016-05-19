@@ -65,8 +65,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private List<IndoorMapMarker> floorChange;
 
 
-    private int displayWidth;
-    private int displayHeight;
+    public int displayWidth;
+    public int displayHeight;
 
     //Scale test
     public MapImage mapImage;
@@ -806,6 +806,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         for (PointOfInterest p : pointList) {
             if (p.getFloor().equals(currentFloor))// || p.getCategory().equals(getString(R.string.Stairs)) || p.getCategory().equals(getString(R.string.Elevator)))
             {
+                Log.d("hejpoint", "fillfloorwithpoints says: " + p.getTitle() + ": " + p.getLongitude() + ", " + p.getLatitude());
                 addPoint(r, p);
             }
         }
@@ -854,14 +855,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             uAreHere.setVisibility(View.GONE);
             goHere.setVisibility(View.GONE);
 
-            for (IndoorMapMarker p : listOfMarkers) {
-                r.removeView(p.getMarker());
-            }
-            listOfMarkers.clear();
-            for (PointOfInterest p : pointList) {
-                if (p.getFloor().equals(currentFloor))// || p.getCategory().equals(getString(R.string.Stairs)) || p.getCategory().equals(getString(R.string.Elevator)))
-                    addPoint(r, p);
-            }
+            fillFloorWithPoints();
+
             floorAdapter.notifyDataSetChanged();
         }
         if (firstLoad) {

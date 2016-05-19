@@ -45,6 +45,21 @@ public class BitmapLoading {
         return BitmapFactory.decodeResource(res, resId, options);
     }
 
+    public static Bitmap decodeSampledBitmapFromByteArray(byte[] bytes, int length) {
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+
+        options.inSampleSize = 2;
+
+        Bitmap b = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return b;
+    }
+
     private static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image

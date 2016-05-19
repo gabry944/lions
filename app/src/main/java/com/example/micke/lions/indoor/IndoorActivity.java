@@ -215,11 +215,10 @@ public class IndoorActivity extends AppCompatActivity {
 
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        options.inSampleSize = 1;
-        FileInputStream fis = new FileInputStream(fileDescriptor);
-        Bitmap image = BitmapFactory.decodeStream(fis);
-        //Bitmap image = BitmapFactory.decodeStream(fis, null, options);
-        //Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
+
+        //Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);    //Den här vill vi ha! men den krashar..
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
         if(image == null) Log.d("hejnull", "NULL!");
         parcelFileDescriptor.close();
         return image;
