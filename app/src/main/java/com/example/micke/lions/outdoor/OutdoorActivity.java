@@ -65,6 +65,17 @@ public class OutdoorActivity extends AppCompatActivity {
                     MY_PERMISSIONS_REQUEST_MAP);
         }
 
+        //check for permission to use photos and media
+        //needed for the MapFragment
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // No explanation needed, we can request the permission.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_MAP);
+        }
+
         setContentView(R.layout.activity_outdoor);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
