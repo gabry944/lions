@@ -10,6 +10,16 @@
         android:layout_height="match_parent" />
 
     <ImageButton
+        android:id="@+id/add_ip"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/add"
+
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"/>
+
+    <ImageButton
         android:id="@+id/goToIndoorList1"
         android:layout_width="40dp"
         android:layout_height="40dp"

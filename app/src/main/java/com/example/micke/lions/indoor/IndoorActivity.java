@@ -171,6 +171,10 @@ public class IndoorActivity extends AppCompatActivity {
         return false;
     }
 
+    public String getCurrentBuilding() {
+        return currentBuilding;
+    }
+
     //Called when image has been loaded from gallery by admin
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
@@ -199,6 +203,7 @@ public class IndoorActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     Log.d("hejgal", "error reading image");
                 }
+                Log.d(TAG, "onActivityResult: data: " + selectedImageUri.toString());
             }
         }
     }
@@ -211,9 +216,9 @@ public class IndoorActivity extends AppCompatActivity {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         options.inSampleSize = 1;
-        //Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
         FileInputStream fis = new FileInputStream(fileDescriptor);
         Bitmap image = BitmapFactory.decodeStream(fis);
+        //Bitmap image = BitmapFactory.decodeStream(fis, null, options);
         //Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
         if(image == null) Log.d("hejnull", "NULL!");
         parcelFileDescriptor.close();
