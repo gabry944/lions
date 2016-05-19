@@ -21,7 +21,9 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.micke.lions.Common;
 import com.example.micke.lions.DataSetChanged;
 import com.example.micke.lions.InloggChange;
 import com.example.micke.lions.R;
@@ -50,6 +52,7 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged, Sea
     private String filterText;
 
     private ImageButton goToQR;
+    private ImageButton addButton;
     private ImageButton goToMaps;
 
     public OutdoorListFragment() {
@@ -75,9 +78,6 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged, Sea
 
         myDataset = outdoorActivity.getFireBaseHandler().getBuildings(this, false);
 
-        goToMaps = (ImageButton) rootView.findViewById(R.id.goToOutdoorMaps);
-        goToQR = (ImageButton) rootView.findViewById(R.id.goToOutdoorQr);
-
         buildingAdapter = new BuildingAdapter(getContext(), myDataset);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.building_recycler_view);
@@ -89,6 +89,9 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged, Sea
 
         setHasOptionsMenu(true);
 
+        goToMaps = (ImageButton) rootView.findViewById(R.id.goToOutdoorMaps);
+        addButton = (ImageButton) rootView.findViewById(R.id.add_building);
+        goToQR = (ImageButton) rootView.findViewById(R.id.goToOutdoorQr);
         //Goes to QR code scanner fragment when user clicks on button
         goToMaps.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,13 +100,27 @@ public class OutdoorListFragment extends Fragment implements DataSetChanged, Sea
                  mPager.setCurrentItem(0, true);
             }
         });
-
         //Goes to Maps fragment when user clicks on button
         goToQR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
                 mPager.setCurrentItem(2, true);
+            }
+        });
+        //Goes to maps fragment and shows toast
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast toast;
+                if(Common.IsAdmin()) {
+                    toast = Toast.makeText(getContext(), R.string.addBuildingExplanation, Toast.LENGTH_LONG);
+                    ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                    mPager.setCurrentItem(0, true);
+                }
+                else
+                    toast = Toast.makeText(getContext(), R.string.addBuildingNoAccess, Toast.LENGTH_LONG);
+                toast.show();
             }
         });
 

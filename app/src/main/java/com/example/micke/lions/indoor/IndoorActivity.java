@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import com.example.micke.lions.outdoor.BuildingAdapter;
 import com.example.micke.lions.R;
 
 import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -169,12 +171,15 @@ public class IndoorActivity extends AppCompatActivity {
         return false;
     }
 
+    public String getCurrentBuilding() {
+        return currentBuilding;
+    }
+
     //Called when image has been loaded from gallery by admin
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == 1) {
                 Uri selectedImageUri = data.getData();
-
                 try {
                     Bitmap b = getBitmapFromUri(selectedImageUri);
 
@@ -182,59 +187,50 @@ public class IndoorActivity extends AppCompatActivity {
                     int maxSize = 500;
 
                     if(b.getWidth() * b.getHeight() < Math.pow(maxSize, 2)) {
+                        //map.mapImage.setImage(new BitmapDrawable(getResources(), b));
                         map.fireBaseIndoor.addMap(b, map.nextFloorToAdd());
                         Toast toast = Toast.makeText(this, "Uploaded image with great Success!", Toast.LENGTH_LONG);
                         toast.show();
                     }
                     else {
+                        //map.mapImage.setImage(new BitmapDrawable(getResources(), b));
                         map.fireBaseIndoor.addMap(getResizedBitmap(b, maxSize), map.nextFloorToAdd());
+                        //map.fireBaseIndoor.addMap(BitmapFactory.decodeResource(getResources(), R.drawable.map_t3), map.nextFloorToAdd());
                         Toast toast = Toast.makeText(this, "Image too large! Uploaded with compression", Toast.LENGTH_LONG);
                         toast.show();
                     }
+                    map.floorAdded();
                 } catch (IOException e) {
                     Log.d("hejgal", "error reading image");
                 }
+                Log.d(TAG, "onActivityResult: data: " + selectedImageUri.toString());
             }
         }
     }
 
-
-    //helper to retrieve the path of an image URI
-    public String getPath(Uri uri) {
-        // just some safety built in
-        if( uri == null ) {
-            // TODO perform some logging or show user feedback
-            return null;
-        }
-        // try to retrieve the image from the media store first
-        // this will only work for images selected from gallery
-        String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-        if( cursor != null ){
-            int column_index = cursor
-                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        }
-        // this is our fallback here
-        return uri.getPath();
-    }
-
     private Bitmap getBitmapFromUri(Uri uri) throws IOException {
-            ParcelFileDescriptor parcelFileDescriptor =
-                    getContentResolver().openFileDescriptor(uri, "r");
-            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-            Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-            parcelFileDescriptor.close();
-            return image;
+        ParcelFileDescriptor parcelFileDescriptor =
+                getContentResolver().openFileDescriptor(uri, "r");
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        options.inSampleSize = 1;
+        FileInputStream fis = new FileInputStream(fileDescriptor);
+        Bitmap image = BitmapFactory.decodeStream(fis);
+        //Bitmap image = BitmapFactory.decodeStream(fis, null, options);
+        //Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        if(image == null) Log.d("hejnull", "NULL!");
+        parcelFileDescriptor.close();
+        return image;
     }
 
     public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
         int width = image.getWidth();
         int height = image.getHeight();
-
+        //Flip height and width to match phone camera
         float bitmapRatio = (float)width / (float) height;
-        if (bitmapRatio > 0) {
+        if (bitmapRatio > 1) {
             width = maxSize;
             height = (int) (width / bitmapRatio);
         } else {

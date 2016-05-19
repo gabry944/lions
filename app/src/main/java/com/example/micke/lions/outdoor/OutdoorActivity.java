@@ -65,6 +65,17 @@ public class OutdoorActivity extends AppCompatActivity {
                     MY_PERMISSIONS_REQUEST_MAP);
         }
 
+        //check for permission to use photos and media
+        //needed for the MapFragment
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // No explanation needed, we can request the permission.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_MAP);
+        }
+
         setContentView(R.layout.activity_outdoor);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -186,15 +197,20 @@ public class OutdoorActivity extends AppCompatActivity {
         String buildingId = parts[1];
         String ipId = "-1";
         String floor = "";
-        if (parts[5] != null) {
+        String currentBuilding = "";
+        if (parts.length > 5 && parts[5] != null) {
             ipId = parts[5];
             floor = parts[3];
+        }
+        if(parts.length > 6 && parts[6] != null){
+            currentBuilding = parts[6];
         }
         bundle.putString("buildingId", buildingId);
         bundle.putString("ipId", ipId);
         bundle.putString("floor", floor);
         bundle.putString("goalID", goalID);
         bundle.putString("goalFloor", goalFloor);
+        bundle.putString("buildingTitle", currentBuilding);
         intent.putExtras(bundle);
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); //not allowed togeter with startActivityForResult
         startActivityForResult(intent, 1);
@@ -207,12 +223,13 @@ public class OutdoorActivity extends AppCompatActivity {
         String buildingId = parts[1];
         String ipId = "-1";
         String floor = "";
+
         String currentBuilding = "";
-        if (parts[5] != null) {
+        if (parts.length > 5 && parts[5] != null) {
             ipId = parts[5];
             floor = parts[3];
         }
-        if(parts[6] != null){
+        if(parts.length > 6 && parts[6] != null) {
            currentBuilding = parts[6];
         }
         bundle.putString("buildingId", buildingId);

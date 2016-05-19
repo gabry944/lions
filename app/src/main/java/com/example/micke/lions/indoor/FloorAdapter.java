@@ -18,6 +18,7 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.micke.lions.Common;
 import com.example.micke.lions.R;
@@ -32,6 +33,7 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
     private View tempView;
     private String TAG = "FloorAdapter";
     private IndoorMapFragment mIndoorMapFragment;
+    public Context mContext;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -49,9 +51,10 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
     }
 
     //empty constructor
-    public FloorAdapter(IndoorMapFragment indoorMapFragment, List<String> myDataset) {
+    public FloorAdapter(IndoorMapFragment indoorMapFragment, List<String> myDataset, Context context) {
         mIndoorMapFragment = indoorMapFragment;
         ipDataset = new ArrayList<>();
+        mContext = context;
     }
 
     public void setData(List<String> dataset) {
@@ -95,7 +98,7 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
 
                 if(!floor.equals(""))
                     mIndoorMapFragment.changeFloor(floor);
-                else {
+                else if(Common.IsReadMediaPermitted(mContext)) {
                     Intent intent = new Intent();
                     intent.setType("image/*");
                     intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -103,8 +106,16 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
                             "Select Picture"), 1);
                     Log.d("hejgallery", "called");
                 }
+                else {
+                    Toast toast = Toast.makeText(mContext, "Tillåt appen att läsa dina filer för att lägga upp en planlösning", Toast.LENGTH_LONG);
+                    toast.show();
+                }
             }
         });
+    }
+
+    public void resetData() {
+        ipDataset = new ArrayList<>();
     }
 
     // Return the size of your dataset (invoked by the layout manager)

@@ -41,6 +41,7 @@ public class AddPointDialogFragment extends DialogFragment {
         final Spinner category = (Spinner) dialogView.findViewById(R.id.category_spinner);
         final CheckBox official = (CheckBox) dialogView.findViewById(R.id.official);
         final TextView offText = (TextView) dialogView.findViewById(R.id.official_text);
+        final Button getQRCode = (Button) dialogView.findViewById(R.id.button_get_qr_code);
         if(Common.IsAdmin()) {
             official.setVisibility(View.VISIBLE);
             offText.setVisibility(View.VISIBLE);
@@ -49,6 +50,7 @@ public class AddPointDialogFragment extends DialogFragment {
             official.setVisibility(View.GONE);
             offText.setVisibility(View.GONE);
         }
+        getQRCode.setVisibility(View.GONE);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.category_array, android.R.layout.simple_spinner_item);

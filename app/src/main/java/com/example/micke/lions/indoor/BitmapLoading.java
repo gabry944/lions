@@ -33,6 +33,7 @@ public class BitmapLoading {
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeResource(res, resId, options);
 
+
         // Calculate inSampleSize
         //temp width & height
         reqHeight = BITMAP_SIZE;
