@@ -5,8 +5,8 @@
     <color name="colorAccent">#E17187</color>
     <color name="colorOutDoorStatusbar">#8160AC</color>
     <color name="colorOutDoorToolbar">#8160AC</color>
-    <color name="colorInDoorStatusbar">#FEC300</color>
-    <color name="colorInDoorToolbar">#FEC300</color>
+    <color name="colorInDoorStatusbar">#FDBE57</color>
+    <color name="colorInDoorToolbar">#FDBE57</color>
     <color name="white">#FFF</color>
     <color name="blue">#1a75ff</color>
     <color name="green">#1aff75</color>
