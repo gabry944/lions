@@ -1,5 +1,6 @@
 package com.example.micke.lions;
 
+import android.Manifest;
 import android.content.Context;
 import android.os.Build;
 import android.content.pm.PackageManager;
@@ -15,12 +16,13 @@ public class Common {
 
     static String TAG = "Common";
 
-    public static final int ASK_FOR_PERISSION = 0;
+    public static final int ASK_FOR_PERMISSION = 0;
     public static final int PERMISSION_GRANTED = 1;
     public static final int PERMISSION_DENIED = 2;
 
     private static boolean admin = false;
-    private static int location_permission = ASK_FOR_PERISSION;
+    private static int location_permission = ASK_FOR_PERMISSION;
+    private static int read_storage_permission = ASK_FOR_PERMISSION;
 
     public static boolean IsAdmin(){
         return admin;
@@ -91,5 +93,16 @@ public class Common {
 
     public static void LocationPermissionDenied(){
         location_permission = PERMISSION_DENIED;
+    }
+
+    public static boolean IsReadMediaPermitted(Context context) {
+        if (ContextCompat.checkSelfPermission(context,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED)
+        {
+            read_storage_permission = PERMISSION_GRANTED;
+        }
+
+        return read_storage_permission == PERMISSION_GRANTED;
     }
 }

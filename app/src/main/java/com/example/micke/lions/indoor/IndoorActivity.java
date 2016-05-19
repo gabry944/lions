@@ -195,6 +195,7 @@ public class IndoorActivity extends AppCompatActivity {
                         Toast toast = Toast.makeText(this, "Image too large! Uploaded with compression", Toast.LENGTH_LONG);
                         toast.show();
                     }
+
                 } catch (IOException e) {
                     Log.d("hejgal", "error reading image");
                 }

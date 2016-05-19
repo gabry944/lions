@@ -136,7 +136,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         buildingId = indoorActivity.getBuildingId();
         rootView = inflater.inflate(R.layout.fragment_indoor_map, container, false);
         mFloors = new ArrayList<>();
-        floorAdapter = new FloorAdapter(this, mFloors);
+        floorAdapter = new FloorAdapter(this, mFloors, context);
 
         //Get display dimensions
         Display display = indoorActivity.getWindowManager().getDefaultDisplay();
