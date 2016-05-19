@@ -26,6 +26,8 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     private Context mContext;
     boolean[] isExpanded = new boolean[NR_OF_CATEGORIES];
     private ArrayList<Vector<PointOfInterest>> sortdedListofIP2D;
+    private ArrayList<View> categoriesViews;
+    
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -45,12 +47,17 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         }
     }
 
-    //empty constructor
     public ipAdapter(Context con, List<PointOfInterest> myDataset) {
-        Log.d(TAG, "ipAdapter: 1");
+        Log.d(TAG, "constructor 1");
         mContext = con;
         ipDataset = myDataset;
         sortdedListofIP2D = new ArrayList<Vector<PointOfInterest>>(NR_OF_CATEGORIES);
+        categoriesViews = new ArrayList<View>(NR_OF_CATEGORIES);
+        //fill list
+        for (int i=0;i<NR_OF_CATEGORIES;i++)
+            categoriesViews.add(null);
+        Log.d(TAG, "constructor 1: cat size = " + categoriesViews.size());
+        Log.d(TAG, "constructor 1: sort size = " + sortdedListofIP2D.size());
         for(int i = 0; i < isExpanded.length; i++){
             isExpanded[i] = false;
         }
@@ -64,21 +71,22 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     }
     // Provide a suitable constructor (depends on the kind of dataset)
     public ipAdapter(List<PointOfInterest> myDataset) {
-        Log.d(TAG, "ipAdapter: 2");
+        Log.d(TAG, "constructor 2");
         ipDataset = myDataset;
         sortdedListofIP2D = new ArrayList<Vector<PointOfInterest>>(NR_OF_CATEGORIES);
+        categoriesViews = new ArrayList<View>(NR_OF_CATEGORIES);
 
         updateSortedList();
     }
 
     @Override
-    public ipAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
-
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.fragment_indoor_list_header, parent, false);
-            ViewHolder vh = new ViewHolder(v);
-            return vh;
+    public ipAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+    {
+        Log.d(TAG, "onCreateViewHolder: viewType = " + viewType);
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.fragment_indoor_list_header, parent, false);
+        ViewHolder vh = new ViewHolder(v);
+        return vh;
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -86,16 +94,32 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
         Log.d(TAG, "onBindViewHolder: pos = " + position);
-        // TODO: call function in another place. temporary solution
-
+        //Log.d(TAG, "onCreateViewHolder: cat size = " + categoriesViews.size());
+        //Log.d(TAG, "onCreateViewHolder: sort size = " + sortdedListofIP2D.size());
 
         if (position < NR_OF_CATEGORIES && sortdedListofIP2D.get(position) != null) {
+            Log.d(TAG, "onBindViewHolder: position < nr of categories for " + toName(position));
+
+            categoriesViews.set(position, holder.mView);
+            Log.d(TAG, "onBindViewHolder: old title "+ ((TextView)holder.mView.findViewById(R.id.header_title)).getText());
+            int oldPost = toPlace((String) (((TextView)holder.mView.findViewById(R.id.header_title)).getText()));
+            Log.d(TAG, "onBindViewHolder: old title number " + oldPost );
+            //clean the old view
+            if(oldPost != -1)
+                collapseView(holder.mView);
 
             holder.header_title.setText(toName(position));
-            if (sortdedListofIP2D.get(position).size() == 0) {
+            
+
+            //if (sortdedListofIP2D.get(position).size() == 0) {
+            //    holder.btn_expand_toggle.setVisibility(View.INVISIBLE);
+            //} else {
                 holder.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
-            } else {
-                holder.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
+            //}
+
+
+            if(isExpanded[position]){
+                expandView(holder.mView);
             }
         }
 
@@ -104,12 +128,13 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
 
-                LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
-                int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
+                //LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
+                //int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
+                int index = categoriesViews.indexOf(v);
 
                 holder.btn_expand_toggle.setImageResource(R.drawable.arrow_up);
                 if(!isExpanded[index]){
-                    expandView(v, holder);
+                    expandView(v);
                     isExpanded[index] = true;
                 }
                 else{
@@ -123,79 +148,98 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     }
 
     public void collapseView(final View v){
+        Log.d(TAG, "collapseView: ");
         LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
-        int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
-        Log.d(TAG, "index collapse= " + index);
-        linearLayout.removeViews(1,sortdedListofIP2D.get(index).size());
+        /*int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
+        Log.d(TAG, "collapseView: index förut = " + index);*/
+        int index = categoriesViews.indexOf(v);
+        int oldPost = toPlace((String) (((TextView)v.findViewById(R.id.header_title)).getText()));
+        Log.d(TAG, "collapseView: index = " + index);
+        Log.d(TAG, "collapseView: oldPost number " + oldPost );
+        Log.d(TAG, "collapseView: linearLayout.getChildCount() = " + linearLayout.getChildCount());
+        Log.d(TAG, "collapseView: sortdedListofIP2D.get(oldPost).size() = " + sortdedListofIP2D.get(oldPost).size());
+        if(linearLayout.getChildCount()>1 && index != -1) // test so that the list is not empty, Obs 1 means that it is empty
+            linearLayout.removeViews(1,linearLayout.getChildCount()-1);
+            //linearLayout.removeViews(1,sortdedListofIP2D.get(index).size());
     }
 
-    public void expandView(final View v, final ViewHolder holder){
+    public void expandView(final View v){
 
         LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
-        final int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
-        Log.d(TAG, "index expand= " + index);
-
-        final LayoutInflater lyInflaterForPanel = (LayoutInflater) mContext
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-
-        for(int i = 0; i < sortdedListofIP2D.get(index).size(); i++){
-
-            LinearLayout childLayout = (LinearLayout) lyInflaterForPanel.inflate(
-                    R.layout.fragment_indoor_list_child, null);
-
-            TextView item = (TextView) childLayout.findViewById(R.id.child_content);
-            ImageButton goToMapImage = (ImageButton) childLayout.findViewById(R.id.goToMapImage);
-            TextView idText = (TextView) childLayout.findViewById(R.id.id);
-
-            idText.setText(sortdedListofIP2D.get(index).get(i).getId());
-            item.setText(sortdedListofIP2D.get(index).get(i).getTitle());
-            if(toName(index).equals(mContext.getResources().getString(R.string.ConferenceRoom)))
-                goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.map_marker_green : R.drawable.navigation);
-            else if(toName(index).equals(mContext.getResources().getString(R.string.Entrance)))
-                goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.entrance_green : R.drawable.entrance_new );
-            else if(toName(index).equals(mContext.getResources().getString(R.string.Toilet)))
-                goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.wc_green : R.drawable.wc );
-            else if(toName(index).equals(mContext.getResources().getString(R.string.Elevator)))
-                goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.elevator_marker_green : R.drawable.elevator_new );
-            else if(toName(index).equals(mContext.getResources().getString(R.string.Stairs)))
-                goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.stairs_green : R.drawable.stairs_menu );
-            else
-                goToMapImage.setImageResource( sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.map_marker_green : R.drawable.navigation);
+        /*final int index33 = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
+        Log.d(TAG, "collapseView: index förut = " + index33);*/
+        final int index = categoriesViews.indexOf(v);
+        Log.d(TAG, "expandView: index = " + index);
+        TextView header_title = (TextView) v.findViewById(R.id.header_title);
+        Log.d(TAG, "expandView: categorie: " + header_title.getText());
 
 
-            final int index2 = i;
-            goToMapImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
-                    mPager.setCurrentItem(0, true);
-                    ((IndoorActivity)mContext).map.startWayFinding(sortdedListofIP2D.get(index).get(index2).getFloor(), ((TextView)((View)v.getParent()).findViewById(R.id.id)).getText().toString());
-                }
-            });
-            childLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    TextView detailInfo = (TextView) v.findViewById(R.id.child_detail_content);
-                    if(detailInfo.getVisibility() == View.GONE){
-                        detailInfo.setVisibility(View.VISIBLE);
-                        detailInfo.setText(sortdedListofIP2D.get(index).get(index2).getDescription());
+        Log.d(TAG, "expandView: linearLayout.getChildCount()" + linearLayout.getChildCount());
+        if(linearLayout.getChildCount()<=1) // test so that the list is empty, Obs 1 means that it is empty
+        {
+            final LayoutInflater lyInflaterForPanel = (LayoutInflater) mContext
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            Log.d(TAG, "expandView: sortdedListofIP2D.get(index).size() = " + sortdedListofIP2D.get(index).size());
+            for(int i = 0; i < sortdedListofIP2D.get(index).size(); i++)
+            {
+                LinearLayout childLayout = (LinearLayout) lyInflaterForPanel.inflate(
+                        R.layout.fragment_indoor_list_child, null);
+
+                TextView item = (TextView) childLayout.findViewById(R.id.child_content);
+                ImageButton goToMapImage = (ImageButton) childLayout.findViewById(R.id.goToMapImage);
+                TextView idText = (TextView) childLayout.findViewById(R.id.id);
+
+                idText.setText(sortdedListofIP2D.get(index).get(i).getId());
+                item.setText(sortdedListofIP2D.get(index).get(i).getTitle());
+                Log.d(TAG, "expandView: Title" + sortdedListofIP2D.get(index).get(i).getTitle());
+                if(toName(index).equals(mContext.getResources().getString(R.string.ConferenceRoom)))
+                    goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.map_marker_green : R.drawable.navigation);
+                else if(toName(index).equals(mContext.getResources().getString(R.string.Entrance)))
+                    goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.entrance_green : R.drawable.entrance_new );
+                else if(toName(index).equals(mContext.getResources().getString(R.string.Toilet)))
+                    goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.wc_green : R.drawable.wc );
+                else if(toName(index).equals(mContext.getResources().getString(R.string.Elevator)))
+                    goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.elevator_marker_green : R.drawable.elevator_new );
+                else if(toName(index).equals(mContext.getResources().getString(R.string.Stairs)))
+                    goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.stairs_green : R.drawable.stairs_menu );
+                else
+                    goToMapImage.setImageResource( sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.map_marker_green : R.drawable.navigation);
+
+
+                final int index2 = i;
+                goToMapImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                        mPager.setCurrentItem(0, true);
+                        ((IndoorActivity)mContext).map.startWayFinding(sortdedListofIP2D.get(index).get(index2).getFloor(), ((TextView)((View)v.getParent()).findViewById(R.id.id)).getText().toString());
                     }
-                    else
-                    {
-                        detailInfo.setVisibility(View.GONE);
+                });
+                childLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        TextView detailInfo = (TextView) v.findViewById(R.id.child_detail_content);
+                        if(detailInfo.getVisibility() == View.GONE){
+                            detailInfo.setVisibility(View.VISIBLE);
+                            detailInfo.setText(sortdedListofIP2D.get(index).get(index2).getDescription());
+                        }
+                        else
+                        {
+                            detailInfo.setVisibility(View.GONE);
+                        }
                     }
-                }
-            });
+                });
 
-            linearLayout.addView(childLayout);
+                linearLayout.addView(childLayout);
+            }
         }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        Log.d(TAG, "getItemCount called");
+        //Log.d(TAG, "getItemCount called");
         updateSortedList();
         return  NR_OF_CATEGORIES;
     }
@@ -205,7 +249,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         //notifyItemRemoved(position);
         //notifyItemRangeChanged(position, ipDataset.size());
         updateSortedList();
-        notifyDataSetChanged();
+        //notifyDataSetChanged();
 
     }
 
@@ -214,7 +258,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         //notifyItemInserted(position);
         //notifyItemRangeChanged(position, ipDataset.size());
         updateSortedList();
-        notifyDataSetChanged();
+        //notifyDataSetChanged();
     }
 
     public void moveItem(int fromPosition, int toPosition) {
@@ -222,15 +266,31 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         ipDataset.add(toPosition, ip);
         //notifyItemMoved(fromPosition, toPosition);
         updateSortedList();
-        notifyDataSetChanged();
+        //notifyDataSetChanged();
     }
 
     public void updateAdapter(List<PointOfInterest> ipSet) {
-        Log.d(TAG, "updateAdapter: ");
+        Log.d(TAG, "updateAdapter: innan update");
 
+        //update list
         applyAndAnimateRemovals(ipSet);
         applyAndAnimateAdditions(ipSet);
         applyAndAnimateMovedItems(ipSet);
+        //notifyDataSetChanged();
+
+        //updateSortedList();
+        printSortedList();
+        for (View v: categoriesViews)
+        {
+            TextView header_title = (TextView) v.findViewById(R.id.header_title);
+            Log.d(TAG, "updateAdapter: categoriesViews: " + header_title.getText());
+        }
+
+        //expand categories
+        collapseAllCategories(); // collapse all first sinse need to reload the point under the categories
+        expandAllCategories();
+
+        Log.d(TAG, "updateAdapter: efter update");
     }
 
     private void applyAndAnimateRemovals(List<PointOfInterest> newips) {
@@ -261,6 +321,38 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         }
     }
 
+    private void expandAllCategories(){
+        View v;
+        for(int i = 0; i<NR_OF_CATEGORIES; i++)
+        {
+            if(!isExpanded[i])
+            {
+                v = categoriesViews.get(i);
+                ImageView mImageButton = (ImageView) v.findViewById(R.id.expand_button);
+                mImageButton.setImageResource(R.drawable.arrow_up);
+                //Log.d(TAG, "expandAllCategories: v = " + v);
+                expandView(v);
+                isExpanded[i] = true;
+            }
+        }
+    }
+
+    private void collapseAllCategories(){
+        View v;
+        for(int i = 0; i<NR_OF_CATEGORIES; i++)
+        {
+            if(isExpanded[i])
+            {
+                v = categoriesViews.get(i);
+                ImageView mImageButton = (ImageView) v.findViewById(R.id.expand_button);
+                mImageButton.setImageResource(R.drawable.arrow_up);
+                //Log.d(TAG, "expandAllCategories: v = " + v);
+                collapseView(v);
+                isExpanded[i] = false;
+            }
+        }
+    }
+
     private void clearSortedList() {
         sortdedListofIP2D.clear();
 
@@ -269,7 +361,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             sortdedListofIP2D.add(new Vector<PointOfInterest>());
     }
     private void updateSortedList() {
-        Log.d(TAG, "updateSortedList: ipDataset size = " + ipDataset.size() );
+        //Log.d(TAG, "updateSortedList: ipDataset size = " + ipDataset.size() );
         clearSortedList();
         for (PointOfInterest p: ipDataset) {
            // Log.d(TAG, "updateSortedList: fetch from ipDataset");
@@ -285,7 +377,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             else
                 sortdedListofIP2D.get(place1).add(p);
         }
-        Log.d(TAG, "updatesortedlist succeeded with " + sortdedListofIP2D.size());
+        //Log.d(TAG, "updatesortedlist succeeded with " + sortdedListofIP2D.size());
        // printSortedList();
     }
     private void printSortedList(){
