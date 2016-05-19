@@ -286,7 +286,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 //if the elevator popup was clicked
                 //switch to user floor
                 if(currentFloor.equals(endPoint.getFloor()))
-                    changeFloor(((IndoorActivity)getActivity()).startFloor);
+                    changeFloor(indoorActivity.startFloor);
             }
         });
 
@@ -300,7 +300,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 //if the elevator popup was clicked
                 //switch to user floor
                 if(currentFloor.equals(endPoint.getFloor()))
-                    changeFloor(((IndoorActivity)getActivity()).startFloor);
+                    changeFloor(indoorActivity.startFloor);
             }
         });
 
@@ -371,7 +371,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         boolean userHasPos = false;
 
         //Does the user have a location?
-        userID = ((IndoorActivity)getActivity()).youAreHereID;
+        userID = indoorActivity.youAreHereID;
         if(!userID.equals(""))
         {
             userHasPos = true;
@@ -795,10 +795,10 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         int id = item.getItemId();
         if (id == R.id.floors) {
             floorAdapter.setData(mFloors); //add updates here
-            if(getActivity().findViewById(R.id.floor_recycler_view).getVisibility() == View.GONE)
-                getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.VISIBLE);
+            if(indoorActivity.findViewById(R.id.floor_recycler_view).getVisibility() == View.GONE)
+                indoorActivity.findViewById(R.id.floor_recycler_view).setVisibility(View.VISIBLE);
             else
-                getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.GONE);
+                indoorActivity.findViewById(R.id.floor_recycler_view).setVisibility(View.GONE);
         }
         return false;
     }
