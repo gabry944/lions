@@ -61,8 +61,8 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
 //        for(String s : dataset) {
 //            ipDataset.add("Våning " + s);
 //        }
-//        if(Common.IsAdmin())
-//            ipDataset.add(mIndoorMapFragment.getResources().getString(R.string.addfloor));
+        if(Common.IsAdmin())
+            ipDataset.add(mIndoorMapFragment.getResources().getString(R.string.addfloor));
         ipDataset = dataset;
     }
 

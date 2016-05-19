@@ -55,7 +55,7 @@ public class IndoorActivity extends AppCompatActivity {
     private RecyclerView mFloorRecyclerView;
     private RecyclerView.LayoutManager mFloorLayoutManager;
     private List<String> mFloors;
-    private Toolbar toolbar;
+    public Toolbar toolbar;
     public FloorAdapter floorAdapter;
     public FloorDrawerAdapter floorDrawerAdapter;
     public List<PointOfInterest> myDataset;
@@ -64,7 +64,7 @@ public class IndoorActivity extends AppCompatActivity {
     public String startGoalID = "";
     public String startGoalFloor = "";
     public String startFloor = "";
-    private android.support.v7.app.ActionBar actionBar;
+    public android.support.v7.app.ActionBar actionBar;
     public MenuItem adminButton;
     private String selectedImagePath = ""; //Used by admin when adding a map from gallery
 
@@ -251,62 +251,5 @@ public class IndoorActivity extends AppCompatActivity {
             width = (int) (height * bitmapRatio);
         }
         return Bitmap.createScaledBitmap(image, width, height, true);
-    }
-
-    public void initDrawer(IndoorMapFragment indoorMapFragment) {
-        Log.d("draweradapter", "initDrawer -------------------------------------");
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
-                // open I am not going to put anything here)
-
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                // Code here will execute once drawer is closed
-            }
-        };
-        mDrawerLayout.setDrawerListener(toggle);
-        toggle.syncState();
-
-//        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-//        navigationView.setNavigationItemSelectedListener(this);
-
-        //For list of floors
-        mFloorRecyclerView = (RecyclerView) findViewById(R.id.floor_recycler_view_drawer);
-        mFloorRecyclerView.setHasFixedSize(true);
-        mFloorLayoutManager = new LinearLayoutManager(this);
-        mFloorRecyclerView.setLayoutManager(mFloorLayoutManager);
-
-        mFloors = new ArrayList<>();
-        mFloors.add("Floor 3");
-        mFloors.add("Floor 4");
-//        floorAdapter = new FloorAdapter(map, mFloors, this);
-        floorDrawerAdapter = new FloorDrawerAdapter(indoorMapFragment, mFloors, this);
-        mFloorRecyclerView.setAdapter(floorDrawerAdapter);
-    }
-
-    public void setFloors(List<String> floors) {
-        mFloors = floors;
-        for (String s :
-                mFloors) {
-            Log.d("draweradapter", "floors setfloors: " + s);
-        }
-        //Ugly fix
-//        this.runOnUiThread(new Runnable() {
-//           public void run() {
-               floorDrawerAdapter.notifyDataSetChanged();
-//           }
-//        });
-//        new NotifyAdapter().execute(floors);
-
-        Log.d("draweradapter", "setFloors!");
     }
 }

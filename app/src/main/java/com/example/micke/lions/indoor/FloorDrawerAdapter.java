@@ -88,7 +88,10 @@ public class FloorDrawerAdapter extends RecyclerView.Adapter<FloorDrawerAdapter.
     public void onBindViewHolder(FloorDrawerAdapter.ViewHolder holder, final int position) {
         if (holder.Holderid == 1) {                              // as the list view is going to be called after the header view so we decrement the
             // position by 1 and pass it to the holder while setting the text and image
-            holder.textView.setText(myDataSet.get(position-1)); // Setting the Text with the array of our Titles
+            if(myDataSet.get(position-1).equals(mIndoorMapFragment.getResources().getString(R.string.addfloor)))
+                holder.textView.setText(myDataSet.get(position-1)); // Setting the Text with the array of our Titles
+            else
+                holder.textView.setText("Våning " + myDataSet.get(position-1));
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
@@ -112,6 +115,7 @@ public class FloorDrawerAdapter extends RecyclerView.Adapter<FloorDrawerAdapter.
                         Toast toast = Toast.makeText(mContext, "Tillåt appen att läsa dina filer för att lägga upp en planlösning", Toast.LENGTH_LONG);
                         toast.show();
                     }
+                    mIndoorMapFragment.mDrawerLayout.closeDrawers();
                 }
             });
         } else {

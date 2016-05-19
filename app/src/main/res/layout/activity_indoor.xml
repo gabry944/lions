@@ -40,7 +40,7 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/floor_recycler_view_drawer"
-        android:layout_width="320dp"
+        android:layout_width="150dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"

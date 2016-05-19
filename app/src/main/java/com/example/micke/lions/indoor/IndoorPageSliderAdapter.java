@@ -25,6 +25,7 @@ public class IndoorPageSliderAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         if(position == 0) {
             ((IndoorActivity)mContext).map = IndoorMapFragment.newInstance(position + 1);
+            ((IndoorActivity)mContext).actionBar.setHomeButtonEnabled(true);
             return ((IndoorActivity)mContext).map;
         } else if(position == 1) {
 

@@ -17,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,13 +51,15 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
      * fragment.
      */
     private RecyclerView mFloorRecyclerView;
+    public FloorDrawerAdapter floorDrawerAdapter;
     private RecyclerView.LayoutManager mFloorLayoutManager;
 
     private View rootView;
     private List<String> mFloors;
     public FloorAdapter floorAdapter;
-    private DrawerLayout mDrawerLayout;
+    public DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+    private boolean addFloorStringAdded = false;
     public FireBaseIndoor fireBaseIndoor;
     private String buildingId;
     private Context context;
@@ -91,6 +94,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     //Stores ips for the current floor as markers
     private List<IndoorMapMarker> listOfMarkers = new ArrayList<IndoorMapMarker>();
 
+    private ImageButton changeFloorButton;
     private ImageButton goToList;
     private ImageButton addButton;
     public Button nextStep;
@@ -188,6 +192,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         pointList = new ArrayList<>();
         images = fireBaseIndoor.getMapimages(buildingId, this);
 
+        changeFloorButton = (ImageButton) rootView.findViewById(R.id.change_floor);
         addButton = (ImageButton) rootView.findViewById(R.id.add_ip);
         goToList = (ImageButton) rootView.findViewById(R.id.goToIndoorList1);
         goToList.setOnClickListener(new View.OnClickListener() {
@@ -203,6 +208,18 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             public void onClick(View v) {
                 Toast toast = Toast.makeText(getContext(), R.string.addMarkerExplanation, Toast.LENGTH_LONG);
                 toast.show();
+            }
+        });
+
+        changeFloorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.openDrawer(Gravity.LEFT);
+                if(Common.IsAdmin() && !addFloorStringAdded) {
+                    mFloors.add(getResources().getString(R.string.addfloor));
+                    addFloorStringAdded = true;
+                    floorDrawerAdapter.notifyDataSetChanged();
+                }
             }
         });
 
@@ -230,29 +247,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         goalFloorText = (TextView) rootView.findViewById(R.id.goal_floor_text);
         goalFloorText.setVisibility(View.GONE);
 
-        //Test navigation drawer
-//        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-//        mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-//                indoorActivity, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        mDrawerLayout.setDrawerListener(toggle);
-//        toggle.syncState();
-//
-////        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-////        navigationView.setNavigationItemSelectedListener(this);
-//
-//        //For list of floors
-//        mFloorRecyclerView = (RecyclerView) getActivity().findViewById(R.id.floor_recycler_view_drawer);
-//        mFloorRecyclerView.setHasFixedSize(true);
-//        mFloorLayoutManager = new LinearLayoutManager(indoorActivity);
-//        mFloorRecyclerView.setLayoutManager(mFloorLayoutManager);
-//
-//        mFloors = new ArrayList<>();
-//        mFloors.add("test");
-//        floorAdapter = new FloorAdapter(this, mFloors, getContext());
-////        mFloorRecyclerView.setAdapter(floorAdapter);
-
-        indoorActivity.initDrawer(this);
+        initDrawer(this);
         return rootView;
     }
 
@@ -786,7 +781,10 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_indoor_map, menu);
+//        inflater.inflate(R.menu.menu_indoor_map, menu);
+//        indoorActivity.getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        indoorActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        indoorActivity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.stairs_menu);
     }
 
     @Override
@@ -798,6 +796,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.VISIBLE);
             else
                 getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.GONE);
+        } else if(id == android.R.id.home) {
+//            mDrawerToggle.set
         }
         return false;
     }
@@ -874,7 +874,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         else changeFloor(""+firstFloor);
 
         pointList = fireBaseIndoor.getPoints(buildingId, this);
-        indoorActivity.setFloors(mFloors);
+//        indoorActivity.setFloors(mFloors);
     }
 
     @Override
@@ -893,6 +893,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                     addPoint(r, p);
             }
             floorAdapter.notifyDataSetChanged();
+            floorDrawerAdapter.notifyDataSetChanged();
         }
         if (firstLoad) {
             //check if there exist a youAreHereID
@@ -920,6 +921,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     @Override
     public void dataSetChanged() {
         floorAdapter.notifyDataSetChanged();
+        floorDrawerAdapter.notifyDataSetChanged();
     }
 
         //Get dimension
@@ -982,5 +984,41 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         floorAdapter.resetData();
         pointList = new ArrayList<>();
         images = fireBaseIndoor.getMapimages(buildingId, this);
+    }
+
+    public void initDrawer(IndoorMapFragment indoorMapFragment) {
+        Log.d("draweradapter", "initDrawer -------------------------------------");
+        mDrawerLayout = (DrawerLayout) indoorActivity.findViewById(R.id.drawer_layout);
+        mDrawerToggle = new ActionBarDrawerToggle(
+                indoorActivity, mDrawerLayout, indoorActivity.toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
+                // open I am not going to put anything here)
+
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                // Code here will execute once drawer is closed
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
+
+        //For list of floors
+        mFloorRecyclerView = (RecyclerView) indoorActivity.findViewById(R.id.floor_recycler_view_drawer);
+        mFloorRecyclerView.setHasFixedSize(true);
+        mFloorLayoutManager = new LinearLayoutManager(indoorActivity);
+        mFloorRecyclerView.setLayoutManager(mFloorLayoutManager);
+
+        floorDrawerAdapter = new FloorDrawerAdapter(this, mFloors, context);
+        mFloorRecyclerView.setAdapter(floorDrawerAdapter);
+
+        indoorActivity.actionBar.setHomeButtonEnabled(true);
     }
 }
