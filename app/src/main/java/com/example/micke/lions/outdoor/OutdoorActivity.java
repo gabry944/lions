@@ -18,6 +18,7 @@ import com.example.micke.lions.Common;
 import com.example.micke.lions.R;
 import com.example.micke.lions.indoor.IndoorActivity;
 import com.example.micke.lions.LoginDialogFragment;
+import com.google.android.gms.maps.GoogleMap;
 
 public class OutdoorActivity extends AppCompatActivity {
 
@@ -35,6 +36,8 @@ public class OutdoorActivity extends AppCompatActivity {
     public OutdoorMapFragment map;
     public OutdoorListFragment list;
     public OutdoorQRFragment qr;
+
+    private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,8 +89,7 @@ public class OutdoorActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
         invalidateOptionsMenu();
     }
@@ -101,9 +103,8 @@ public class OutdoorActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed()
-    {
-        if(mViewPager.getCurrentItem() != 1)
+    public void onBackPressed() {
+        if (mViewPager.getCurrentItem() != 1)
             mViewPager.setCurrentItem(1);
         else
             super.onBackPressed();
@@ -122,12 +123,11 @@ public class OutdoorActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id ==  R.id.admin){
+        if (id == R.id.admin) {
             if (Common.IsAdmin()) {
                 Common.LogOut(map, list, qr);
                 Common.setAdminButton(adminButton, this);
-            }
-            else {
+            } else {
                 LoginDialogFragment login = new LoginDialogFragment();
                 login.show(getFragmentManager(), "login_fragment");
             }
@@ -143,6 +143,15 @@ public class OutdoorActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    //Check to see if outdoorMapFragment have set the map.
+                    if (mMap != null) {
+                        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                            return;
+                        }else
+                            mMap.setMyLocationEnabled(true);
+                    }
 
                 } else {
                     Common.LocationPermissionDenied();
@@ -222,5 +231,13 @@ public class OutdoorActivity extends AppCompatActivity {
         intent.putExtras(bundle);
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); //not allowed togeter with startActivityForResult
         startActivityForResult(intent, 1);
+    }
+
+    public GoogleMap getmMap() {
+        return mMap;
+    }
+
+    public void setmMap(GoogleMap map) {
+        mMap = map;
     }
 }
