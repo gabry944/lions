@@ -1,10 +1,13 @@
 package com.example.micke.lions.outdoor;
 
+import android.Manifest;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -50,7 +53,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     private String TAG = "OutdoorMapFragment";
 
     private static final String ARG_SECTION_NUMBER = "section_number";
-    private GoogleMap mMap;
+    //private GoogleMap mMap;
     private double longitude, latitude;
     private View rootView;
     private List<Building> buildings;
@@ -122,7 +125,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_outdoor_map, menu);
         MenuItem add = menu.findItem(R.id.addBuildingBtn);
-        if(Common.IsAdmin())
+        if (Common.IsAdmin())
             add.setVisible(true);
         else
             add.setVisible(false);
@@ -145,15 +148,26 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        //mMap = googleMap;
         //mMap.setMyLocationEnabled(true); //Needs a permission check
+        outdoorActivity.setmMap(googleMap);
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,
+        //setMyLocationEnabled allways needs permission check.
+        //setMyLocationEnabled also set to true in indoorActivity
+        //at onRequestPermissionsResult to be sure the user gave permission.
+        if (ActivityCompat.checkSelfPermission(outdoorActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(outdoorActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            return;
+        }else
+            outdoorActivity.getmMap().setMyLocationEnabled(true);
+
+        outdoorActivity.getmMap().animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,
                 longitude), 20.0f));
 
-        mMap.setOnMapLongClickListener(this);
-        mMap.setOnMapClickListener(this);
-        mMap.setOnMarkerClickListener(this);
+        outdoorActivity.getmMap().setOnMapLongClickListener(this);
+        outdoorActivity.getmMap().setOnMapClickListener(this);
+        outdoorActivity.getmMap().setOnMarkerClickListener(this);
 
         buildings = new ArrayList<>();
         outdoorActivity.getFireBaseHandler().buildingListener(this);
@@ -161,7 +175,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
 
     public void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
-        if (mMap == null) {
+        if (outdoorActivity.getmMap() == null) {
             SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                     .findFragmentById(R.id.map);
             if(mapFragment != null) {
@@ -189,7 +203,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     public void newMarker(Building building) {
         LatLng point = new LatLng(building.getLatitude(), building.getLongitude());
 
-        Marker marker = mMap.addMarker(new MarkerOptions()
+        Marker marker = outdoorActivity.getmMap().addMarker(new MarkerOptions()
                 .position(point)
                 .title(building.getName())
                 .snippet(building.getId())
@@ -205,10 +219,10 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
         //Hide all other parked cars
         carMarkerList.clear();
         //Clear the map, clears all markers and other stuff
-        mMap.clear();
+        outdoorActivity.getmMap().clear();
         loadAllBuildings();
 
-        Marker carMarker = mMap.addMarker(new MarkerOptions()
+        Marker carMarker = outdoorActivity.getmMap().addMarker(new MarkerOptions()
                 .position(point)
                 .title(car.getName())
                 .snippet("car")
@@ -222,7 +236,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
 
 //        LatLngBounds bounds = builder.build();
 //        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(car.getLatitude(), car.getLongitude()), 19));
+        outdoorActivity.getmMap().animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(car.getLatitude(), car.getLongitude()), 19));
     }
 
     public void loadAllBuildings() {
@@ -256,7 +270,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void panToMarker(LatLng point) {
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 18));
+        outdoorActivity.getmMap().animateCamera(CameraUpdateFactory.newLatLngZoom(point, 18));
     }
 
     @Override
