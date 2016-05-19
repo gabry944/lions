@@ -612,7 +612,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         //Should be done in IndoorMapMarker but easier this way
         marker.getPopup().setText(marker.getTitle());
-        marker.getPopup().setTextColor(ContextCompat.getColor(getActivity(), R.color.black));
+        marker.getPopup().setTextColor(indoorActivity.getResources().getColor(R.color.black));
 
         marker.getPopup().measure(0,0);
         int x = marker.getPopup().getMeasuredWidth();
@@ -984,6 +984,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         for (FloorMapImage fmi : images) {
             fmi.remove();
         }
-        indoorActivity = null;
+        //indoorActivity = null;
     }
 }

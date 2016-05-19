@@ -85,7 +85,6 @@ public class IndoorActivity extends AppCompatActivity {
         buildingId = bundle.getString("buildingId", "1");
         currentBuilding = bundle.getString("buildingTitle");
         Log.d("indoor", "buldingId: " + buildingId);
-        fireBaseHandler = new FireBaseIndoor(getApplicationContext(), buildingId);
 
         actionBar = getSupportActionBar();
 
@@ -135,6 +134,8 @@ public class IndoorActivity extends AppCompatActivity {
         //see if the user already set a goal
         startGoalID = bundle.getString("goalID", "");
         startGoalFloor = bundle.getString("goalFloor", "");
+
+        fireBaseHandler = new FireBaseIndoor(getApplicationContext(), buildingId);
     }
 
     public FireBaseIndoor getFireBaseHandler() { return fireBaseHandler; }
