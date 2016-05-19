@@ -829,7 +829,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     @Override
     public void getMapimagesDataSet(List<FloorMapimage> mapimageList) {
         //Start loading points
-        pointList = fireBaseIndoor.getPoints(buildingId, this);
 
         images = mapimageList;
 
@@ -845,6 +844,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             changeFloor(indoorActivity.startFloor);
         }
         else changeFloor(""+firstFloor);
+
+        pointList = fireBaseIndoor.getPoints(buildingId, this);
     }
 
     @Override
@@ -942,5 +943,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             return Integer.parseInt(mFloors.get(mFloors.size()-1))+1;
         else
             return 1;
+    }
+
+    //Reload floor images
+    public void floorAdded() {
+        floorAdapter.resetData();
+        pointList = new ArrayList<>();
+        images = fireBaseIndoor.getMapimages(buildingId, this);
     }
 }
