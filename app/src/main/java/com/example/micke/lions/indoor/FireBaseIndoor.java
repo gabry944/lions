@@ -100,6 +100,7 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
                 for (DataSnapshot image : building.getChildren()) {
                     if(image.getValue() != null) {
                         Bitmap bitmap = decodeThumbnail(image.getValue().toString());
+                        if(bitmap == null) Log.d("hejnull", "bitmap null!");
                         list.add(new FloorMapImage(bitmap, Integer.parseInt(image.getKey())));
                     }
                 }
@@ -163,6 +164,10 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
 
     private Bitmap decodeThumbnail(String thumbData) {
         byte[] bytes = Base64.decode(thumbData, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        Bitmap b = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+        BitmapLoading.decodeSampledBitmapFromByteArray(bytes, bytes.length);
+
+        return b;
     }
 }

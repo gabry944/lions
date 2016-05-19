@@ -1,5 +1,6 @@
 package com.example.micke.lions.indoor;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -19,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -83,7 +85,6 @@ public class IndoorActivity extends AppCompatActivity {
         buildingId = bundle.getString("buildingId", "1");
         currentBuilding = bundle.getString("buildingTitle");
         Log.d("indoor", "buldingId: " + buildingId);
-        fireBaseHandler = new FireBaseIndoor(getApplicationContext(), buildingId);
 
         actionBar = getSupportActionBar();
 
@@ -133,6 +134,8 @@ public class IndoorActivity extends AppCompatActivity {
         //see if the user already set a goal
         startGoalID = bundle.getString("goalID", "");
         startGoalFloor = bundle.getString("goalFloor", "");
+
+        fireBaseHandler = new FireBaseIndoor(getApplicationContext(), buildingId);
     }
 
     public FireBaseIndoor getFireBaseHandler() { return fireBaseHandler; }
@@ -146,8 +149,10 @@ public class IndoorActivity extends AppCompatActivity {
     {
         if(mViewPager.getCurrentItem() != 1)
             mViewPager.setCurrentItem(1);
-        else
-            super.onBackPressed();
+        else {
+            map.removeAll();
+            finish();
+        }
     }
 
     @Override
@@ -229,11 +234,10 @@ public class IndoorActivity extends AppCompatActivity {
 
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        options.inSampleSize = 1;
-        FileInputStream fis = new FileInputStream(fileDescriptor);
-        Bitmap image = BitmapFactory.decodeStream(fis);
-        //Bitmap image = BitmapFactory.decodeStream(fis, null, options);
-        //Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
+
+        //Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);    //Den här vill vi ha! men den krashar..
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
         if(image == null) Log.d("hejnull", "NULL!");
         parcelFileDescriptor.close();
         return image;
