@@ -1,23 +1,26 @@
 package com.example.micke.lions.indoor;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.micke.lions.Common;
@@ -28,6 +31,7 @@ import com.example.micke.lions.R;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -45,6 +49,15 @@ public class IndoorActivity extends AppCompatActivity {
     public IndoorMapFragment map;
     public IndoorListFragment list;
     public IndoorQRFragment qr;
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private ListView mDrawerList;
+    private RecyclerView mFloorRecyclerView;
+    private RecyclerView.LayoutManager mFloorLayoutManager;
+    private List<String> mFloors;
+    private Toolbar toolbar;
+    public FloorAdapter floorAdapter;
+    public FloorDrawerAdapter floorDrawerAdapter;
     public List<PointOfInterest> myDataset;
     public BuildingAdapter buildingAdapter;
     public String youAreHereID = "";
@@ -60,7 +73,7 @@ public class IndoorActivity extends AppCompatActivity {
         super.onCreate(state);
         setContentView(R.layout.activity_indoor);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         //get the building and set the connection to firebase
@@ -81,8 +94,6 @@ public class IndoorActivity extends AppCompatActivity {
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new IndoorPageSliderAdapter(getSupportFragmentManager(), this);
-
-
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -130,7 +141,9 @@ public class IndoorActivity extends AppCompatActivity {
     @Override
     public void onBackPressed()
     {
-        if(mViewPager.getCurrentItem() != 1)
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else if(mViewPager.getCurrentItem() != 1)
             mViewPager.setCurrentItem(1);
         else
             super.onBackPressed();
@@ -238,5 +251,62 @@ public class IndoorActivity extends AppCompatActivity {
             width = (int) (height * bitmapRatio);
         }
         return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+
+    public void initDrawer(IndoorMapFragment indoorMapFragment) {
+        Log.d("draweradapter", "initDrawer -------------------------------------");
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
+                // open I am not going to put anything here)
+
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                // Code here will execute once drawer is closed
+            }
+        };
+        mDrawerLayout.setDrawerListener(toggle);
+        toggle.syncState();
+
+//        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+//        navigationView.setNavigationItemSelectedListener(this);
+
+        //For list of floors
+        mFloorRecyclerView = (RecyclerView) findViewById(R.id.floor_recycler_view_drawer);
+        mFloorRecyclerView.setHasFixedSize(true);
+        mFloorLayoutManager = new LinearLayoutManager(this);
+        mFloorRecyclerView.setLayoutManager(mFloorLayoutManager);
+
+        mFloors = new ArrayList<>();
+        mFloors.add("Floor 3");
+        mFloors.add("Floor 4");
+//        floorAdapter = new FloorAdapter(map, mFloors, this);
+        floorDrawerAdapter = new FloorDrawerAdapter(indoorMapFragment, mFloors, this);
+        mFloorRecyclerView.setAdapter(floorDrawerAdapter);
+    }
+
+    public void setFloors(List<String> floors) {
+        mFloors = floors;
+        for (String s :
+                mFloors) {
+            Log.d("draweradapter", "floors setfloors: " + s);
+        }
+        //Ugly fix
+//        this.runOnUiThread(new Runnable() {
+//           public void run() {
+               floorDrawerAdapter.notifyDataSetChanged();
+//           }
+//        });
+//        new NotifyAdapter().execute(floors);
+
+        Log.d("draweradapter", "setFloors!");
     }
 }

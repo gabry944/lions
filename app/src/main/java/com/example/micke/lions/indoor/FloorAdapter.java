@@ -50,20 +50,20 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
         }
     }
 
-    //empty constructor
     public FloorAdapter(IndoorMapFragment indoorMapFragment, List<String> myDataset, Context context) {
         mIndoorMapFragment = indoorMapFragment;
-        ipDataset = new ArrayList<>();
+        ipDataset = myDataset;
         mContext = context;
     }
 
     public void setData(List<String> dataset) {
-        ipDataset = new ArrayList<>();
-        for(String s : dataset) {
-            ipDataset.add("Våning " + s);
-        }
-        if(Common.IsAdmin())
-            ipDataset.add(mIndoorMapFragment.getResources().getString(R.string.addfloor));
+//        ipDataset = new ArrayList<>();
+//        for(String s : dataset) {
+//            ipDataset.add("Våning " + s);
+//        }
+//        if(Common.IsAdmin())
+//            ipDataset.add(mIndoorMapFragment.getResources().getString(R.string.addfloor));
+        ipDataset = dataset;
     }
 
     // Create new views (invoked by the layout manager)
@@ -115,7 +115,7 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
     }
 
     public void resetData() {
-        ipDataset = new ArrayList<>();
+//        ipDataset = new ArrayList<>();
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -128,7 +128,6 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
         ipDataset.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, ipDataset.size());
-
     }
 
     public void addItem(int position, String ip) {

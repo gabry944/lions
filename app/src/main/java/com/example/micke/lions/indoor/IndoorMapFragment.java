@@ -9,8 +9,12 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -51,6 +55,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private View rootView;
     private List<String> mFloors;
     public FloorAdapter floorAdapter;
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
     public FireBaseIndoor fireBaseIndoor;
     private String buildingId;
     private Context context;
@@ -147,12 +153,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         bitmapLoading = new BitmapLoading(context, displayWidth, displayHeight);
 
         //For list of floors
-        mFloorRecyclerView = (RecyclerView) rootView.findViewById(R.id.floor_recycler_view);
-        mFloorRecyclerView.setHasFixedSize(true);
-        mFloorLayoutManager = new LinearLayoutManager(indoorActivity);
-        mFloorRecyclerView.setLayoutManager(mFloorLayoutManager);
-
-        mFloorRecyclerView.setAdapter(floorAdapter);
+//        mFloorRecyclerView = (RecyclerView) rootView.findViewById(R.id.floor_recycler_view);
+//        mFloorRecyclerView.setHasFixedSize(true);
+//        mFloorLayoutManager = new LinearLayoutManager(indoorActivity);
+//        mFloorRecyclerView.setLayoutManager(mFloorLayoutManager);
+//
+//        mFloorRecyclerView.setAdapter(floorAdapter);
 
         //For the map
         r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
@@ -224,6 +230,29 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         goalFloorText = (TextView) rootView.findViewById(R.id.goal_floor_text);
         goalFloorText.setVisibility(View.GONE);
 
+        //Test navigation drawer
+//        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+//        mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+//                indoorActivity, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        mDrawerLayout.setDrawerListener(toggle);
+//        toggle.syncState();
+//
+////        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+////        navigationView.setNavigationItemSelectedListener(this);
+//
+//        //For list of floors
+//        mFloorRecyclerView = (RecyclerView) getActivity().findViewById(R.id.floor_recycler_view_drawer);
+//        mFloorRecyclerView.setHasFixedSize(true);
+//        mFloorLayoutManager = new LinearLayoutManager(indoorActivity);
+//        mFloorRecyclerView.setLayoutManager(mFloorLayoutManager);
+//
+//        mFloors = new ArrayList<>();
+//        mFloors.add("test");
+//        floorAdapter = new FloorAdapter(this, mFloors, getContext());
+////        mFloorRecyclerView.setAdapter(floorAdapter);
+
+        indoorActivity.initDrawer(this);
         return rootView;
     }
 
@@ -845,6 +874,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         else changeFloor(""+firstFloor);
 
         pointList = fireBaseIndoor.getPoints(buildingId, this);
+        indoorActivity.setFloors(mFloors);
     }
 
     @Override

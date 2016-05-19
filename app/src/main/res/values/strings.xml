@@ -50,6 +50,8 @@
     <string name="Other">Övrigt</string>
     <string name="create_car_prompt">Vill du skapa en ny bil och kopiera URL-addressen?</string>
     <string name="create_car_info">Skriv ut bilden som finns på URL-addressen.</string>
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">closed</string>
 
     <string-array name="category_array">
         <item>@string/non_chosen</item>
@@ -61,4 +63,8 @@
         <item>@string/Printer</item>
         <item>@string/Other</item>
     </string-array>
+    <string name="title_activity_navigationdrawertest">NAVIGATIONDRAWERTEST</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>
