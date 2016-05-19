@@ -287,7 +287,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         }
 
         //expand categories
-        //collapseAllCategories(); // collapse all first sinse need to reload the point under the categories
+        collapseAllCategories(); // collapse all first sinse need to reload the point under the categories
         expandAllCategories();
 
         Log.d(TAG, "updateAdapter: efter update");
