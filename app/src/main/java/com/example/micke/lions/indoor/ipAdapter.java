@@ -111,6 +111,11 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             //} else {
                 holder.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
             //}
+
+            collapseView(holder.mView);
+            if(isExpanded[position]){
+                expandView(holder.mView);
+            }
         }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -143,7 +148,9 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         Log.d(TAG, "collapseView: index förut = " + index);*/
         int index = categoriesViews.indexOf(v);
         Log.d(TAG, "collapseView: index = " + index);
-        linearLayout.removeViews(1,sortdedListofIP2D.get(index).size());
+        Log.d(TAG, "collapseView: linearLayout.getChildCount() = " + linearLayout.getChildCount());
+        if(linearLayout.getChildCount()>1) // test so that the list is not empty, Obs 1 means that it is empty
+            linearLayout.removeViews(1,sortdedListofIP2D.get(index).size());
     }
 
     public void expandView(final View v){
@@ -156,62 +163,66 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         TextView header_title = (TextView) v.findViewById(R.id.header_title);
         Log.d(TAG, "expandView: categorie: " + header_title.getText());
 
-        final LayoutInflater lyInflaterForPanel = (LayoutInflater) mContext
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        Log.d(TAG, "expandView: linearLayout.getChildCount()" + linearLayout.getChildCount());
+        if(linearLayout.getChildCount()<=1) // test so that the list is empty, Obs 1 means that it is empty
+        {
+            final LayoutInflater lyInflaterForPanel = (LayoutInflater) mContext
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            Log.d(TAG, "expandView: sortdedListofIP2D.get(index).size() = " + sortdedListofIP2D.get(index).size());
+            for(int i = 0; i < sortdedListofIP2D.get(index).size(); i++)
+            {
+                LinearLayout childLayout = (LinearLayout) lyInflaterForPanel.inflate(
+                        R.layout.fragment_indoor_list_child, null);
+
+                TextView item = (TextView) childLayout.findViewById(R.id.child_content);
+                ImageButton goToMapImage = (ImageButton) childLayout.findViewById(R.id.goToMapImage);
+                TextView idText = (TextView) childLayout.findViewById(R.id.id);
+
+                idText.setText(sortdedListofIP2D.get(index).get(i).getId());
+                item.setText(sortdedListofIP2D.get(index).get(i).getTitle());
+                Log.d(TAG, "expandView: Title" + sortdedListofIP2D.get(index).get(i).getTitle());
+                if(toName(index).equals(mContext.getResources().getString(R.string.ConferenceRoom)))
+                    goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.map_marker_green : R.drawable.navigation);
+                else if(toName(index).equals(mContext.getResources().getString(R.string.Entrance)))
+                    goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.entrance_green : R.drawable.entrance_new );
+                else if(toName(index).equals(mContext.getResources().getString(R.string.Toilet)))
+                    goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.wc_green : R.drawable.wc );
+                else if(toName(index).equals(mContext.getResources().getString(R.string.Elevator)))
+                    goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.elevator_marker_green : R.drawable.elevator_new );
+                else if(toName(index).equals(mContext.getResources().getString(R.string.Stairs)))
+                    goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.stairs_green : R.drawable.stairs_menu );
+                else
+                    goToMapImage.setImageResource( sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.map_marker_green : R.drawable.navigation);
 
 
-        Log.d(TAG, "expandView: sortdedListofIP2D.get(index).size() = " + sortdedListofIP2D.get(index).size());
-        for(int i = 0; i < sortdedListofIP2D.get(index).size(); i++){
-
-            LinearLayout childLayout = (LinearLayout) lyInflaterForPanel.inflate(
-                    R.layout.fragment_indoor_list_child, null);
-
-            TextView item = (TextView) childLayout.findViewById(R.id.child_content);
-            ImageButton goToMapImage = (ImageButton) childLayout.findViewById(R.id.goToMapImage);
-            TextView idText = (TextView) childLayout.findViewById(R.id.id);
-
-            idText.setText(sortdedListofIP2D.get(index).get(i).getId());
-            item.setText(sortdedListofIP2D.get(index).get(i).getTitle());
-            Log.d(TAG, "expandView: ==== Title = " + sortdedListofIP2D.get(index).get(i).getTitle());
-            if(toName(index).equals(mContext.getResources().getString(R.string.ConferenceRoom)))
-                goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.map_marker_green : R.drawable.navigation);
-            else if(toName(index).equals(mContext.getResources().getString(R.string.Entrance)))
-                goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.entrance_green : R.drawable.entrance_new );
-            else if(toName(index).equals(mContext.getResources().getString(R.string.Toilet)))
-                goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.wc_green : R.drawable.wc );
-            else if(toName(index).equals(mContext.getResources().getString(R.string.Elevator)))
-                goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.elevator_marker_green : R.drawable.elevator_new );
-            else if(toName(index).equals(mContext.getResources().getString(R.string.Stairs)))
-                goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.stairs_green : R.drawable.stairs_menu );
-            else
-                goToMapImage.setImageResource( sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.map_marker_green : R.drawable.navigation);
-
-
-            final int index2 = i;
-            goToMapImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
-                    mPager.setCurrentItem(0, true);
-                    ((IndoorActivity)mContext).map.startWayFinding(sortdedListofIP2D.get(index).get(index2).getFloor(), ((TextView)((View)v.getParent()).findViewById(R.id.id)).getText().toString());
-                }
-            });
-            childLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    TextView detailInfo = (TextView) v.findViewById(R.id.child_detail_content);
-                    if(detailInfo.getVisibility() == View.GONE){
-                        detailInfo.setVisibility(View.VISIBLE);
-                        detailInfo.setText(sortdedListofIP2D.get(index).get(index2).getDescription());
+                final int index2 = i;
+                goToMapImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
+                        mPager.setCurrentItem(0, true);
+                        ((IndoorActivity)mContext).map.startWayFinding(sortdedListofIP2D.get(index).get(index2).getFloor(), ((TextView)((View)v.getParent()).findViewById(R.id.id)).getText().toString());
                     }
-                    else
-                    {
-                        detailInfo.setVisibility(View.GONE);
+                });
+                childLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        TextView detailInfo = (TextView) v.findViewById(R.id.child_detail_content);
+                        if(detailInfo.getVisibility() == View.GONE){
+                            detailInfo.setVisibility(View.VISIBLE);
+                            detailInfo.setText(sortdedListofIP2D.get(index).get(index2).getDescription());
+                        }
+                        else
+                        {
+                            detailInfo.setVisibility(View.GONE);
+                        }
                     }
-                }
-            });
+                });
 
-            linearLayout.addView(childLayout);
+                linearLayout.addView(childLayout);
+            }
         }
     }
 
