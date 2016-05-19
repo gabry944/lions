@@ -26,6 +26,9 @@ import com.google.android.gms.maps.model.Marker;
 
 import org.w3c.dom.Text;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 
 public class ChangePointDialogFragment extends DialogFragment {
 
@@ -131,9 +134,15 @@ public class ChangePointDialogFragment extends DialogFragment {
         getQRCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String buildingName = "";
+                try {
+                    buildingName = URLEncoder.encode(indoorActivity.getCurrentBuilding(), "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
                 String url = "http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=" +
                         "building/" + indoorActivity.getBuildingId() + "/floor/"
-                        + fireBaseIndoor.getFloor() + "/ip/" + ipId
+                        + fireBaseIndoor.getFloor() + "/ip/" + ipId + "/" + buildingName
                         + "&qzone=1&margin=0&size=400x400&ecc=L";
 
                 Log.d("url", url);

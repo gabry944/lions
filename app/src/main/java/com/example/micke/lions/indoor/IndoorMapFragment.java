@@ -89,6 +89,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private List<IndoorMapMarker> listOfMarkers = new ArrayList<IndoorMapMarker>();
 
     private ImageButton goToList;
+    private ImageButton addButton;
     public Button nextStep;
     public Button cancel;
     public TextView goalFloorText;
@@ -184,12 +185,21 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         pointList = new ArrayList<>();
         images = fireBaseIndoor.getMapimages(buildingId, this);
 
+        addButton = (ImageButton) rootView.findViewById(R.id.add_ip);
         goToList = (ImageButton) rootView.findViewById(R.id.goToIndoorList1);
         goToList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
                 mPager.setCurrentItem(1, true);
+            }
+        });
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast toast = Toast.makeText(getContext(), R.string.addMarkerExplanation, Toast.LENGTH_LONG);
+                toast.show();
             }
         });
 
@@ -763,14 +773,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             else
                 getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.GONE);
         }
-        else if (id == R.id.addInterestPoint) {
-            Context context = getContext();
-            int duration = Toast.LENGTH_LONG;
-
-            Toast toast = Toast.makeText(context, R.string.addMarkerExplanation, duration);
-            toast.show();
-
-        }
         return false;
     }
 
@@ -938,8 +940,11 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     //Admin can not choose a floor currently
     public int nextFloorToAdd() {
-        if(mFloors.size() > 0)
-            return Integer.parseInt(mFloors.get(mFloors.size()-1))+1;
+        Log.d(TAG, "nextFloorToAdd: start");
+        if(mFloors.size() > 0) {
+            Log.d(TAG, "nextFloorToAdd: if");
+            return Integer.parseInt(mFloors.get(mFloors.size() - 1)) + 1;
+        }
         else
             return 1;
     }

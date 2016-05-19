@@ -22,6 +22,8 @@ import java.util.List;
 
 public class FireBaseIndoor extends FireBaseHandler implements Serializable {
 
+    private String TAG = "FireBaseIndoor";
+
     private String buildingId;
     private String floorId;
 
@@ -42,8 +44,10 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
 
     //Only call first time a map needs to be uploaded to the server
     public void addMap(Bitmap bitmap, int floor) {
+        Log.d(TAG, "addMap: start");
         Firebase imgRef = myFirebaseRef.child("buildingimages/" + buildingId + "/" + floor);
         imgRef.setValue(encodeThumbnail(bitmap));
+        Log.d(TAG, "addMap: end");
     }
 
     public void removeIp(PointOfInterest point) {
