@@ -9,7 +9,7 @@
         app:showAsAction="always"/>
 
     <item android:id="@+id/admin"
-        android:title="Admin"
+        android:title="Logga in"
         android:icon="@drawable/admin_button_off"
         app:showAsAction="never"
         />
