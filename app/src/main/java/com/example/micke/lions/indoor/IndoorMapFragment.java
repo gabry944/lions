@@ -1,7 +1,6 @@
 package com.example.micke.lions.indoor;
 
 import android.app.DialogFragment;
-
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
@@ -11,10 +10,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -56,7 +53,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     private View rootView;
     private List<String> mFloors;
-    public FloorAdapter floorAdapter;
     public DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private boolean addFloorStringAdded = false;
@@ -144,7 +140,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         buildingId = indoorActivity.getBuildingId();
         rootView = inflater.inflate(R.layout.fragment_indoor_map, container, false);
         mFloors = new ArrayList<>();
-        floorAdapter = new FloorAdapter(this, mFloors, context);
 
         //Get display dimensions
         Display display = indoorActivity.getWindowManager().getDefaultDisplay();
@@ -155,14 +150,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         //Initialize bitmap loading class
         bitmapLoading = new BitmapLoading(context, displayWidth, displayHeight);
-
-        //For list of floors
-//        mFloorRecyclerView = (RecyclerView) rootView.findViewById(R.id.floor_recycler_view);
-//        mFloorRecyclerView.setHasFixedSize(true);
-//        mFloorLayoutManager = new LinearLayoutManager(indoorActivity);
-//        mFloorRecyclerView.setLayoutManager(mFloorLayoutManager);
-//
-//        mFloorRecyclerView.setAdapter(floorAdapter);
 
         //For the map
         r = (RelativeLayout) rootView.findViewById(R.id.mapLayout);
@@ -791,7 +778,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.floors) {
-            floorAdapter.setData(mFloors); //add updates here
             if(getActivity().findViewById(R.id.floor_recycler_view).getVisibility() == View.GONE)
                 getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.VISIBLE);
             else
@@ -892,7 +878,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 if (p.getFloor().equals(currentFloor))// || p.getCategory().equals(getString(R.string.Stairs)) || p.getCategory().equals(getString(R.string.Elevator)))
                     addPoint(r, p);
             }
-            floorAdapter.notifyDataSetChanged();
             floorDrawerAdapter.notifyDataSetChanged();
         }
         if (firstLoad) {
@@ -920,7 +905,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     @Override
     public void dataSetChanged() {
-        floorAdapter.notifyDataSetChanged();
         floorDrawerAdapter.notifyDataSetChanged();
     }
 
@@ -981,7 +965,6 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     //Reload floor images
     public void floorAdded() {
-        floorAdapter.resetData();
         pointList = new ArrayList<>();
         images = fireBaseIndoor.getMapimages(buildingId, this);
     }
