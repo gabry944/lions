@@ -102,11 +102,11 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             categoriesViews.set(position, holder.mView);
 
             holder.header_title.setText(toName(position));
-            if (sortdedListofIP2D.get(position).size() == 0) {
+            //if (sortdedListofIP2D.get(position).size() == 0) {
+            //    holder.btn_expand_toggle.setVisibility(View.INVISIBLE);
+            //} else {
                 holder.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
-            } else {
-                holder.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
-            }
+            //}
         }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -114,9 +114,9 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
 
-                LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
-                //TODO kan bli fel
-                int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
+                //LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
+                //int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
+                int index = categoriesViews.indexOf(v);
 
                 holder.btn_expand_toggle.setImageResource(R.drawable.arrow_up);
                 if(!isExpanded[index]){
@@ -168,6 +168,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
             idText.setText(sortdedListofIP2D.get(index).get(i).getId());
             item.setText(sortdedListofIP2D.get(index).get(i).getTitle());
+            Log.d(TAG, "expandView: Title" + sortdedListofIP2D.get(index).get(i).getTitle());
             if(toName(index).equals(mContext.getResources().getString(R.string.ConferenceRoom)))
                 goToMapImage.setImageResource(sortdedListofIP2D.get(index).get(i).getOfficial() ? R.drawable.map_marker_green : R.drawable.navigation);
             else if(toName(index).equals(mContext.getResources().getString(R.string.Entrance)))
@@ -250,7 +251,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         applyAndAnimateRemovals(ipSet);
         applyAndAnimateAdditions(ipSet);
         applyAndAnimateMovedItems(ipSet);
-        notifyDataSetChanged();
+        //notifyDataSetChanged();
 
         //updateSortedList();
         printSortedList();
