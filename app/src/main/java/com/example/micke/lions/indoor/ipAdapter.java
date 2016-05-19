@@ -98,14 +98,17 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         //Log.d(TAG, "onCreateViewHolder: sort size = " + sortdedListofIP2D.size());
 
         if (position < NR_OF_CATEGORIES && sortdedListofIP2D.get(position) != null) {
+            Log.d(TAG, "onBindViewHolder: position < nr of categories for " + toName(position));
 
             categoriesViews.set(position, holder.mView);
 
             holder.header_title.setText(toName(position));
             if (sortdedListofIP2D.get(position).size() == 0) {
+                Log.d(TAG, "onBindViewHolder: closed");
                 holder.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
             } else {
-                holder.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
+                Log.d(TAG, "onBindViewHolder: open");
+                holder.btn_expand_toggle.setImageResource(R.drawable.arrow_up);
             }
         }
 
@@ -163,6 +166,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
                     R.layout.fragment_indoor_list_child, null);
 
             TextView item = (TextView) childLayout.findViewById(R.id.child_content);
+            Log.d(TAG, "expandView: text = "+ item.getText());
             ImageButton goToMapImage = (ImageButton) childLayout.findViewById(R.id.goToMapImage);
             TextView idText = (TextView) childLayout.findViewById(R.id.id);
 
