@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +14,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.micke.lions.Common;
@@ -20,7 +23,6 @@ import com.example.micke.lions.LoginDialogFragment;
 import com.example.micke.lions.R;
 
 import java.io.FileDescriptor;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 
@@ -52,6 +54,17 @@ public class IndoorActivity extends AppCompatActivity {
         super.onCreate(state);
         setContentView(R.layout.activity_indoor);
 
+        Window window = this.getWindow();
+
+        //Clear FLAG_TRANSLUCENT_STATUS flag
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+        //Add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+        //Change the color
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorInDoorStatusbar));
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -61,7 +74,6 @@ public class IndoorActivity extends AppCompatActivity {
         buildingId = bundle.getString("buildingId", "1");
         currentBuilding = bundle.getString("buildingTitle");
         Log.d("indoor", "buldingId: " + buildingId);
-        fireBaseHandler = new FireBaseIndoor(getApplicationContext(), buildingId);
 
         actionBar = getSupportActionBar();
 
@@ -109,6 +121,8 @@ public class IndoorActivity extends AppCompatActivity {
         //see if the user already set a goal
         startGoalID = bundle.getString("goalID", "");
         startGoalFloor = bundle.getString("goalFloor", "");
+
+        fireBaseHandler = new FireBaseIndoor(getApplicationContext(), buildingId);
     }
 
     public FireBaseIndoor getFireBaseHandler() { return fireBaseHandler; }
@@ -122,8 +136,10 @@ public class IndoorActivity extends AppCompatActivity {
     {
         if(mViewPager.getCurrentItem() != 1)
             mViewPager.setCurrentItem(1);
-        else
-            super.onBackPressed();
+        else {
+            map.removeAll();
+            finish();
+        }
     }
 
     @Override
@@ -205,11 +221,10 @@ public class IndoorActivity extends AppCompatActivity {
 
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        options.inSampleSize = 1;
-        FileInputStream fis = new FileInputStream(fileDescriptor);
-        Bitmap image = BitmapFactory.decodeStream(fis);
-        //Bitmap image = BitmapFactory.decodeStream(fis, null, options);
-        //Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
+
+        //Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);    //Den här vill vi ha! men den krashar..
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
         if(image == null) Log.d("hejnull", "NULL!");
         parcelFileDescriptor.close();
         return image;

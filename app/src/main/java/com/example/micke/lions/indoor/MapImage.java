@@ -1,5 +1,6 @@
 package com.example.micke.lions.indoor;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
@@ -9,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -50,6 +52,12 @@ public class MapImage extends RelativeLayout {
                 int[] viewCoords = new int[2];
                 imageView.getLocationOnScreen(viewCoords);
                 imageYOffset = viewCoords[1];
+
+//                TranslateAnimation transAnimation= new TranslateAnimation(0, -imageWidth/2, 0, 0);
+//                transAnimation.setDuration(0);
+//                transAnimation.setFillAfter(true);
+//                imageView.startAnimation(transAnimation);
+
                 return true;
             }
         });
@@ -185,8 +193,9 @@ public class MapImage extends RelativeLayout {
         imageView.getLocationOnScreen(viewCoords);
 
         //Top left corner
-        point[0] = (percentageX * imageWidth );
-        point[1] = (percentageY * imageHeight );
+        //point[0] = (percentageX * imageWidth);
+        point[0] = (percentageX * imageWidth); //works for uploaded images but not when moving points.
+        point[1] = (percentageY * imageHeight);
 
         Log.d("touch", "x: " + point[0] + " percentageX: " + percentageX + " xscale: " + relativeLayout.getScaleX()
                 + " imagewidth: " + imageWidth + " viewcoords[0]: " + viewCoords[0]);

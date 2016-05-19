@@ -99,11 +99,6 @@ public class IndoorQRFragment extends Fragment implements ZBarScannerView.Result
         // Do something with the result here
         Log.v("qr", rawResult.getContents()); // Prints scan results
 
-        //Toast to show result
-        Toast toast = Toast.makeText(getContext(),
-                rawResult.getContents(), Toast.LENGTH_LONG);
-        toast.show();
-
         //
         String[] parts = rawResult.getContents().split("/");
         int partsLength = parts.length;
@@ -112,7 +107,8 @@ public class IndoorQRFragment extends Fragment implements ZBarScannerView.Result
             Log.d("buildparts", part);
         }
 
-        if(partsLength > 1) {
+        if(partsLength > 1 && (parts[0].equals("building") || parts[0].equals("car"))) {
+
             //send data to OutdoorActivity
             Intent intent = new Intent();
             intent.putExtra("data", parts);

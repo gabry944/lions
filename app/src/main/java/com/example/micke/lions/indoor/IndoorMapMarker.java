@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.micke.lions.R;
@@ -15,6 +17,8 @@ public class IndoorMapMarker {
     String TAG = "IndoorMapMarker";
 
     private ImageView point;
+    private TextView popup;
+    private RelativeLayout mRelativeLayout;
     private PointOfInterest pointOfInterest;
     private final Context context;
     private float[] localCoord;    //[0] = posX, [1] = posY
@@ -31,6 +35,7 @@ public class IndoorMapMarker {
 
         localCoord[0] = posX;
         localCoord[1] = posY;
+
         //TODO replace with function to calaulate x and y from long and lat.
         //localCoord = transformCoordToLocal(pointOfInterest.getGlobalCoord());
 
@@ -77,6 +82,8 @@ public class IndoorMapMarker {
     public ImageView getMarker() {
         return point;
     }
+
+    public TextView getPopup() { return  popup; }
 
     public PointOfInterest getPoint(){
         return pointOfInterest;
@@ -161,6 +168,10 @@ public class IndoorMapMarker {
         point.setMaxWidth(40);
         point.setMinimumHeight(40);
         point.setMinimumWidth(40);
+
+        popup = new TextView(context);
+
+        popup.setVisibility(View.GONE);
 
         if(getCategory().equals(context.getString(R.string.Entrance)))
             point.setImageResource( getOfficial() ? R.drawable.entrance_green : R.drawable.entrance_new );

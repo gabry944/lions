@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -70,8 +71,8 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private List<IndoorMapMarker> floorChange;
 
 
-    private int displayWidth;
-    private int displayHeight;
+    public int displayWidth;
+    public int displayHeight;
 
     //Scale test
     public MapImage mapImage;
@@ -296,7 +297,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 //if the elevator popup was clicked
                 //switch to user floor
                 if(currentFloor.equals(endPoint.getFloor()))
-                    changeFloor(((IndoorActivity)getActivity()).startFloor);
+                    changeFloor(indoorActivity.startFloor);
             }
         });
 
@@ -310,7 +311,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                 //if the elevator popup was clicked
                 //switch to user floor
                 if(currentFloor.equals(endPoint.getFloor()))
-                    changeFloor(((IndoorActivity)getActivity()).startFloor);
+                    changeFloor(indoorActivity.startFloor);
             }
         });
 
@@ -381,7 +382,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         boolean userHasPos = false;
 
         //Does the user have a location?
-        userID = ((IndoorActivity)getActivity()).youAreHereID;
+        userID = indoorActivity.youAreHereID;
         if(!userID.equals(""))
         {
             userHasPos = true;
@@ -620,6 +621,20 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         parent.addView(marker.getMarker());
 
+        //Should be done in IndoorMapMarker but easier this way
+        marker.getPopup().setText(marker.getTitle());
+        marker.getPopup().setTextColor(indoorActivity.getResources().getColor(R.color.black));
+
+        marker.getPopup().measure(0,0);
+        int x = marker.getPopup().getMeasuredWidth();
+        int y = marker.getPopup().getMeasuredHeight();
+
+        marker.getPopup().setX(marker.getX() - x/2);
+        marker.getPopup().setY(marker.getY() - y - marker.getMarker().getMaxHeight()/2.0f);
+
+        //Adds the popup to the layout(map)
+        parent.addView(marker.getPopup());
+
         listOfMarkers.add(marker);
 
         marker.getMarker().setOnClickListener(new View.OnClickListener() {
@@ -690,7 +705,22 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                             uAreHere2.setVisibility(View.VISIBLE);
                         }
                     }
+                }else {
+
+                    marker.getPopup().startAnimation(animToVISIBLE);
+                    marker.getPopup().setVisibility(View.VISIBLE);
+                    //marker.getPopup().startAnimation(animToGONE);
+                    //marker.getPopup().setVisibility(View.GONE);
+
+                    marker.getPopup().postDelayed(new Runnable() {
+                        public void run() {
+                            marker.getPopup().startAnimation(animToGONE);
+                            marker.getPopup().setVisibility(View.GONE);
+                        }
+                    }, 1500);
+
                 }
+
             }
         });
 
@@ -809,6 +839,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         for (PointOfInterest p : pointList) {
             if (p.getFloor().equals(currentFloor))// || p.getCategory().equals(getString(R.string.Stairs)) || p.getCategory().equals(getString(R.string.Elevator)))
             {
+                Log.d("hejpoint", "fillfloorwithpoints says: " + p.getTitle() + ": " + p.getLongitude() + ", " + p.getLatitude());
                 addPoint(r, p);
             }
         }
@@ -820,7 +851,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         for(FloorMapImage i : images) {
             if(floor.equals(Integer.toString(i.floor))) {
                 //This will indirectly call fillFloorWithPoints() above once image is done loading
-                mapImage.setImage(new BitmapDrawable(getResources(), i.mapimage));
+                mapImage.setImage(new BitmapDrawable(indoorActivity.getResources(), i.mapimage));
                 fillFloorWithPoints();
             }
         }
@@ -867,10 +898,11 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
                     addPoint(r, p);
             }
             floorDrawerAdapter.notifyDataSetChanged();
+            fillFloorWithPoints();
         }
         if (firstLoad) {
             //check if there exist a youAreHereID
-            userID = ((IndoorActivity) getActivity()).youAreHereID;
+            userID = indoorActivity.youAreHereID;
             if (!userID.equals("")) {
                 //the user has a position
                 //is there a goal?
@@ -961,7 +993,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         mDrawerLayout = (DrawerLayout) indoorActivity.findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(
                 indoorActivity, mDrawerLayout,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
 
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -985,5 +1017,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         floorDrawerAdapter = new FloorDrawerAdapter(this, mFloors, context);
         mFloorRecyclerView.setAdapter(floorDrawerAdapter);
+    }
+
+    public void removeAll() {
+        mapImage.removeAllViews();
+        for (FloorMapImage fmi : images) {
+            fmi.remove();
+        }
     }
 }
