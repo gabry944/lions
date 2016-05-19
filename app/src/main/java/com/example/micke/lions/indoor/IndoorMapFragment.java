@@ -768,23 +768,11 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        inflater.inflate(R.menu.menu_indoor_map, menu);
-//        indoorActivity.getSupportActionBar().setDisplayShowHomeEnabled(true);
-//        indoorActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        indoorActivity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.stairs_menu);
+
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.floors) {
-            if(getActivity().findViewById(R.id.floor_recycler_view).getVisibility() == View.GONE)
-                getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.VISIBLE);
-            else
-                getActivity().findViewById(R.id.floor_recycler_view).setVisibility(View.GONE);
-        } else if(id == android.R.id.home) {
-//            mDrawerToggle.set
-        }
         return false;
     }
 
@@ -991,6 +979,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerToggle.setDrawerIndicatorEnabled(false);
         mDrawerToggle.syncState();
 
         //For list of floors
@@ -1001,7 +990,5 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
         floorDrawerAdapter = new FloorDrawerAdapter(this, mFloors, context);
         mFloorRecyclerView.setAdapter(floorDrawerAdapter);
-
-        indoorActivity.actionBar.setHomeButtonEnabled(true);
     }
 }

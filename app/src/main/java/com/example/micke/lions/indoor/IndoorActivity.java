@@ -4,35 +4,24 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.micke.lions.Common;
 import com.example.micke.lions.LoginDialogFragment;
-import com.example.micke.lions.outdoor.BuildingAdapter;
 import com.example.micke.lions.R;
 
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class IndoorActivity extends AppCompatActivity {
@@ -49,16 +38,7 @@ public class IndoorActivity extends AppCompatActivity {
     public IndoorMapFragment map;
     public IndoorListFragment list;
     public IndoorQRFragment qr;
-    private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private ListView mDrawerList;
-    private RecyclerView mFloorRecyclerView;
-    private RecyclerView.LayoutManager mFloorLayoutManager;
-    private List<String> mFloors;
     public Toolbar toolbar;
-    public FloorDrawerAdapter floorDrawerAdapter;
-    public List<PointOfInterest> myDataset;
-    public BuildingAdapter buildingAdapter;
     public String youAreHereID = "";
     public String startGoalID = "";
     public String startGoalFloor = "";
@@ -140,9 +120,7 @@ public class IndoorActivity extends AppCompatActivity {
     @Override
     public void onBackPressed()
     {
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-        } else if(mViewPager.getCurrentItem() != 1)
+        if(mViewPager.getCurrentItem() != 1)
             mViewPager.setCurrentItem(1);
         else
             super.onBackPressed();
@@ -161,6 +139,7 @@ public class IndoorActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        Log.d("backback", "menuitem pressed: " + item + " " + item.toString());
 
         if(id ==  R.id.admin){
             if (Common.IsAdmin()) {
@@ -175,6 +154,7 @@ public class IndoorActivity extends AppCompatActivity {
 
         //Finishes activity and starting outdoorActivity.
         if(id == android.R.id.home) {
+            Log.d("backback", "back arrow pressed (home)");
             onBackPressed();
             this.finish();
             return true;

@@ -20,8 +20,10 @@ import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.example.micke.lions.Common;
 import com.example.micke.lions.DataSetChanged;
 import com.example.micke.lions.InloggChange;
+import com.example.micke.lions.LoginDialogFragment;
 import com.example.micke.lions.R;
 
 import java.util.ArrayList;
@@ -134,6 +136,22 @@ public class IndoorListFragment extends Fragment implements DataSetChanged, Sear
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(this);
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        Log.d("backback", "menuitem pressed: " + item + " " + item.toString());
+
+        //Finishes activity and starting outdoorActivity.
+        if(id == android.R.id.home) {
+            Log.d("backback", "back arrow pressed (home)");
+//            onBackPressed();
+//            this.finish();
+            return true;
+        }
+
+        return false;
     }
 
     @Override
