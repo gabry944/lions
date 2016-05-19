@@ -977,4 +977,12 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         pointList = new ArrayList<>();
         images = fireBaseIndoor.getMapimages(buildingId, this);
     }
+
+    public void removeAll() {
+        mapImage.removeAllViews();
+        for (FloorMapImage fmi : images) {
+            fmi.remove();
+        }
+        indoorActivity = null;
+    }
 }

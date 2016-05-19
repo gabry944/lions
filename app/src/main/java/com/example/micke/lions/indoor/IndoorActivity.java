@@ -1,5 +1,6 @@
 package com.example.micke.lions.indoor;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -19,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -146,8 +148,10 @@ public class IndoorActivity extends AppCompatActivity {
     {
         if(mViewPager.getCurrentItem() != 1)
             mViewPager.setCurrentItem(1);
-        else
-            super.onBackPressed();
+        else {
+            map.removeAll();
+            finish();
+        }
     }
 
     @Override

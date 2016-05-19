@@ -194,7 +194,7 @@ public class MapImage extends RelativeLayout {
 
         //Top left corner
         //point[0] = (percentageX * imageWidth);
-        point[0] = (percentageX * imageWidth + imageWidth / 2); //works for uploaded images but not when moving points.
+        point[0] = (percentageX * imageWidth); //works for uploaded images but not when moving points.
         point[1] = (percentageY * imageHeight);
 
         Log.d("touch", "x: " + point[0] + " percentageX: " + percentageX + " xscale: " + relativeLayout.getScaleX()

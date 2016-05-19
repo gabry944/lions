@@ -13,4 +13,8 @@ public class FloorMapImage {
         this.mapimage = left;
         this.floor = right;
     }
+
+    public void remove() {
+        mapimage.recycle();
+    }
 }
