@@ -56,7 +56,6 @@ public class IndoorActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mFloorLayoutManager;
     private List<String> mFloors;
     public Toolbar toolbar;
-    public FloorAdapter floorAdapter;
     public FloorDrawerAdapter floorDrawerAdapter;
     public List<PointOfInterest> myDataset;
     public BuildingAdapter buildingAdapter;
