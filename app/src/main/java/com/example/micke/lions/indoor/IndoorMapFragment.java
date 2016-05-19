@@ -3,7 +3,6 @@ package com.example.micke.lions.indoor;
 import android.app.DialogFragment;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -14,7 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,7 +25,6 @@ import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,7 +75,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     //fireBaseIndoor.addMap(bitmapLoading.getFloorImage(R.drawable.map_t3), 3);
 
     //Sorts map images by which floor they are for
-    private List<FloorMapimage> images;
+    private List<FloorMapImage> images;
 
     //Stores all ips for the whole building
     private List<PointOfInterest> pointList;
@@ -817,7 +814,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
     private void setCurrentFloor(String floor) {
         fireBaseIndoor.setFloor(floor);
         currentFloor = floor;
-        for(FloorMapimage i : images) {
+        for(FloorMapImage i : images) {
             if(floor.equals(Integer.toString(i.floor))) {
                 //This will indirectly call fillFloorWithPoints() above once image is done loading
                 mapImage.setImage(new BitmapDrawable(getResources(), i.mapimage));
@@ -829,7 +826,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     //This function takes care of map initialization for the mapimage and markers
     @Override
-    public void getMapimagesDataSet(List<FloorMapimage> mapimageList) {
+    public void getMapimagesDataSet(List<FloorMapImage> mapimageList) {
         //Start loading points
         pointList = fireBaseIndoor.getPoints(buildingId, this);
 
@@ -839,7 +836,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         if(mapimageList.size() > 0)
             firstFloor = mapimageList.get(0).floor;
 
-        for(FloorMapimage fmi : mapimageList) {
+        for(FloorMapImage fmi : mapimageList) {
             mFloors.add(""+fmi.floor);
         }
 
