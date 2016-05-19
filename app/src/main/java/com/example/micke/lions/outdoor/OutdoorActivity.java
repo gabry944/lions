@@ -207,12 +207,12 @@ public class OutdoorActivity extends AppCompatActivity {
         String buildingId = parts[1];
         String ipId = "-1";
         String floor = "";
-        String currentBuilding = "";
+        String currentBuilding = "error";
         if (parts[5] != null) {
             ipId = parts[5];
             floor = parts[3];
         }
-        if(parts[6] != null){
+        if(parts.length >= 7 && parts[6] != null){
            currentBuilding = parts[6];
         }
         bundle.putString("buildingId", buildingId);
