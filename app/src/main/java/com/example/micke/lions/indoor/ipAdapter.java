@@ -80,14 +80,11 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     }
 
     @Override
-    public ipAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewNumber)
+    public ipAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
-        Log.d(TAG, "onCreateViewHolder: viewType = " + viewNumber);
+        Log.d(TAG, "onCreateViewHolder: viewType = " + viewType);
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_indoor_list_header, parent, false);
-        Log.d(TAG, "onCreateViewHolder: cat size = " + categoriesViews.size());
-        Log.d(TAG, "onCreateViewHolder: sort size = " + sortdedListofIP2D.size());
-        categoriesViews.set(viewNumber, v);
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
@@ -97,9 +94,12 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
         Log.d(TAG, "onBindViewHolder: pos = " + position);
-
+        //Log.d(TAG, "onCreateViewHolder: cat size = " + categoriesViews.size());
+        //Log.d(TAG, "onCreateViewHolder: sort size = " + sortdedListofIP2D.size());
 
         if (position < NR_OF_CATEGORIES && sortdedListofIP2D.get(position) != null) {
+
+            categoriesViews.set(position, holder.mView);
 
             holder.header_title.setText(toName(position));
             if (sortdedListofIP2D.get(position).size() == 0) {
@@ -135,24 +135,26 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
 
     public void collapseView(final View v){
         LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
-        int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
-        Log.d(TAG, "index collapse= " + index);
+        /*int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
+        Log.d(TAG, "collapseView: index förut = " + index);*/
+        int index = categoriesViews.indexOf(v);
+        Log.d(TAG, "collapseView: index = " + index);
         linearLayout.removeViews(1,sortdedListofIP2D.get(index).size());
     }
 
     public void expandView(final View v){
 
-        Log.d(TAG, "expandView: v = " + v);
-        Log.d(TAG, "expandView: layout = " + v.findViewById(R.id.layout));
-
         LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
-        final int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
-        Log.d(TAG, "index expand= " + index);
+        /*final int index33 = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
+        Log.d(TAG, "collapseView: index förut = " + index33);*/
+        final int index = categoriesViews.indexOf(v);
+        Log.d(TAG, "expandView: index = " + index);
 
         final LayoutInflater lyInflaterForPanel = (LayoutInflater) mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 
+        Log.d(TAG, "expandView: sortdedListofIP2D.get(index).size() = " + sortdedListofIP2D.get(index).size());
         for(int i = 0; i < sortdedListofIP2D.get(index).size(); i++){
 
             LinearLayout childLayout = (LinearLayout) lyInflaterForPanel.inflate(
@@ -209,7 +211,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        Log.d(TAG, "getItemCount called");
+        //Log.d(TAG, "getItemCount called");
         updateSortedList();
         return  NR_OF_CATEGORIES;
     }
@@ -247,7 +249,16 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         applyAndAnimateAdditions(ipSet);
         applyAndAnimateMovedItems(ipSet);
 
+        //updateSortedList();
+        printSortedList();
+        for (View v: categoriesViews)
+        {
+            TextView header_title = (TextView) v.findViewById(R.id.header_title);
+            Log.d(TAG, "updateAdapter: categoriesViews: " + header_title.getText());
+        }
+
         //expand categories
+        //collapseAllCategories(); // collapse all first sinse need to reload the point under the categories
         expandAllCategories();
 
         Log.d(TAG, "updateAdapter: efter update");
@@ -285,12 +296,31 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
         View v;
         for(int i = 0; i<NR_OF_CATEGORIES; i++)
         {
-            v = categoriesViews.get(i);
-            ImageView mImageButton = (ImageView) v.findViewById(R.id.expand_button);
-            mImageButton.setImageResource(R.drawable.arrow_up);
-            Log.d(TAG, "expandAllCategories: v = " + v);
-            expandView(v);
-            isExpanded[i] = true;
+            if(!isExpanded[i])
+            {
+                v = categoriesViews.get(i);
+                ImageView mImageButton = (ImageView) v.findViewById(R.id.expand_button);
+                mImageButton.setImageResource(R.drawable.arrow_up);
+                //Log.d(TAG, "expandAllCategories: v = " + v);
+                expandView(v);
+                isExpanded[i] = true;
+            }
+        }
+    }
+
+    private void collapseAllCategories(){
+        View v;
+        for(int i = 0; i<NR_OF_CATEGORIES; i++)
+        {
+            if(isExpanded[i])
+            {
+                v = categoriesViews.get(i);
+                ImageView mImageButton = (ImageView) v.findViewById(R.id.expand_button);
+                mImageButton.setImageResource(R.drawable.arrow_up);
+                //Log.d(TAG, "expandAllCategories: v = " + v);
+                collapseView(v);
+                isExpanded[i] = false;
+            }
         }
     }
 
@@ -302,7 +332,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             sortdedListofIP2D.add(new Vector<PointOfInterest>());
     }
     private void updateSortedList() {
-        Log.d(TAG, "updateSortedList: ipDataset size = " + ipDataset.size() );
+        //Log.d(TAG, "updateSortedList: ipDataset size = " + ipDataset.size() );
         clearSortedList();
         for (PointOfInterest p: ipDataset) {
            // Log.d(TAG, "updateSortedList: fetch from ipDataset");
@@ -318,7 +348,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             else
                 sortdedListofIP2D.get(place1).add(p);
         }
-        Log.d(TAG, "updatesortedlist succeeded with " + sortdedListofIP2D.size());
+        //Log.d(TAG, "updatesortedlist succeeded with " + sortdedListofIP2D.size());
        // printSortedList();
     }
     private void printSortedList(){
