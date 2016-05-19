@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.example.micke.lions.R;
+import com.firebase.client.utilities.Base64;
 
 /**
  * Created by iSirux on 2016-04-21.

@@ -15,6 +15,8 @@
     <string name="skanQrMarkerCar"> Skanna QRkoden på din bilnyckel för att hitta bilen.</string>
     <string name="skanQrMarkerPlace"> Skanna QRkoden på anslagstavlan för den byggnad du beffinner dig i för att hitta din position.</string>
     <string name="addMarkerExplanation"> Tryck och håll fingret på den position du vill lägga till en punkt på</string>
+    <string name="addBuildingExplanation"> Tryck och håll fingret på den position du vill lägga till en byggnad på</string>
+    <string name="addBuildingNoAccess">Du måste vara admin för att lägga till en byggnad</string>
     <string name="removePointQuetion">Vad vill du göra med din punkt?</string>
     <string name="yes">Ja</string>
     <string name="no">Nej</string>
