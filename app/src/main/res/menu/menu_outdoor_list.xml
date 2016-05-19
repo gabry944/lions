@@ -7,7 +7,7 @@
         app:showAsAction="always"/>
 
     <item android:id="@+id/info"
-        android:title="info"
+        android:title="Information"
         android:icon="@drawable/info"
         app:showAsAction="never"/>
 

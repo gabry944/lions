@@ -8,10 +8,4 @@
         android:title="floors"
         app:showAsAction="ifRoom"/>
 
-    <item
-        android:id="@+id/addInterestPoint"
-        android:icon="@drawable/add"
-        android:title="addMarker"
-        app:showAsAction="ifRoom"/>
-
 </menu>

@@ -107,6 +107,10 @@ public class FloorAdapter extends RecyclerView.Adapter<FloorAdapter.ViewHolder> 
         });
     }
 
+    public void resetData() {
+        ipDataset = new ArrayList<>();
+    }
+
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {

@@ -60,6 +60,7 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
     private List<Marker> carMarkerList;
     private OutdoorActivity outdoorActivity;
     private ImageButton goToList;
+    private ImageButton addButton;
 
     public OutdoorMapFragment() {
 
@@ -89,12 +90,24 @@ public class OutdoorMapFragment extends Fragment implements OnMapReadyCallback,
             return rootView;
         }
 
+        addButton = (ImageButton) rootView.findViewById(R.id.add_building);
         goToList = (ImageButton) rootView.findViewById(R.id.goToOutdoorList1);
         goToList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ViewPager mPager = (ViewPager) v.getRootView().findViewById(R.id.container);
                 mPager.setCurrentItem(1, true);
+            }
+        });
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast toast;
+                if(Common.IsAdmin())
+                    toast = Toast.makeText(getContext(), R.string.addBuildingExplanation, Toast.LENGTH_LONG);
+                else
+                    toast = Toast.makeText(getContext(), R.string.addBuildingNoAccess, Toast.LENGTH_LONG);
+                toast.show();
             }
         });
 

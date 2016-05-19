@@ -3,13 +3,11 @@ package com.example.micke.lions.indoor;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.provider.ContactsContract;
 import android.util.Base64;
 import android.util.Log;
 
 import com.example.micke.lions.DataSetChanged;
 import com.example.micke.lions.FireBaseHandler;
-import com.example.micke.lions.indoor.PointOfInterest;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -21,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FireBaseIndoor extends FireBaseHandler implements Serializable {
+
+    private String TAG = "FireBaseIndoor";
 
     private String buildingId;
     private String floorId;
@@ -42,8 +42,10 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
 
     //Only call first time a map needs to be uploaded to the server
     public void addMap(Bitmap bitmap, int floor) {
+        Log.d(TAG, "addMap: start");
         Firebase imgRef = myFirebaseRef.child("buildingimages/" + buildingId + "/" + floor);
         imgRef.setValue(encodeThumbnail(bitmap));
+        Log.d(TAG, "addMap: end");
     }
 
     public void removeIp(PointOfInterest point) {
@@ -89,8 +91,8 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
     //Loads bitmaps for the current building from firebase. Maps are special in that they are only
     //loaded once on starup. This means that if admin adds another map while a user is using the app,
     //the user needs to restart to see changes.
-    public List<FloorMapimage> getMapimages(String buildingId, final IndoorMapMarkerChange indoorMapFragment) {
-        final List<FloorMapimage> list = new ArrayList<>();
+    public List<FloorMapImage> getMapimages(String buildingId, final IndoorMapMarkerChange indoorMapFragment) {
+        final List<FloorMapImage> list = new ArrayList<>();
 
         myFirebaseRef.child("buildingimages/" + buildingId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -98,7 +100,7 @@ public class FireBaseIndoor extends FireBaseHandler implements Serializable {
                 for (DataSnapshot image : building.getChildren()) {
                     if(image.getValue() != null) {
                         Bitmap bitmap = decodeThumbnail(image.getValue().toString());
-                        list.add(new FloorMapimage(bitmap, Integer.parseInt(image.getKey())));
+                        list.add(new FloorMapImage(bitmap, Integer.parseInt(image.getKey())));
                     }
                 }
                 indoorMapFragment.getMapimagesDataSet(list);
