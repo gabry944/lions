@@ -101,7 +101,12 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
             Log.d(TAG, "onBindViewHolder: position < nr of categories for " + toName(position));
 
             categoriesViews.set(position, holder.mView);
-            Log.d(TAG, "onBindViewHolder: title "+ ((TextView)holder.mView.findViewById(R.id.header_title)).getText());
+            Log.d(TAG, "onBindViewHolder: old title "+ ((TextView)holder.mView.findViewById(R.id.header_title)).getText());
+            int oldPost = toPlace((String) (((TextView)holder.mView.findViewById(R.id.header_title)).getText()));
+            Log.d(TAG, "onBindViewHolder: old title number " + oldPost );
+            //clean the old view
+            if(oldPost != -1)
+                collapseView(holder.mView);
 
             holder.header_title.setText(toName(position));
             
@@ -112,7 +117,7 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
                 holder.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
             //}
 
-            collapseView(holder.mView);
+
             if(isExpanded[position]){
                 expandView(holder.mView);
             }
@@ -143,14 +148,19 @@ public class ipAdapter extends RecyclerView.Adapter<ipAdapter.ViewHolder> {
     }
 
     public void collapseView(final View v){
+        Log.d(TAG, "collapseView: ");
         LinearLayout linearLayout =  (LinearLayout) v.findViewById(R.id.layout);
         /*int index = ((ViewGroup) linearLayout.getParent()).indexOfChild(linearLayout);
         Log.d(TAG, "collapseView: index förut = " + index);*/
         int index = categoriesViews.indexOf(v);
+        int oldPost = toPlace((String) (((TextView)v.findViewById(R.id.header_title)).getText()));
         Log.d(TAG, "collapseView: index = " + index);
+        Log.d(TAG, "collapseView: oldPost number " + oldPost );
         Log.d(TAG, "collapseView: linearLayout.getChildCount() = " + linearLayout.getChildCount());
-        if(linearLayout.getChildCount()>1) // test so that the list is not empty, Obs 1 means that it is empty
-            linearLayout.removeViews(1,sortdedListofIP2D.get(index).size());
+        Log.d(TAG, "collapseView: sortdedListofIP2D.get(oldPost).size() = " + sortdedListofIP2D.get(oldPost).size());
+        if(linearLayout.getChildCount()>1 && index != -1) // test so that the list is not empty, Obs 1 means that it is empty
+            linearLayout.removeViews(1,linearLayout.getChildCount()-1);
+            //linearLayout.removeViews(1,sortdedListofIP2D.get(index).size());
     }
 
     public void expandView(final View v){
