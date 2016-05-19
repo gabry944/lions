@@ -3,7 +3,6 @@ package com.example.micke.lions.indoor;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +72,7 @@ public class FloorDrawerAdapter extends RecyclerView.Adapter<FloorDrawerAdapter.
 
             return vhItem; // Returning the created object
         } else if (viewType == TYPE_HEADER) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.nav_header_navigationdrawertest, parent, false); //Inflating the layout
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.navigation_drawer_header, parent, false); //Inflating the layout
             ViewHolder vhHeader = new ViewHolder(v, viewType); //Creating ViewHolder and passing the object of type view
 
             return vhHeader; //returning the object created
