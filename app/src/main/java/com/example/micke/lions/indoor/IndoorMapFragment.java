@@ -1008,6 +1008,7 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.setDrawerIndicatorEnabled(false);
         mDrawerToggle.syncState();
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         //For list of floors
         mFloorRecyclerView = (RecyclerView) indoorActivity.findViewById(R.id.floor_recycler_view_drawer);
