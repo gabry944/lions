@@ -1,17 +1,11 @@
 package com.example.micke.lions.indoor;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -20,20 +14,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.micke.lions.Common;
 import com.example.micke.lions.LoginDialogFragment;
-import com.example.micke.lions.outdoor.BuildingAdapter;
 import com.example.micke.lions.R;
 
 import java.io.FileDescriptor;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
 
 
 public class IndoorActivity extends AppCompatActivity {
@@ -50,13 +40,12 @@ public class IndoorActivity extends AppCompatActivity {
     public IndoorMapFragment map;
     public IndoorListFragment list;
     public IndoorQRFragment qr;
-    public List<PointOfInterest> myDataset;
-    public BuildingAdapter buildingAdapter;
+    public Toolbar toolbar;
     public String youAreHereID = "";
     public String startGoalID = "";
     public String startGoalFloor = "";
     public String startFloor = "";
-    private android.support.v7.app.ActionBar actionBar;
+    public android.support.v7.app.ActionBar actionBar;
     public MenuItem adminButton;
     private String selectedImagePath = ""; //Used by admin when adding a map from gallery
 
@@ -76,7 +65,7 @@ public class IndoorActivity extends AppCompatActivity {
         //Change the color
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorInDoorStatusbar));
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         //get the building and set the connection to firebase
@@ -96,8 +85,6 @@ public class IndoorActivity extends AppCompatActivity {
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new IndoorPageSliderAdapter(getSupportFragmentManager(), this);
-
-
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
