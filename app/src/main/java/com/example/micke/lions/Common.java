@@ -78,6 +78,8 @@ public class Common {
             else
                 adminButton.setIcon(context.getResources().getDrawable(R.drawable.admin_button_off));
         }
+
+        adminButton.setChecked(admin);
     }
 
     public static int IsLocationPermitted(Context context) {
