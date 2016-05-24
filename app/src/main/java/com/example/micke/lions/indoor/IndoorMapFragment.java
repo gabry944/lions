@@ -974,10 +974,10 @@ public class IndoorMapFragment extends Fragment implements IndoorMapMarkerChange
 
     //Admin can not choose a floor currently
     public int nextFloorToAdd() {
-        Log.d(TAG, "nextFloorToAdd: start");
-        if(mFloors.size() > 0) {
+        //mFloors always contains "Lägg till våning" which we are not interested in
+        if(mFloors.size() > 1) {
             Log.d(TAG, "nextFloorToAdd: if");
-            return Integer.parseInt(mFloors.get(mFloors.size() - 1)) + 1;
+            return Integer.parseInt(mFloors.get(mFloors.size() - 2)) + 1;
         }
         else
             return 1;

@@ -190,7 +190,7 @@ public class IndoorActivity extends AppCompatActivity {
                     Bitmap b = getBitmapFromUri(selectedImageUri);
 
                     //Max width or height in pixels. Used for optimization
-                    int maxSize = 500;
+                    int maxSize = 1000;
 
                     if(b.getWidth() * b.getHeight() < Math.pow(maxSize, 2)) {
                         //map.mapImage.setImage(new BitmapDrawable(getResources(), b));
