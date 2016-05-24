@@ -5,6 +5,8 @@
     <item android:id="@+id/admin"
         android:title="Logga in"
         android:icon="@drawable/admin_button_off"
+        android:checkable="true"
+        android:checked="false"
         app:showAsAction="never"
         />
 
